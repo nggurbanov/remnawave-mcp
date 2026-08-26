@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.28.0",
-    "@remnawave/backend-contract": "2.7.3",
+    "@remnawave/backend-contract": "^2.8.1",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "zod": "^4.3.6"

@@ -9,7 +9,7 @@
 - MCP protocol version: `2025-06-18`
 - Runtime model: local stdio server only
 - Built entrypoint: `dist/index.js`
-- Supported Remnawave version gate: `2.7.0` through `2.7.4`
+- Supported Remnawave version gate: `2.8.0` through `2.8.1`
 - Unsupported or unknown Remnawave versions: startup fails before discovery is advertised
 
 ## Install from npm
@@ -30,7 +30,7 @@ Then configure your MCP client to run `remnawave-mcp` with the required Remnawav
       "env": {
         "REMNAWAVE_BASE_URL": "https://panel.example.test",
         "REMNAWAVE_API_TOKEN": "replace-with-real-token",
-        "REMNAWAVE_VERSION": "2.7.4"
+        "REMNAWAVE_VERSION": "2.8.1"
       }
     }
   }
@@ -109,7 +109,7 @@ These operations are currently `supported` and executable. The runtime exposes 1
 
 - `system.get_metadata`, `system.get_stats`, `system.get_health`, `system.get_nodes_metrics`, `system.get_recap`, `system.get_bandwidth_stats`, `system.get_node_statistics`
 - `users.list`, `users.create`, `users.get`, `users.update`, lookup reads such as `users.get_by_username`, single-user lifecycle actions, and bulk preview/apply actions such as `users.bulk_update`
-- `hosts.list`, `hosts.get`, `hosts.create`, `hosts.update`, `hosts.bulk_set_port`, and other guarded bulk host actions
+- `hosts.list`, `hosts.get`, `hosts.create`, `hosts.update`, `hosts.bulk_update`, and other guarded bulk host actions
 - `nodes.list`, `nodes.get`, `nodes.create`, `nodes.update`, `nodes.restart`, `nodes.restart_all`, and guarded node bulk/profile actions
 - `profiles.list`, `profiles.get`, `profiles.get_computed`, `profiles.list_inbounds`, `profiles.create`, `profiles.update`, `profiles.delete`, and `profiles.reorder`
 - `metadata.get_node`, `metadata.upsert_node`, `metadata.get_user`, `metadata.upsert_user`
@@ -215,7 +215,7 @@ Every supported operation has a safety mode that determines how it executes:
 // Preview call
 {
   "domain": "hosts",
-  "operation": "bulk_set_port",
+  "operation": "bulk_update",
   "payload": { "hostUuids": ["host-1"], "port": 443 }
 }
 // Response
@@ -230,7 +230,7 @@ Every supported operation has a safety mode that determines how it executes:
 // Apply call
 {
   "domain": "hosts",
-  "operation": "bulk_set_port",
+  "operation": "bulk_update",
   "payload": { "applyToken": "def456" }
 }
 // Response
@@ -339,7 +339,7 @@ This project ships as a local stdio server. `stdout` is reserved for MCP protoco
 
 Compatibility is intentionally strict:
 
-- supported now: `2.7.0` through `2.7.4`
+- supported now: `2.8.0` through `2.8.1`
 - unsupported explicit versions: fail with `REMNAWAVE_VERSION_UNSUPPORTED`
 - missing or unknown versions: fail with `REMNAWAVE_VERSION_UNKNOWN`
 
@@ -349,7 +349,7 @@ Compatibility is intentionally strict:
 |---|---|---|
 | `REMNAWAVE_BASE_URL` | yes | Base URL for the Remnawave panel API |
 | `REMNAWAVE_API_TOKEN` | yes | API token used for Remnawave requests |
-| `REMNAWAVE_VERSION` | recommended | Explicit Remnawave version gate. Versions `2.7.0` through `2.7.4` are supported |
+| `REMNAWAVE_VERSION` | recommended | Explicit Remnawave version gate. Versions `2.8.0` through `2.8.1` are supported |
 | `LOG_LEVEL` | no | One of `debug`, `info`, `warn`, `error`. Defaults to `info` |
 
 Example:
@@ -357,7 +357,7 @@ Example:
 ```bash
 export REMNAWAVE_BASE_URL="https://panel.example.test"
 export REMNAWAVE_API_TOKEN="replace-with-real-token"
-export REMNAWAVE_VERSION="2.7.4"
+export REMNAWAVE_VERSION="2.8.1"
 export LOG_LEVEL="info"
 ```
 
@@ -366,7 +366,7 @@ export LOG_LEVEL="info"
 ```bash
 REMNAWAVE_BASE_URL="https://panel.example.test" \
 REMNAWAVE_API_TOKEN="replace-with-real-token" \
-REMNAWAVE_VERSION="2.7.4" \
+REMNAWAVE_VERSION="2.8.1" \
 remnawave-mcp
 ```
 
@@ -403,7 +403,7 @@ If you used 0.1 grouped operations, replace them with the equivalent atomic oper
 |---|---|
 | `users.manage_lifecycle` | `users.disable`, `users.enable`, `users.revoke_subscription` |
 | `nodes.manage_maintenance` | `nodes.restart` |
-| `hosts.manage_routing` | `hosts.bulk_set_port` |
+| `hosts.manage_routing` | `hosts.bulk_update` |
 
 If you parsed legacy envelope fields such as `details.result` or `suggested_next_step`, remove that parsing. Read the direct payload on success and the compact `error` object on failure.
 

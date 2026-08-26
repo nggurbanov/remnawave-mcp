@@ -4,9 +4,9 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
   "metadata": {
     "extractedAt": "static",
     "openapi": "3.0.0",
-    "source": "remnawave-openapi-2.7.4.json",
-    "title": "Remnawave API v2.7.4",
-    "version": "2.7.4"
+    "source": "remnawave-openapi-2.8.1.json",
+    "title": "Remnawave API v2.8.1",
+    "version": "2.8.1"
   },
   "operations": [
     {
@@ -5312,13 +5312,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "address": {
                       "type": "string"
                     },
-                    "allowInsecure": {
-                      "default": false,
-                      "type": "boolean"
-                    },
                     "alpn": {
                       "anyOf": [
                         {
+                          "enum": [
+                            "h3",
+                            "h2",
+                            "http/1.1",
+                            "h2,http/1.1",
+                            "h3,h2,http/1.1",
+                            "h3,h2"
+                          ],
                           "type": "string"
                         },
                         {
@@ -5407,7 +5411,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "type": "object"
                     },
                     "isDisabled": {
-                      "default": false,
                       "type": "boolean"
                     },
                     "isHidden": {
@@ -5417,6 +5420,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "keepSniBlank": {
                       "default": false,
                       "type": "boolean"
+                    },
+                    "mihomoIpVersion": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "dual",
+                            "ipv4",
+                            "ipv6",
+                            "ipv4-prefer",
+                            "ipv6-prefer"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
                     },
                     "mihomoX25519": {
                       "type": "boolean"
@@ -5441,6 +5461,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "type": "boolean"
                     },
                     "path": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "pinnedPeerCertSha256": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -5497,7 +5527,18 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       ]
                     },
-                    "tag": {
+                    "tags": {
+                      "default": [],
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "uuid": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "verifyPeerCertByName": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -5506,10 +5547,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                           "type": "null"
                         }
                       ]
-                    },
-                    "uuid": {
-                      "format": "uuid",
-                      "type": "string"
                     },
                     "viewPosition": {
                       "type": "integer"
@@ -5528,7 +5565,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       ]
                     },
-                    "xHttpExtraParams": {
+                    "xhttpExtraParams": {
                       "anyOf": [
                         {},
                         {
@@ -5551,26 +5588,30 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "required": [
                     "address",
                     "alpn",
+                    "excludeFromSubscriptionTypes",
                     "excludedInternalSquads",
                     "finalMask",
                     "fingerprint",
                     "host",
                     "inbound",
+                    "isDisabled",
+                    "mihomoIpVersion",
                     "mihomoX25519",
                     "muxParams",
                     "nodes",
                     "path",
+                    "pinnedPeerCertSha256",
                     "port",
                     "remark",
                     "serverDescription",
                     "shuffleHost",
                     "sni",
                     "sockoptParams",
-                    "tag",
                     "uuid",
+                    "verifyPeerCertByName",
                     "viewPosition",
                     "vlessRouteId",
-                    "xHttpExtraParams",
+                    "xhttpExtraParams",
                     "xrayJsonTemplateUuid"
                   ],
                   "type": "object"
@@ -5664,9 +5705,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
             "address": {
               "type": "string"
             },
-            "allowInsecure": {
-              "type": "boolean"
-            },
             "alpn": {
               "anyOf": [
                 {
@@ -5719,17 +5757,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
             "fingerprint": {
               "anyOf": [
                 {
-                  "enum": [
-                    "chrome",
-                    "firefox",
-                    "safari",
-                    "ios",
-                    "android",
-                    "edge",
-                    "qq",
-                    "random",
-                    "randomized"
-                  ],
                   "type": "string"
                 },
                 {
@@ -5738,7 +5765,14 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               ]
             },
             "host": {
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "inbound": {
               "properties": {
@@ -5758,6 +5792,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "type": "object"
             },
             "isDisabled": {
+              "default": false,
               "type": "boolean"
             },
             "isHidden": {
@@ -5765,6 +5800,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
             },
             "keepSniBlank": {
               "type": "boolean"
+            },
+            "mihomoIpVersion": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "dual",
+                    "ipv4",
+                    "ipv6",
+                    "ipv4-prefer",
+                    "ipv6-prefer"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "mihomoX25519": {
               "type": "boolean"
@@ -5788,7 +5840,24 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "type": "boolean"
             },
             "path": {
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "pinnedPeerCertSha256": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "port": {
               "type": "integer"
@@ -5820,7 +5889,14 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "type": "boolean"
             },
             "sni": {
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "sockoptParams": {
               "anyOf": [
@@ -5830,22 +5906,28 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                 }
               ]
             },
-            "tag": {
+            "tags": {
+              "items": {
+                "maxLength": 36,
+                "pattern": "^[A-Z0-9_:]+$",
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            "uuid": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "verifyPeerCertByName": {
               "anyOf": [
                 {
-                  "description": "Optional. Host tag for categorization. Max 32 characters, uppercase letters, numbers, underscores and colons are allowed.",
-                  "maxLength": 32,
-                  "pattern": "^[A-Z0-9_:]+$",
                   "type": "string"
                 },
                 {
                   "type": "null"
                 }
               ]
-            },
-            "uuid": {
-              "format": "uuid",
-              "type": "string"
             },
             "vlessRouteId": {
               "anyOf": [
@@ -5861,7 +5943,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                 }
               ]
             },
-            "xHttpExtraParams": {
+            "xhttpExtraParams": {
               "anyOf": [
                 {},
                 {
@@ -5897,13 +5979,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "address": {
                     "type": "string"
                   },
-                  "allowInsecure": {
-                    "default": false,
-                    "type": "boolean"
-                  },
                   "alpn": {
                     "anyOf": [
                       {
+                        "enum": [
+                          "h3",
+                          "h2",
+                          "http/1.1",
+                          "h2,http/1.1",
+                          "h3,h2,http/1.1",
+                          "h3,h2"
+                        ],
                         "type": "string"
                       },
                       {
@@ -5992,7 +6078,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "type": "object"
                   },
                   "isDisabled": {
-                    "default": false,
                     "type": "boolean"
                   },
                   "isHidden": {
@@ -6002,6 +6087,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "keepSniBlank": {
                     "default": false,
                     "type": "boolean"
+                  },
+                  "mihomoIpVersion": {
+                    "anyOf": [
+                      {
+                        "enum": [
+                          "dual",
+                          "ipv4",
+                          "ipv6",
+                          "ipv4-prefer",
+                          "ipv6-prefer"
+                        ],
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "mihomoX25519": {
                     "type": "boolean"
@@ -6026,6 +6128,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "type": "boolean"
                   },
                   "path": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "pinnedPeerCertSha256": {
                     "anyOf": [
                       {
                         "type": "string"
@@ -6082,7 +6194,18 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       }
                     ]
                   },
-                  "tag": {
+                  "tags": {
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "uuid": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "verifyPeerCertByName": {
                     "anyOf": [
                       {
                         "type": "string"
@@ -6091,10 +6214,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "type": "null"
                       }
                     ]
-                  },
-                  "uuid": {
-                    "format": "uuid",
-                    "type": "string"
                   },
                   "viewPosition": {
                     "type": "integer"
@@ -6113,7 +6232,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       }
                     ]
                   },
-                  "xHttpExtraParams": {
+                  "xhttpExtraParams": {
                     "anyOf": [
                       {},
                       {
@@ -6136,26 +6255,30 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                 "required": [
                   "address",
                   "alpn",
+                  "excludeFromSubscriptionTypes",
                   "excludedInternalSquads",
                   "finalMask",
                   "fingerprint",
                   "host",
                   "inbound",
+                  "isDisabled",
+                  "mihomoIpVersion",
                   "mihomoX25519",
                   "muxParams",
                   "nodes",
                   "path",
+                  "pinnedPeerCertSha256",
                   "port",
                   "remark",
                   "serverDescription",
                   "shuffleHost",
                   "sni",
                   "sockoptParams",
-                  "tag",
                   "uuid",
+                  "verifyPeerCertByName",
                   "viewPosition",
                   "vlessRouteId",
-                  "xHttpExtraParams",
+                  "xhttpExtraParams",
                   "xrayJsonTemplateUuid"
                 ],
                 "type": "object"
@@ -6247,10 +6370,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
             "address": {
               "type": "string"
             },
-            "allowInsecure": {
-              "default": false,
-              "type": "boolean"
-            },
             "alpn": {
               "anyOf": [
                 {
@@ -6303,17 +6422,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
             "fingerprint": {
               "anyOf": [
                 {
-                  "enum": [
-                    "chrome",
-                    "firefox",
-                    "safari",
-                    "ios",
-                    "android",
-                    "edge",
-                    "qq",
-                    "random",
-                    "randomized"
-                  ],
                   "type": "string"
                 },
                 {
@@ -6322,7 +6430,14 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               ]
             },
             "host": {
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "inbound": {
               "properties": {
@@ -6353,6 +6468,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "default": false,
               "type": "boolean"
             },
+            "mihomoIpVersion": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "dual",
+                    "ipv4",
+                    "ipv6",
+                    "ipv4-prefer",
+                    "ipv6-prefer"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "mihomoX25519": {
               "default": false,
               "type": "boolean"
@@ -6377,7 +6509,24 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "type": "boolean"
             },
             "path": {
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "pinnedPeerCertSha256": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "port": {
               "type": "integer"
@@ -6412,7 +6561,14 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "type": "boolean"
             },
             "sni": {
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "sockoptParams": {
               "anyOf": [
@@ -6422,12 +6578,18 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                 }
               ]
             },
-            "tag": {
+            "tags": {
+              "items": {
+                "maxLength": 36,
+                "pattern": "^[A-Z0-9_:]+$",
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            "verifyPeerCertByName": {
               "anyOf": [
                 {
-                  "description": "Optional. Host tag for categorization. Max 32 characters, uppercase letters, numbers, underscores and colons are allowed.",
-                  "maxLength": 32,
-                  "pattern": "^[A-Z0-9_:]+$",
                   "type": "string"
                 },
                 {
@@ -6449,7 +6611,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                 }
               ]
             },
-            "xHttpExtraParams": {
+            "xhttpExtraParams": {
               "anyOf": [
                 {},
                 {
@@ -6488,13 +6650,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "address": {
                     "type": "string"
                   },
-                  "allowInsecure": {
-                    "default": false,
-                    "type": "boolean"
-                  },
                   "alpn": {
                     "anyOf": [
                       {
+                        "enum": [
+                          "h3",
+                          "h2",
+                          "http/1.1",
+                          "h2,http/1.1",
+                          "h3,h2,http/1.1",
+                          "h3,h2"
+                        ],
                         "type": "string"
                       },
                       {
@@ -6583,7 +6749,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "type": "object"
                   },
                   "isDisabled": {
-                    "default": false,
                     "type": "boolean"
                   },
                   "isHidden": {
@@ -6593,6 +6758,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "keepSniBlank": {
                     "default": false,
                     "type": "boolean"
+                  },
+                  "mihomoIpVersion": {
+                    "anyOf": [
+                      {
+                        "enum": [
+                          "dual",
+                          "ipv4",
+                          "ipv6",
+                          "ipv4-prefer",
+                          "ipv6-prefer"
+                        ],
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "mihomoX25519": {
                     "type": "boolean"
@@ -6617,6 +6799,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "type": "boolean"
                   },
                   "path": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "pinnedPeerCertSha256": {
                     "anyOf": [
                       {
                         "type": "string"
@@ -6673,7 +6865,18 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       }
                     ]
                   },
-                  "tag": {
+                  "tags": {
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "uuid": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "verifyPeerCertByName": {
                     "anyOf": [
                       {
                         "type": "string"
@@ -6682,10 +6885,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "type": "null"
                       }
                     ]
-                  },
-                  "uuid": {
-                    "format": "uuid",
-                    "type": "string"
                   },
                   "viewPosition": {
                     "type": "integer"
@@ -6704,7 +6903,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       }
                     ]
                   },
-                  "xHttpExtraParams": {
+                  "xhttpExtraParams": {
                     "anyOf": [
                       {},
                       {
@@ -6727,26 +6926,30 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                 "required": [
                   "address",
                   "alpn",
+                  "excludeFromSubscriptionTypes",
                   "excludedInternalSquads",
                   "finalMask",
                   "fingerprint",
                   "host",
                   "inbound",
+                  "isDisabled",
+                  "mihomoIpVersion",
                   "mihomoX25519",
                   "muxParams",
                   "nodes",
                   "path",
+                  "pinnedPeerCertSha256",
                   "port",
                   "remark",
                   "serverDescription",
                   "shuffleHost",
                   "sni",
                   "sockoptParams",
-                  "tag",
                   "uuid",
+                  "verifyPeerCertByName",
                   "viewPosition",
                   "vlessRouteId",
-                  "xHttpExtraParams",
+                  "xhttpExtraParams",
                   "xrayJsonTemplateUuid"
                 ],
                 "type": "object"
@@ -6986,13 +7189,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "address": {
                       "type": "string"
                     },
-                    "allowInsecure": {
-                      "default": false,
-                      "type": "boolean"
-                    },
                     "alpn": {
                       "anyOf": [
                         {
+                          "enum": [
+                            "h3",
+                            "h2",
+                            "http/1.1",
+                            "h2,http/1.1",
+                            "h3,h2,http/1.1",
+                            "h3,h2"
+                          ],
                           "type": "string"
                         },
                         {
@@ -7081,7 +7288,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "type": "object"
                     },
                     "isDisabled": {
-                      "default": false,
                       "type": "boolean"
                     },
                     "isHidden": {
@@ -7091,6 +7297,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "keepSniBlank": {
                       "default": false,
                       "type": "boolean"
+                    },
+                    "mihomoIpVersion": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "dual",
+                            "ipv4",
+                            "ipv6",
+                            "ipv4-prefer",
+                            "ipv6-prefer"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
                     },
                     "mihomoX25519": {
                       "type": "boolean"
@@ -7115,6 +7338,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "type": "boolean"
                     },
                     "path": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "pinnedPeerCertSha256": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -7171,7 +7404,18 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       ]
                     },
-                    "tag": {
+                    "tags": {
+                      "default": [],
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "uuid": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "verifyPeerCertByName": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -7180,10 +7424,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                           "type": "null"
                         }
                       ]
-                    },
-                    "uuid": {
-                      "format": "uuid",
-                      "type": "string"
                     },
                     "viewPosition": {
                       "type": "integer"
@@ -7202,7 +7442,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       ]
                     },
-                    "xHttpExtraParams": {
+                    "xhttpExtraParams": {
                       "anyOf": [
                         {},
                         {
@@ -7225,26 +7465,30 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "required": [
                     "address",
                     "alpn",
+                    "excludeFromSubscriptionTypes",
                     "excludedInternalSquads",
                     "finalMask",
                     "fingerprint",
                     "host",
                     "inbound",
+                    "isDisabled",
+                    "mihomoIpVersion",
                     "mihomoX25519",
                     "muxParams",
                     "nodes",
                     "path",
+                    "pinnedPeerCertSha256",
                     "port",
                     "remark",
                     "serverDescription",
                     "shuffleHost",
                     "sni",
                     "sockoptParams",
-                    "tag",
                     "uuid",
+                    "verifyPeerCertByName",
                     "viewPosition",
                     "vlessRouteId",
-                    "xHttpExtraParams",
+                    "xhttpExtraParams",
                     "xrayJsonTemplateUuid"
                   ],
                   "type": "object"
@@ -7360,13 +7604,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "address": {
                       "type": "string"
                     },
-                    "allowInsecure": {
-                      "default": false,
-                      "type": "boolean"
-                    },
                     "alpn": {
                       "anyOf": [
                         {
+                          "enum": [
+                            "h3",
+                            "h2",
+                            "http/1.1",
+                            "h2,http/1.1",
+                            "h3,h2,http/1.1",
+                            "h3,h2"
+                          ],
                           "type": "string"
                         },
                         {
@@ -7455,7 +7703,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "type": "object"
                     },
                     "isDisabled": {
-                      "default": false,
                       "type": "boolean"
                     },
                     "isHidden": {
@@ -7465,6 +7712,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "keepSniBlank": {
                       "default": false,
                       "type": "boolean"
+                    },
+                    "mihomoIpVersion": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "dual",
+                            "ipv4",
+                            "ipv6",
+                            "ipv4-prefer",
+                            "ipv6-prefer"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
                     },
                     "mihomoX25519": {
                       "type": "boolean"
@@ -7489,6 +7753,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "type": "boolean"
                     },
                     "path": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "pinnedPeerCertSha256": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -7545,7 +7819,18 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       ]
                     },
-                    "tag": {
+                    "tags": {
+                      "default": [],
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "uuid": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "verifyPeerCertByName": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -7554,10 +7839,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                           "type": "null"
                         }
                       ]
-                    },
-                    "uuid": {
-                      "format": "uuid",
-                      "type": "string"
                     },
                     "viewPosition": {
                       "type": "integer"
@@ -7576,7 +7857,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       ]
                     },
-                    "xHttpExtraParams": {
+                    "xhttpExtraParams": {
                       "anyOf": [
                         {},
                         {
@@ -7599,26 +7880,30 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "required": [
                     "address",
                     "alpn",
+                    "excludeFromSubscriptionTypes",
                     "excludedInternalSquads",
                     "finalMask",
                     "fingerprint",
                     "host",
                     "inbound",
+                    "isDisabled",
+                    "mihomoIpVersion",
                     "mihomoX25519",
                     "muxParams",
                     "nodes",
                     "path",
+                    "pinnedPeerCertSha256",
                     "port",
                     "remark",
                     "serverDescription",
                     "shuffleHost",
                     "sni",
                     "sockoptParams",
-                    "tag",
                     "uuid",
+                    "verifyPeerCertByName",
                     "viewPosition",
                     "vlessRouteId",
-                    "xHttpExtraParams",
+                    "xhttpExtraParams",
                     "xrayJsonTemplateUuid"
                   ],
                   "type": "object"
@@ -7734,13 +8019,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "address": {
                       "type": "string"
                     },
-                    "allowInsecure": {
-                      "default": false,
-                      "type": "boolean"
-                    },
                     "alpn": {
                       "anyOf": [
                         {
+                          "enum": [
+                            "h3",
+                            "h2",
+                            "http/1.1",
+                            "h2,http/1.1",
+                            "h3,h2,http/1.1",
+                            "h3,h2"
+                          ],
                           "type": "string"
                         },
                         {
@@ -7829,7 +8118,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "type": "object"
                     },
                     "isDisabled": {
-                      "default": false,
                       "type": "boolean"
                     },
                     "isHidden": {
@@ -7839,6 +8127,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "keepSniBlank": {
                       "default": false,
                       "type": "boolean"
+                    },
+                    "mihomoIpVersion": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "dual",
+                            "ipv4",
+                            "ipv6",
+                            "ipv4-prefer",
+                            "ipv6-prefer"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
                     },
                     "mihomoX25519": {
                       "type": "boolean"
@@ -7863,6 +8168,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "type": "boolean"
                     },
                     "path": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "pinnedPeerCertSha256": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -7919,7 +8234,18 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       ]
                     },
-                    "tag": {
+                    "tags": {
+                      "default": [],
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "uuid": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "verifyPeerCertByName": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -7928,10 +8254,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                           "type": "null"
                         }
                       ]
-                    },
-                    "uuid": {
-                      "format": "uuid",
-                      "type": "string"
                     },
                     "viewPosition": {
                       "type": "integer"
@@ -7950,7 +8272,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       ]
                     },
-                    "xHttpExtraParams": {
+                    "xhttpExtraParams": {
                       "anyOf": [
                         {},
                         {
@@ -7973,26 +8295,30 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "required": [
                     "address",
                     "alpn",
+                    "excludeFromSubscriptionTypes",
                     "excludedInternalSquads",
                     "finalMask",
                     "fingerprint",
                     "host",
                     "inbound",
+                    "isDisabled",
+                    "mihomoIpVersion",
                     "mihomoX25519",
                     "muxParams",
                     "nodes",
                     "path",
+                    "pinnedPeerCertSha256",
                     "port",
                     "remark",
                     "serverDescription",
                     "shuffleHost",
                     "sni",
                     "sockoptParams",
-                    "tag",
                     "uuid",
+                    "verifyPeerCertByName",
                     "viewPosition",
                     "vlessRouteId",
-                    "xHttpExtraParams",
+                    "xhttpExtraParams",
                     "xrayJsonTemplateUuid"
                   ],
                   "type": "object"
@@ -8073,417 +8399,282 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
       "summary": "Enable hosts by UUIDs"
     },
     {
-      "key": "hosts.bulk_set_inbound",
-      "method": "post",
-      "operationId": "HostsBulkActionsController_setInboundToHosts",
-      "parameters": [],
-      "path": "/api/hosts/bulk/set-inbound",
-      "requestBody": {
-        "contentType": "application/json",
-        "required": true,
-        "schema": {
-          "properties": {
-            "configProfileInboundUuid": {
-              "format": "uuid",
-              "type": "string"
-            },
-            "configProfileUuid": {
-              "format": "uuid",
-              "type": "string"
-            },
-            "uuids": {
-              "items": {
-                "format": "uuid",
-                "type": "string"
-              },
-              "type": "array"
-            }
-          },
-          "required": [
-            "configProfileInboundUuid",
-            "configProfileUuid",
-            "uuids"
-          ],
-          "type": "object"
-        }
-      },
-      "responses": {
-        "200": {
-          "description": "Hosts inbound set successfully",
-          "schema": {
-            "properties": {
-              "response": {
-                "items": {
-                  "properties": {
-                    "address": {
-                      "type": "string"
-                    },
-                    "allowInsecure": {
-                      "default": false,
-                      "type": "boolean"
-                    },
-                    "alpn": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "excludeFromSubscriptionTypes": {
-                      "items": {
-                        "enum": [
-                          "XRAY_JSON",
-                          "XRAY_BASE64",
-                          "MIHOMO",
-                          "STASH",
-                          "CLASH",
-                          "SINGBOX"
-                        ],
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "excludedInternalSquads": {
-                      "items": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "finalMask": {
-                      "anyOf": [
-                        {},
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "fingerprint": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "host": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "inbound": {
-                      "properties": {
-                        "configProfileInboundUuid": {
-                          "anyOf": [
-                            {
-                              "format": "uuid",
-                              "type": "string"
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        "configProfileUuid": {
-                          "anyOf": [
-                            {
-                              "format": "uuid",
-                              "type": "string"
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        }
-                      },
-                      "required": [
-                        "configProfileInboundUuid",
-                        "configProfileUuid"
-                      ],
-                      "type": "object"
-                    },
-                    "isDisabled": {
-                      "default": false,
-                      "type": "boolean"
-                    },
-                    "isHidden": {
-                      "default": false,
-                      "type": "boolean"
-                    },
-                    "keepSniBlank": {
-                      "default": false,
-                      "type": "boolean"
-                    },
-                    "mihomoX25519": {
-                      "type": "boolean"
-                    },
-                    "muxParams": {
-                      "anyOf": [
-                        {},
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "nodes": {
-                      "items": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "overrideSniFromAddress": {
-                      "default": false,
-                      "type": "boolean"
-                    },
-                    "path": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "port": {
-                      "type": "integer"
-                    },
-                    "remark": {
-                      "type": "string"
-                    },
-                    "securityLayer": {
-                      "default": "DEFAULT",
-                      "enum": [
-                        "DEFAULT",
-                        "TLS",
-                        "NONE"
-                      ],
-                      "type": "string"
-                    },
-                    "serverDescription": {
-                      "anyOf": [
-                        {
-                          "maxLength": 30,
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "shuffleHost": {
-                      "type": "boolean"
-                    },
-                    "sni": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "sockoptParams": {
-                      "anyOf": [
-                        {},
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "tag": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "uuid": {
-                      "format": "uuid",
-                      "type": "string"
-                    },
-                    "viewPosition": {
-                      "type": "integer"
-                    },
-                    "vlessRouteId": {
-                      "anyOf": [
-                        {
-                          "exclusiveMaximum": false,
-                          "exclusiveMinimum": false,
-                          "maximum": 65535,
-                          "minimum": 0,
-                          "type": "integer"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "xHttpExtraParams": {
-                      "anyOf": [
-                        {},
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "xrayJsonTemplateUuid": {
-                      "anyOf": [
-                        {
-                          "format": "uuid",
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    }
-                  },
-                  "required": [
-                    "address",
-                    "alpn",
-                    "excludedInternalSquads",
-                    "finalMask",
-                    "fingerprint",
-                    "host",
-                    "inbound",
-                    "mihomoX25519",
-                    "muxParams",
-                    "nodes",
-                    "path",
-                    "port",
-                    "remark",
-                    "serverDescription",
-                    "shuffleHost",
-                    "sni",
-                    "sockoptParams",
-                    "tag",
-                    "uuid",
-                    "viewPosition",
-                    "vlessRouteId",
-                    "xHttpExtraParams",
-                    "xrayJsonTemplateUuid"
-                  ],
-                  "type": "object"
-                },
-                "type": "array"
-              }
-            },
-            "required": [
-              "response"
-            ],
-            "type": "object"
-          }
-        },
-        "400": {
-          "description": "Validation error",
-          "schema": {
-            "properties": {
-              "errors": {
-                "items": {
-                  "properties": {
-                    "code": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "path": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "validation": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "code",
-                    "message",
-                    "path",
-                    "validation"
-                  ],
-                  "type": "object"
-                },
-                "type": "array"
-              },
-              "message": {
-                "type": "string"
-              },
-              "statusCode": {
-                "type": "number"
-              }
-            },
-            "type": "object"
-          }
-        },
-        "500": {
-          "description": "Server error",
-          "schema": {
-            "properties": {
-              "errorCode": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              },
-              "path": {
-                "type": "string"
-              },
-              "timestamp": {
-                "type": "string"
-              }
-            },
-            "type": "object"
-          }
-        }
-      },
-      "summary": "Set inbound to hosts by UUIDs"
-    },
-    {
-      "key": "hosts.bulk_set_port",
-      "method": "post",
+      "key": "hosts.bulk_update",
+      "method": "patch",
       "operationId": "HostsBulkActionsController_setPortToHosts",
       "parameters": [],
-      "path": "/api/hosts/bulk/set-port",
+      "path": "/api/hosts/bulk/update",
       "requestBody": {
         "contentType": "application/json",
         "required": true,
         "schema": {
           "properties": {
+            "address": {
+              "type": "string"
+            },
+            "alpn": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "h3",
+                    "h2",
+                    "http/1.1",
+                    "h2,http/1.1",
+                    "h3,h2,http/1.1",
+                    "h3,h2"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "excludeFromSubscriptionTypes": {
+              "description": "Optional. Subscription types from which the host will be excluded from.",
+              "items": {
+                "enum": [
+                  "XRAY_JSON",
+                  "XRAY_BASE64",
+                  "MIHOMO",
+                  "STASH",
+                  "CLASH",
+                  "SINGBOX"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "excludedInternalSquads": {
+              "description": "Optional. Internal squads from which the host will be excluded.",
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "finalMask": {
+              "anyOf": [
+                {},
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "fingerprint": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "host": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "inbound": {
+              "properties": {
+                "configProfileInboundUuid": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "configProfileUuid": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "configProfileInboundUuid",
+                "configProfileUuid"
+              ],
+              "type": "object"
+            },
+            "isDisabled": {
+              "default": false,
+              "type": "boolean"
+            },
+            "isHidden": {
+              "type": "boolean"
+            },
+            "keepSniBlank": {
+              "type": "boolean"
+            },
+            "mihomoIpVersion": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "dual",
+                    "ipv4",
+                    "ipv6",
+                    "ipv4-prefer",
+                    "ipv6-prefer"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "mihomoX25519": {
+              "type": "boolean"
+            },
+            "muxParams": {
+              "anyOf": [
+                {},
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "nodes": {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "overrideSniFromAddress": {
+              "type": "boolean"
+            },
+            "path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "pinnedPeerCertSha256": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "port": {
-              "exclusiveMaximum": false,
-              "exclusiveMinimum": false,
-              "maximum": 65535,
-              "minimum": 1,
               "type": "integer"
+            },
+            "remark": {
+              "maxLength": 40,
+              "type": "string"
+            },
+            "securityLayer": {
+              "enum": [
+                "DEFAULT",
+                "TLS",
+                "NONE"
+              ],
+              "type": "string"
+            },
+            "serverDescription": {
+              "anyOf": [
+                {
+                  "maxLength": 30,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "shuffleHost": {
+              "type": "boolean"
+            },
+            "sni": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sockoptParams": {
+              "anyOf": [
+                {},
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "tags": {
+              "items": {
+                "maxLength": 36,
+                "pattern": "^[A-Z0-9_:]+$",
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
             },
             "uuids": {
               "items": {
                 "format": "uuid",
                 "type": "string"
               },
+              "minItems": 1,
               "type": "array"
+            },
+            "verifyPeerCertByName": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "vlessRouteId": {
+              "anyOf": [
+                {
+                  "exclusiveMaximum": false,
+                  "exclusiveMinimum": false,
+                  "maximum": 65535,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "xhttpExtraParams": {
+              "anyOf": [
+                {},
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "xrayJsonTemplateUuid": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           },
           "required": [
-            "port",
             "uuids"
           ],
           "type": "object"
@@ -8491,7 +8682,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
       },
       "responses": {
         "200": {
-          "description": "Hosts port set successfully",
+          "description": "Hosts updated successfully",
           "schema": {
             "properties": {
               "response": {
@@ -8500,13 +8691,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "address": {
                       "type": "string"
                     },
-                    "allowInsecure": {
-                      "default": false,
-                      "type": "boolean"
-                    },
                     "alpn": {
                       "anyOf": [
                         {
+                          "enum": [
+                            "h3",
+                            "h2",
+                            "http/1.1",
+                            "h2,http/1.1",
+                            "h3,h2,http/1.1",
+                            "h3,h2"
+                          ],
                           "type": "string"
                         },
                         {
@@ -8595,7 +8790,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "type": "object"
                     },
                     "isDisabled": {
-                      "default": false,
                       "type": "boolean"
                     },
                     "isHidden": {
@@ -8605,6 +8799,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "keepSniBlank": {
                       "default": false,
                       "type": "boolean"
+                    },
+                    "mihomoIpVersion": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "dual",
+                            "ipv4",
+                            "ipv6",
+                            "ipv4-prefer",
+                            "ipv6-prefer"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
                     },
                     "mihomoX25519": {
                       "type": "boolean"
@@ -8629,6 +8840,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "type": "boolean"
                     },
                     "path": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "pinnedPeerCertSha256": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -8685,7 +8906,18 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       ]
                     },
-                    "tag": {
+                    "tags": {
+                      "default": [],
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "uuid": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "verifyPeerCertByName": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -8694,10 +8926,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                           "type": "null"
                         }
                       ]
-                    },
-                    "uuid": {
-                      "format": "uuid",
-                      "type": "string"
                     },
                     "viewPosition": {
                       "type": "integer"
@@ -8716,7 +8944,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       ]
                     },
-                    "xHttpExtraParams": {
+                    "xhttpExtraParams": {
                       "anyOf": [
                         {},
                         {
@@ -8739,26 +8967,30 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "required": [
                     "address",
                     "alpn",
+                    "excludeFromSubscriptionTypes",
                     "excludedInternalSquads",
                     "finalMask",
                     "fingerprint",
                     "host",
                     "inbound",
+                    "isDisabled",
+                    "mihomoIpVersion",
                     "mihomoX25519",
                     "muxParams",
                     "nodes",
                     "path",
+                    "pinnedPeerCertSha256",
                     "port",
                     "remark",
                     "serverDescription",
                     "shuffleHost",
                     "sni",
                     "sockoptParams",
-                    "tag",
                     "uuid",
+                    "verifyPeerCertByName",
                     "viewPosition",
                     "vlessRouteId",
-                    "xHttpExtraParams",
+                    "xhttpExtraParams",
                     "xrayJsonTemplateUuid"
                   ],
                   "type": "object"
@@ -8836,7 +9068,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
           }
         }
       },
-      "summary": "Set port to hosts by UUIDs"
+      "summary": "Update many hosts"
     },
     {
       "key": "hosts.list_tags",
@@ -9070,13 +9302,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "address": {
                     "type": "string"
                   },
-                  "allowInsecure": {
-                    "default": false,
-                    "type": "boolean"
-                  },
                   "alpn": {
                     "anyOf": [
                       {
+                        "enum": [
+                          "h3",
+                          "h2",
+                          "http/1.1",
+                          "h2,http/1.1",
+                          "h3,h2,http/1.1",
+                          "h3,h2"
+                        ],
                         "type": "string"
                       },
                       {
@@ -9165,7 +9401,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "type": "object"
                   },
                   "isDisabled": {
-                    "default": false,
                     "type": "boolean"
                   },
                   "isHidden": {
@@ -9175,6 +9410,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "keepSniBlank": {
                     "default": false,
                     "type": "boolean"
+                  },
+                  "mihomoIpVersion": {
+                    "anyOf": [
+                      {
+                        "enum": [
+                          "dual",
+                          "ipv4",
+                          "ipv6",
+                          "ipv4-prefer",
+                          "ipv6-prefer"
+                        ],
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "mihomoX25519": {
                     "type": "boolean"
@@ -9199,6 +9451,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "type": "boolean"
                   },
                   "path": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "pinnedPeerCertSha256": {
                     "anyOf": [
                       {
                         "type": "string"
@@ -9255,7 +9517,18 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       }
                     ]
                   },
-                  "tag": {
+                  "tags": {
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "uuid": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "verifyPeerCertByName": {
                     "anyOf": [
                       {
                         "type": "string"
@@ -9264,10 +9537,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "type": "null"
                       }
                     ]
-                  },
-                  "uuid": {
-                    "format": "uuid",
-                    "type": "string"
                   },
                   "viewPosition": {
                     "type": "integer"
@@ -9286,7 +9555,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       }
                     ]
                   },
-                  "xHttpExtraParams": {
+                  "xhttpExtraParams": {
                     "anyOf": [
                       {},
                       {
@@ -9309,26 +9578,30 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                 "required": [
                   "address",
                   "alpn",
+                  "excludeFromSubscriptionTypes",
                   "excludedInternalSquads",
                   "finalMask",
                   "fingerprint",
                   "host",
                   "inbound",
+                  "isDisabled",
+                  "mihomoIpVersion",
                   "mihomoX25519",
                   "muxParams",
                   "nodes",
                   "path",
+                  "pinnedPeerCertSha256",
                   "port",
                   "remark",
                   "serverDescription",
                   "shuffleHost",
                   "sni",
                   "sockoptParams",
-                  "tag",
                   "uuid",
+                  "verifyPeerCertByName",
                   "viewPosition",
                   "vlessRouteId",
-                  "xHttpExtraParams",
+                  "xhttpExtraParams",
                   "xrayJsonTemplateUuid"
                 ],
                 "type": "object"
@@ -9478,6 +9751,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
+                        "requestIp": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "updatedAt": {
                           "format": "date-time",
                           "type": "string"
@@ -9492,9 +9775,8 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
-                        "userUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                        "userId": {
+                          "type": "number"
                         }
                       },
                       "required": [
@@ -9503,9 +9785,10 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "hwid",
                         "osVersion",
                         "platform",
+                        "requestIp",
                         "updatedAt",
                         "userAgent",
-                        "userUuid"
+                        "userId"
                       ],
                       "type": "object"
                     },
@@ -9617,6 +9900,9 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
             "platform": {
               "type": "string"
             },
+            "requestIp": {
+              "type": "string"
+            },
             "userAgent": {
               "type": "string"
             },
@@ -9679,6 +9965,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
+                        "requestIp": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "updatedAt": {
                           "format": "date-time",
                           "type": "string"
@@ -9693,9 +9989,8 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
-                        "userUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                        "userId": {
+                          "type": "number"
                         }
                       },
                       "required": [
@@ -9704,9 +9999,10 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "hwid",
                         "osVersion",
                         "platform",
+                        "requestIp",
                         "updatedAt",
                         "userAgent",
-                        "userUuid"
+                        "userId"
                       ],
                       "type": "object"
                     },
@@ -9871,6 +10167,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
+                        "requestIp": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "updatedAt": {
                           "format": "date-time",
                           "type": "string"
@@ -9885,9 +10191,8 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
-                        "userUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                        "userId": {
+                          "type": "number"
                         }
                       },
                       "required": [
@@ -9896,9 +10201,10 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "hwid",
                         "osVersion",
                         "platform",
+                        "requestIp",
                         "updatedAt",
                         "userAgent",
-                        "userUuid"
+                        "userId"
                       ],
                       "type": "object"
                     },
@@ -10059,6 +10365,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
+                        "requestIp": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "updatedAt": {
                           "format": "date-time",
                           "type": "string"
@@ -10073,9 +10389,8 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
-                        "userUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                        "userId": {
+                          "type": "number"
                         }
                       },
                       "required": [
@@ -10084,9 +10399,10 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "hwid",
                         "osVersion",
                         "platform",
+                        "requestIp",
                         "updatedAt",
                         "userAgent",
-                        "userUuid"
+                        "userId"
                       ],
                       "type": "object"
                     },
@@ -10191,27 +10507,27 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
             "properties": {
               "response": {
                 "properties": {
-                  "byApp": {
-                    "items": {
-                      "properties": {
-                        "app": {
-                          "type": "string"
-                        },
-                        "count": {
-                          "type": "number"
-                        }
-                      },
-                      "required": [
-                        "app",
-                        "count"
-                      ],
-                      "type": "object"
-                    },
-                    "type": "array"
-                  },
                   "byPlatform": {
                     "items": {
                       "properties": {
+                        "byApp": {
+                          "items": {
+                            "properties": {
+                              "app": {
+                                "type": "string"
+                              },
+                              "count": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "app",
+                              "count"
+                            ],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
                         "count": {
                           "type": "number"
                         },
@@ -10220,6 +10536,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         }
                       },
                       "required": [
+                        "byApp",
                         "count",
                         "platform"
                       ],
@@ -10248,7 +10565,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   }
                 },
                 "required": [
-                  "byApp",
                   "byPlatform",
                   "stats"
                 ],
@@ -10532,6 +10848,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
+                        "requestIp": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "updatedAt": {
                           "format": "date-time",
                           "type": "string"
@@ -10546,9 +10872,8 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
-                        "userUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                        "userId": {
+                          "type": "number"
                         }
                       },
                       "required": [
@@ -10557,9 +10882,10 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "hwid",
                         "osVersion",
                         "platform",
+                        "requestIp",
                         "updatedAt",
                         "userAgent",
-                        "userUuid"
+                        "userId"
                       ],
                       "type": "object"
                     },
@@ -11190,33 +11516,57 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                           "format": "date-time",
                           "type": "string"
                         },
+                        "name": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "nextBillingAt": {
                           "format": "date-time",
                           "type": "string"
                         },
                         "node": {
-                          "properties": {
-                            "countryCode": {
-                              "type": "string"
+                          "anyOf": [
+                            {
+                              "properties": {
+                                "countryCode": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "uuid": {
+                                  "format": "uuid",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "countryCode",
+                                "name",
+                                "uuid"
+                              ],
+                              "type": "object"
                             },
-                            "name": {
-                              "type": "string"
-                            },
-                            "uuid": {
-                              "format": "uuid",
-                              "type": "string"
+                            {
+                              "type": "null"
                             }
-                          },
-                          "required": [
-                            "countryCode",
-                            "name",
-                            "uuid"
-                          ],
-                          "type": "object"
+                          ]
                         },
                         "nodeUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                          "anyOf": [
+                            {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         },
                         "provider": {
                           "properties": {
@@ -11271,6 +11621,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       },
                       "required": [
                         "createdAt",
+                        "name",
                         "nextBillingAt",
                         "node",
                         "nodeUuid",
@@ -11458,33 +11809,57 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                           "format": "date-time",
                           "type": "string"
                         },
+                        "name": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "nextBillingAt": {
                           "format": "date-time",
                           "type": "string"
                         },
                         "node": {
-                          "properties": {
-                            "countryCode": {
-                              "type": "string"
+                          "anyOf": [
+                            {
+                              "properties": {
+                                "countryCode": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "uuid": {
+                                  "format": "uuid",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "countryCode",
+                                "name",
+                                "uuid"
+                              ],
+                              "type": "object"
                             },
-                            "name": {
-                              "type": "string"
-                            },
-                            "uuid": {
-                              "format": "uuid",
-                              "type": "string"
+                            {
+                              "type": "null"
                             }
-                          },
-                          "required": [
-                            "countryCode",
-                            "name",
-                            "uuid"
-                          ],
-                          "type": "object"
+                          ]
                         },
                         "nodeUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                          "anyOf": [
+                            {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         },
                         "provider": {
                           "properties": {
@@ -11539,6 +11914,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       },
                       "required": [
                         "createdAt",
+                        "name",
                         "nextBillingAt",
                         "node",
                         "nodeUuid",
@@ -11670,14 +12046,33 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
         "required": true,
         "schema": {
           "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "nextBillingAt": {
               "description": "Next billing date. Format: 2025-01-17T15:38:45.065Z",
               "format": "date-time",
               "type": "string"
             },
             "nodeUuid": {
-              "format": "uuid",
-              "type": "string"
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "providerUuid": {
               "format": "uuid",
@@ -11685,6 +12080,8 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
             }
           },
           "required": [
+            "name",
+            "nextBillingAt",
             "nodeUuid",
             "providerUuid"
           ],
@@ -11728,33 +12125,57 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                           "format": "date-time",
                           "type": "string"
                         },
+                        "name": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "nextBillingAt": {
                           "format": "date-time",
                           "type": "string"
                         },
                         "node": {
-                          "properties": {
-                            "countryCode": {
-                              "type": "string"
+                          "anyOf": [
+                            {
+                              "properties": {
+                                "countryCode": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "uuid": {
+                                  "format": "uuid",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "countryCode",
+                                "name",
+                                "uuid"
+                              ],
+                              "type": "object"
                             },
-                            "name": {
-                              "type": "string"
-                            },
-                            "uuid": {
-                              "format": "uuid",
-                              "type": "string"
+                            {
+                              "type": "null"
                             }
-                          },
-                          "required": [
-                            "countryCode",
-                            "name",
-                            "uuid"
-                          ],
-                          "type": "object"
+                          ]
                         },
                         "nodeUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                          "anyOf": [
+                            {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         },
                         "provider": {
                           "properties": {
@@ -11809,6 +12230,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       },
                       "required": [
                         "createdAt",
+                        "name",
                         "nextBillingAt",
                         "node",
                         "nodeUuid",
@@ -11981,33 +12403,57 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                           "format": "date-time",
                           "type": "string"
                         },
+                        "name": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "nextBillingAt": {
                           "format": "date-time",
                           "type": "string"
                         },
                         "node": {
-                          "properties": {
-                            "countryCode": {
-                              "type": "string"
+                          "anyOf": [
+                            {
+                              "properties": {
+                                "countryCode": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "uuid": {
+                                  "format": "uuid",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "countryCode",
+                                "name",
+                                "uuid"
+                              ],
+                              "type": "object"
                             },
-                            "name": {
-                              "type": "string"
-                            },
-                            "uuid": {
-                              "format": "uuid",
-                              "type": "string"
+                            {
+                              "type": "null"
                             }
-                          },
-                          "required": [
-                            "countryCode",
-                            "name",
-                            "uuid"
-                          ],
-                          "type": "object"
+                          ]
                         },
                         "nodeUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                          "anyOf": [
+                            {
+                              "format": "uuid",
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         },
                         "provider": {
                           "properties": {
@@ -12062,6 +12508,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       },
                       "required": [
                         "createdAt",
+                        "name",
                         "nextBillingAt",
                         "node",
                         "nodeUuid",
@@ -12216,21 +12663,36 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "billingNodes": {
                           "items": {
                             "properties": {
-                              "countryCode": {
-                                "type": "string"
+                              "details": {
+                                "anyOf": [
+                                  {
+                                    "properties": {
+                                      "countryCode": {
+                                        "type": "string"
+                                      },
+                                      "nodeUuid": {
+                                        "format": "uuid",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "countryCode",
+                                      "nodeUuid"
+                                    ],
+                                    "type": "object"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
                               },
                               "name": {
-                                "type": "string"
-                              },
-                              "nodeUuid": {
-                                "format": "uuid",
                                 "type": "string"
                               }
                             },
                             "required": [
-                              "countryCode",
-                              "name",
-                              "nodeUuid"
+                              "details",
+                              "name"
                             ],
                             "type": "object"
                           },
@@ -12443,21 +12905,36 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "billingNodes": {
                     "items": {
                       "properties": {
-                        "countryCode": {
-                          "type": "string"
+                        "details": {
+                          "anyOf": [
+                            {
+                              "properties": {
+                                "countryCode": {
+                                  "type": "string"
+                                },
+                                "nodeUuid": {
+                                  "format": "uuid",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "countryCode",
+                                "nodeUuid"
+                              ],
+                              "type": "object"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         },
                         "name": {
-                          "type": "string"
-                        },
-                        "nodeUuid": {
-                          "format": "uuid",
                           "type": "string"
                         }
                       },
                       "required": [
-                        "countryCode",
-                        "name",
-                        "nodeUuid"
+                        "details",
+                        "name"
                       ],
                       "type": "object"
                     },
@@ -12640,21 +13117,36 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "billingNodes": {
                     "items": {
                       "properties": {
-                        "countryCode": {
-                          "type": "string"
+                        "details": {
+                          "anyOf": [
+                            {
+                              "properties": {
+                                "countryCode": {
+                                  "type": "string"
+                                },
+                                "nodeUuid": {
+                                  "format": "uuid",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "countryCode",
+                                "nodeUuid"
+                              ],
+                              "type": "object"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         },
                         "name": {
-                          "type": "string"
-                        },
-                        "nodeUuid": {
-                          "format": "uuid",
                           "type": "string"
                         }
                       },
                       "required": [
-                        "countryCode",
-                        "name",
-                        "nodeUuid"
+                        "details",
+                        "name"
                       ],
                       "type": "object"
                     },
@@ -12925,21 +13417,36 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "billingNodes": {
                     "items": {
                       "properties": {
-                        "countryCode": {
-                          "type": "string"
+                        "details": {
+                          "anyOf": [
+                            {
+                              "properties": {
+                                "countryCode": {
+                                  "type": "string"
+                                },
+                                "nodeUuid": {
+                                  "format": "uuid",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "countryCode",
+                                "nodeUuid"
+                              ],
+                              "type": "object"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
                         },
                         "name": {
-                          "type": "string"
-                        },
-                        "nodeUuid": {
-                          "format": "uuid",
                           "type": "string"
                         }
                       },
                       "required": [
-                        "countryCode",
-                        "name",
-                        "nodeUuid"
+                        "details",
+                        "name"
                       ],
                       "type": "object"
                     },
@@ -15527,6 +16034,19 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "name": {
                       "type": "string"
                     },
+                    "nodeConsumptionMultiplier": {
+                      "type": "number"
+                    },
+                    "note": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "notifyPercent": {
                       "anyOf": [
                         {
@@ -15606,6 +16126,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "anyOf": [
                         {
                           "format": "uuid",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "proxyUrl": {
+                      "anyOf": [
+                        {
                           "type": "string"
                         },
                         {
@@ -15830,10 +16360,13 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "lastStatusChange",
                     "lastStatusMessage",
                     "name",
+                    "nodeConsumptionMultiplier",
+                    "note",
                     "notifyPercent",
                     "port",
                     "provider",
                     "providerUuid",
+                    "proxyUrl",
                     "system",
                     "tags",
                     "trafficLimitBytes",
@@ -15988,6 +16521,24 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "minLength": 3,
               "type": "string"
             },
+            "nodeConsumptionMultiplier": {
+              "exclusiveMaximum": false,
+              "exclusiveMinimum": false,
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            "note": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "notifyPercent": {
               "exclusiveMaximum": false,
               "exclusiveMinimum": false,
@@ -16006,6 +16557,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "anyOf": [
                 {
                   "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "proxyUrl": {
+              "anyOf": [
+                {
+                  "pattern": "^socks5:\\/\\/(?:[^:@/\\s]+(?::[^@/\\s]*)?@)?[^:@/\\s]+:\\d{1,5}$",
                   "type": "string"
                 },
                 {
@@ -16202,6 +16764,19 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "name": {
                     "type": "string"
                   },
+                  "nodeConsumptionMultiplier": {
+                    "type": "number"
+                  },
+                  "note": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "notifyPercent": {
                     "anyOf": [
                       {
@@ -16281,6 +16856,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "anyOf": [
                       {
                         "format": "uuid",
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "proxyUrl": {
+                    "anyOf": [
+                      {
                         "type": "string"
                       },
                       {
@@ -16505,10 +17090,13 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "lastStatusChange",
                   "lastStatusMessage",
                   "name",
+                  "nodeConsumptionMultiplier",
+                  "note",
                   "notifyPercent",
                   "port",
                   "provider",
                   "providerUuid",
+                  "proxyUrl",
                   "system",
                   "tags",
                   "trafficLimitBytes",
@@ -16663,6 +17251,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "minLength": 3,
               "type": "string"
             },
+            "nodeConsumptionMultiplier": {
+              "exclusiveMaximum": false,
+              "exclusiveMinimum": false,
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            "note": {
+              "maxLength": 255,
+              "type": "string"
+            },
             "notifyPercent": {
               "exclusiveMaximum": false,
               "exclusiveMinimum": false,
@@ -16688,6 +17287,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                 }
               ]
             },
+            "proxyUrl": {
+              "anyOf": [
+                {
+                  "pattern": "^socks5:\\/\\/(?:[^:@/\\s]+(?::[^@/\\s]*)?@)?[^:@/\\s]+:\\d{1,5}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "tags": {
               "items": {
                 "maxLength": 36,
@@ -16700,7 +17310,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
             "trafficLimitBytes": {
               "exclusiveMinimum": false,
               "minimum": 0,
-              "type": "integer"
+              "type": "number"
             },
             "trafficResetDay": {
               "exclusiveMaximum": false,
@@ -16875,6 +17485,19 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "name": {
                     "type": "string"
                   },
+                  "nodeConsumptionMultiplier": {
+                    "type": "number"
+                  },
+                  "note": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "notifyPercent": {
                     "anyOf": [
                       {
@@ -16954,6 +17577,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "anyOf": [
                       {
                         "format": "uuid",
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "proxyUrl": {
+                    "anyOf": [
+                      {
                         "type": "string"
                       },
                       {
@@ -17178,10 +17811,13 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "lastStatusChange",
                   "lastStatusMessage",
                   "name",
+                  "nodeConsumptionMultiplier",
+                  "note",
                   "notifyPercent",
                   "port",
                   "provider",
                   "providerUuid",
+                  "proxyUrl",
                   "system",
                   "tags",
                   "trafficLimitBytes",
@@ -17464,6 +18100,19 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "name": {
                       "type": "string"
                     },
+                    "nodeConsumptionMultiplier": {
+                      "type": "number"
+                    },
+                    "note": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "notifyPercent": {
                       "anyOf": [
                         {
@@ -17543,6 +18192,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "anyOf": [
                         {
                           "format": "uuid",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "proxyUrl": {
+                      "anyOf": [
+                        {
                           "type": "string"
                         },
                         {
@@ -17767,10 +18426,13 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "lastStatusChange",
                     "lastStatusMessage",
                     "name",
+                    "nodeConsumptionMultiplier",
+                    "note",
                     "notifyPercent",
                     "port",
                     "provider",
                     "providerUuid",
+                    "proxyUrl",
                     "system",
                     "tags",
                     "trafficLimitBytes",
@@ -17875,6 +18537,9 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "type": "boolean"
             }
           },
+          "required": [
+            "forceRestart"
+          ],
           "type": "object"
         }
       },
@@ -18263,6 +18928,24 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                 "countryCode": {
                   "maxLength": 2,
                   "type": "string"
+                },
+                "nodeConsumptionMultiplier": {
+                  "exclusiveMaximum": false,
+                  "exclusiveMinimum": false,
+                  "maximum": 100,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "note": {
+                  "anyOf": [
+                    {
+                      "maxLength": 255,
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "providerUuid": {
                   "anyOf": [
@@ -18768,6 +19451,19 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "name": {
                     "type": "string"
                   },
+                  "nodeConsumptionMultiplier": {
+                    "type": "number"
+                  },
+                  "note": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "notifyPercent": {
                     "anyOf": [
                       {
@@ -18847,6 +19543,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "anyOf": [
                       {
                         "format": "uuid",
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "proxyUrl": {
+                    "anyOf": [
+                      {
                         "type": "string"
                       },
                       {
@@ -19071,10 +19777,13 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "lastStatusChange",
                   "lastStatusMessage",
                   "name",
+                  "nodeConsumptionMultiplier",
+                  "note",
                   "notifyPercent",
                   "port",
                   "provider",
                   "providerUuid",
+                  "proxyUrl",
                   "system",
                   "tags",
                   "trafficLimitBytes",
@@ -19335,6 +20044,19 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "name": {
                     "type": "string"
                   },
+                  "nodeConsumptionMultiplier": {
+                    "type": "number"
+                  },
+                  "note": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "notifyPercent": {
                     "anyOf": [
                       {
@@ -19414,6 +20136,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "anyOf": [
                       {
                         "format": "uuid",
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "proxyUrl": {
+                    "anyOf": [
+                      {
                         "type": "string"
                       },
                       {
@@ -19638,10 +20370,13 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "lastStatusChange",
                   "lastStatusMessage",
                   "name",
+                  "nodeConsumptionMultiplier",
+                  "note",
                   "notifyPercent",
                   "port",
                   "provider",
                   "providerUuid",
+                  "proxyUrl",
                   "system",
                   "tags",
                   "trafficLimitBytes",
@@ -19902,6 +20637,19 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "name": {
                     "type": "string"
                   },
+                  "nodeConsumptionMultiplier": {
+                    "type": "number"
+                  },
+                  "note": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "notifyPercent": {
                     "anyOf": [
                       {
@@ -19981,6 +20729,16 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     "anyOf": [
                       {
                         "format": "uuid",
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "proxyUrl": {
+                    "anyOf": [
+                      {
                         "type": "string"
                       },
                       {
@@ -20205,10 +20963,13 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "lastStatusChange",
                   "lastStatusMessage",
                   "name",
+                  "nodeConsumptionMultiplier",
+                  "note",
                   "notifyPercent",
                   "port",
                   "provider",
                   "providerUuid",
+                  "proxyUrl",
                   "system",
                   "tags",
                   "trafficLimitBytes",
@@ -20417,6 +21178,21 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
         }
       ],
       "path": "/api/nodes/{uuid}/actions/restart",
+      "requestBody": {
+        "contentType": "application/json",
+        "required": true,
+        "schema": {
+          "properties": {
+            "forceRestart": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "forceRestart"
+          ],
+          "type": "object"
+        }
+      },
       "responses": {
         "200": {
           "description": "Node restarted",
@@ -22244,9 +23020,8 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
-                        "userUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                        "userId": {
+                          "type": "number"
                         }
                       },
                       "required": [
@@ -22254,7 +23029,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "requestAt",
                         "requestIp",
                         "userAgent",
-                        "userUuid"
+                        "userId"
                       ],
                       "type": "object"
                     },
@@ -22724,6 +23499,40 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                                       "description": "{\"markdownDescription\":\"By default, headers are added when forming the response. In some cases, headers set in SRR may be overridden by headers from other parts of the system. If you set this flag to **true**, headers from SRR will be added at the very end, just before the response is sent. In this case, SRR headers may override headers from other sections.\"}",
                                       "type": "boolean"
                                     },
+                                    "disableHwidCheck": {
+                                      "description": "{\"markdownDescription\":\"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**\"}",
+                                      "type": "boolean"
+                                    },
+                                    "encryption": {
+                                      "description": "{\"markdownDescription\":\"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \\\"Generate keypairs\\\".\"}",
+                                      "properties": {
+                                        "key": {
+                                          "type": "string"
+                                        },
+                                        "method": {
+                                          "enum": [
+                                            "age1",
+                                            "age1pq1"
+                                          ],
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "key",
+                                        "method"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    "excludeHostsByTags": {
+                                      "description": "{\"markdownDescription\":\"Excludes hosts from the subscription output if at least one tag in the host matches the given tags.\"}",
+                                      "items": {
+                                        "maxLength": 36,
+                                        "pattern": "^[A-Z0-9_:]+$",
+                                        "type": "string"
+                                      },
+                                      "minItems": 1,
+                                      "type": "array"
+                                    },
                                     "headers": {
                                       "description": "{\"defaultSnippets\":[{\"label\":\"Examples: Add custom header\",\"markdownDescription\":\"Add a custom header to the response\",\"body\":[{\"key\":\"X-Custom-Header\",\"value\":\"CustomValue\"}]}],\"markdownDescription\":\"Array of headers to be added when the rule is matched.\"}",
                                       "items": {
@@ -23158,6 +23967,40 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             "description": "{\"markdownDescription\":\"By default, headers are added when forming the response. In some cases, headers set in SRR may be overridden by headers from other parts of the system. If you set this flag to **true**, headers from SRR will be added at the very end, just before the response is sent. In this case, SRR headers may override headers from other sections.\"}",
                             "type": "boolean"
                           },
+                          "disableHwidCheck": {
+                            "description": "{\"markdownDescription\":\"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**\"}",
+                            "type": "boolean"
+                          },
+                          "encryption": {
+                            "description": "{\"markdownDescription\":\"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \\\"Generate keypairs\\\".\"}",
+                            "properties": {
+                              "key": {
+                                "type": "string"
+                              },
+                              "method": {
+                                "enum": [
+                                  "age1",
+                                  "age1pq1"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "key",
+                              "method"
+                            ],
+                            "type": "object"
+                          },
+                          "excludeHostsByTags": {
+                            "description": "{\"markdownDescription\":\"Excludes hosts from the subscription output if at least one tag in the host matches the given tags.\"}",
+                            "items": {
+                              "maxLength": 36,
+                              "pattern": "^[A-Z0-9_:]+$",
+                              "type": "string"
+                            },
+                            "minItems": 1,
+                            "type": "array"
+                          },
                           "headers": {
                             "description": "{\"defaultSnippets\":[{\"label\":\"Examples: Add custom header\",\"markdownDescription\":\"Add a custom header to the response\",\"body\":[{\"key\":\"X-Custom-Header\",\"value\":\"CustomValue\"}]}],\"markdownDescription\":\"Array of headers to be added when the rule is matched.\"}",
                             "items": {
@@ -23512,6 +24355,40 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                                     "applyHeadersToEnd": {
                                       "description": "{\"markdownDescription\":\"By default, headers are added when forming the response. In some cases, headers set in SRR may be overridden by headers from other parts of the system. If you set this flag to **true**, headers from SRR will be added at the very end, just before the response is sent. In this case, SRR headers may override headers from other sections.\"}",
                                       "type": "boolean"
+                                    },
+                                    "disableHwidCheck": {
+                                      "description": "{\"markdownDescription\":\"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**\"}",
+                                      "type": "boolean"
+                                    },
+                                    "encryption": {
+                                      "description": "{\"markdownDescription\":\"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \\\"Generate keypairs\\\".\"}",
+                                      "properties": {
+                                        "key": {
+                                          "type": "string"
+                                        },
+                                        "method": {
+                                          "enum": [
+                                            "age1",
+                                            "age1pq1"
+                                          ],
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "key",
+                                        "method"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    "excludeHostsByTags": {
+                                      "description": "{\"markdownDescription\":\"Excludes hosts from the subscription output if at least one tag in the host matches the given tags.\"}",
+                                      "items": {
+                                        "maxLength": 36,
+                                        "pattern": "^[A-Z0-9_:]+$",
+                                        "type": "string"
+                                      },
+                                      "minItems": 1,
+                                      "type": "array"
                                     },
                                     "headers": {
                                       "description": "{\"defaultSnippets\":[{\"label\":\"Examples: Add custom header\",\"markdownDescription\":\"Add a custom header to the response\",\"body\":[{\"key\":\"X-Custom-Header\",\"value\":\"CustomValue\"}]}],\"markdownDescription\":\"Array of headers to be added when the rule is matched.\"}",
@@ -25109,8 +25986,35 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       "daysLeft": {
                         "type": "number"
                       },
-                      "isHwidLimited": {
-                        "type": "boolean"
+                      "hwidCheckup": {
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "hwidNotSupported": {
+                                "type": "boolean"
+                              },
+                              "limitBypassed": {
+                                "type": "boolean"
+                              },
+                              "maxDeviceReached": {
+                                "type": "boolean"
+                              },
+                              "subscriptionAllowed": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "hwidNotSupported",
+                              "limitBypassed",
+                              "maxDeviceReached",
+                              "subscriptionAllowed"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       },
                       "lifetimeTrafficUsed": {
                         "type": "string"
@@ -25124,7 +26028,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     },
                     "required": [
                       "daysLeft",
-                      "isHwidLimited",
+                      "hwidCheckup",
                       "lifetimeTrafficUsed",
                       "trafficLimit",
                       "trafficUsed"
@@ -25145,6 +26049,23 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         },
                         "clientOverrides": {
                           "properties": {
+                            "mihomoIpVersion": {
+                              "anyOf": [
+                                {
+                                  "enum": [
+                                    "dual",
+                                    "ipv4",
+                                    "ipv6",
+                                    "ipv4-prefer",
+                                    "ipv6-prefer"
+                                  ],
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
                             "mihomoX25519": {
                               "type": "boolean"
                             },
@@ -25171,6 +26092,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           },
                           "required": [
+                            "mihomoIpVersion",
                             "mihomoX25519",
                             "serverDescription",
                             "shuffleHost",
@@ -25239,15 +26161,11 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             "remark": {
                               "type": "string"
                             },
-                            "tag": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
+                            "tags": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
                             },
                             "uuid": {
                               "format": "uuid",
@@ -25276,7 +26194,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             "isHidden",
                             "rawInbound",
                             "remark",
-                            "tag",
+                            "tags",
                             "uuid",
                             "viewPosition",
                             "vlessRouteId"
@@ -25390,9 +26308,6 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                           "oneOf": [
                             {
                               "properties": {
-                                "allowInsecure": {
-                                  "type": "boolean"
-                                },
                                 "alpn": {
                                   "anyOf": [
                                     {
@@ -25436,7 +26351,27 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                                     }
                                   ]
                                 },
+                                "pinnedPeerCertSha256": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
                                 "serverName": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "verifyPeerCertByName": {
                                   "anyOf": [
                                     {
                                       "type": "string"
@@ -25448,13 +26383,14 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                                 }
                               },
                               "required": [
-                                "allowInsecure",
                                 "alpn",
                                 "echConfigList",
                                 "echForceQuery",
                                 "enableSessionResumption",
                                 "fingerprint",
-                                "serverName"
+                                "pinnedPeerCertSha256",
+                                "serverName",
+                                "verifyPeerCertByName"
                               ],
                               "type": "object"
                             },
@@ -25823,17 +26759,17 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                                 "clientMtu": {
                                   "type": "integer"
                                 },
+                                "clientTti": {
+                                  "type": "integer"
+                                },
                                 "congestion": {
                                   "type": "boolean"
-                                },
-                                "tti": {
-                                  "type": "integer"
                                 }
                               },
                               "required": [
                                 "clientMtu",
-                                "congestion",
-                                "tti"
+                                "clientTti",
+                                "congestion"
                               ],
                               "type": "object"
                             },
@@ -26014,7 +26950,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                       },
                       "trafficLimitBytes": {
                         "default": 0,
-                        "type": "integer"
+                        "type": "number"
                       },
                       "trafficLimitStrategy": {
                         "default": "NO_RESET",
@@ -28305,7 +29241,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         },
                         "trafficLimitBytes": {
                           "default": 0,
-                          "type": "integer"
+                          "type": "number"
                         },
                         "trafficLimitStrategy": {
                           "default": "NO_RESET",
@@ -28494,7 +29430,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
           }
         }
       },
-      "summary": "Get all users"
+      "summary": "Get all users using offset-based pagination"
     },
     {
       "key": "users.update",
@@ -28597,7 +29533,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "description": "Traffic limit in bytes. 0 - unlimited",
               "exclusiveMinimum": false,
               "minimum": 0,
-              "type": "integer"
+              "type": "number"
             },
             "trafficLimitStrategy": {
               "default": "NO_RESET",
@@ -28770,7 +29706,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   },
                   "trafficLimitBytes": {
                     "default": 0,
-                    "type": "integer"
+                    "type": "number"
                   },
                   "trafficLimitStrategy": {
                     "default": "NO_RESET",
@@ -29069,7 +30005,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "description": "Optional. Traffic limit in bytes. Set to 0 for unlimited traffic.",
               "exclusiveMinimum": false,
               "minimum": 0,
-              "type": "integer"
+              "type": "number"
             },
             "trafficLimitStrategy": {
               "default": "NO_RESET",
@@ -29260,7 +30196,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   },
                   "trafficLimitBytes": {
                     "default": 0,
-                    "type": "integer"
+                    "type": "number"
                   },
                   "trafficLimitStrategy": {
                     "default": "NO_RESET",
@@ -29734,7 +30670,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
               "description": "Traffic limit in bytes. 0 - unlimited",
               "exclusiveMinimum": false,
               "minimum": 0,
-              "type": "integer"
+              "type": "number"
             },
             "trafficLimitStrategy": {
               "description": "Traffic limit reset strategy",
@@ -30525,7 +31461,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   "description": "Traffic limit in bytes. 0 - unlimited",
                   "exclusiveMinimum": false,
                   "minimum": 0,
-                  "type": "integer"
+                  "type": "number"
                 },
                 "trafficLimitStrategy": {
                   "description": "Traffic limit reset strategy",
@@ -30934,7 +31870,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     },
                     "trafficLimitBytes": {
                       "default": 0,
-                      "type": "integer"
+                      "type": "number"
                     },
                     "trafficLimitStrategy": {
                       "default": "NO_RESET",
@@ -31280,7 +32216,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   },
                   "trafficLimitBytes": {
                     "default": 0,
-                    "type": "integer"
+                    "type": "number"
                   },
                   "trafficLimitStrategy": {
                     "default": "NO_RESET",
@@ -31627,7 +32563,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   },
                   "trafficLimitBytes": {
                     "default": 0,
-                    "type": "integer"
+                    "type": "number"
                   },
                   "trafficLimitStrategy": {
                     "default": "NO_RESET",
@@ -31975,7 +32911,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     },
                     "trafficLimitBytes": {
                       "default": 0,
-                      "type": "integer"
+                      "type": "number"
                     },
                     "trafficLimitStrategy": {
                       "default": "NO_RESET",
@@ -32322,7 +33258,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                     },
                     "trafficLimitBytes": {
                       "default": 0,
-                      "type": "integer"
+                      "type": "number"
                     },
                     "trafficLimitStrategy": {
                       "default": "NO_RESET",
@@ -32668,7 +33604,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   },
                   "trafficLimitBytes": {
                     "default": 0,
-                    "type": "integer"
+                    "type": "number"
                   },
                   "trafficLimitStrategy": {
                     "default": "NO_RESET",
@@ -33354,7 +34290,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   },
                   "trafficLimitBytes": {
                     "default": 0,
-                    "type": "integer"
+                    "type": "number"
                   },
                   "trafficLimitStrategy": {
                     "default": "NO_RESET",
@@ -33865,7 +34801,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   },
                   "trafficLimitBytes": {
                     "default": 0,
-                    "type": "integer"
+                    "type": "number"
                   },
                   "trafficLimitStrategy": {
                     "default": "NO_RESET",
@@ -34212,7 +35148,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   },
                   "trafficLimitBytes": {
                     "default": 0,
-                    "type": "integer"
+                    "type": "number"
                   },
                   "trafficLimitStrategy": {
                     "default": "NO_RESET",
@@ -34559,7 +35495,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   },
                   "trafficLimitBytes": {
                     "default": 0,
-                    "type": "integer"
+                    "type": "number"
                   },
                   "trafficLimitStrategy": {
                     "default": "NO_RESET",
@@ -34926,7 +35862,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                   },
                   "trafficLimitBytes": {
                     "default": 0,
-                    "type": "integer"
+                    "type": "number"
                   },
                   "trafficLimitStrategy": {
                     "default": "NO_RESET",
@@ -35164,9 +36100,8 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                             }
                           ]
                         },
-                        "userUuid": {
-                          "format": "uuid",
-                          "type": "string"
+                        "userId": {
+                          "type": "number"
                         }
                       },
                       "required": [
@@ -35174,7 +36109,7 @@ export const REMNAWAVE_OPENAPI_EXTRACT = ({
                         "requestAt",
                         "requestIp",
                         "userAgent",
-                        "userUuid"
+                        "userId"
                       ],
                       "type": "object"
                     },

@@ -631,6 +631,7 @@ function normalizeHost(host: unknown, path: string): import('./types.js').Normal
     sni: getOptionalString(record.sni),
     securityLayer: getOptionalString(record.securityLayer),
     fingerprint: getOptionalString(record.fingerprint),
+    tags: Array.isArray(record.tags) ? getStringArray(record.tags, `${path}.tags`) : [],
     nodes: nodesRaw.map((entry, index) =>
       typeof entry === 'string'
         ? { uuid: entry, name: entry }

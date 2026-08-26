@@ -11,18 +11,17 @@ import {
 } from '../src/server/discovery.js';
 
 describe('discovery bootstrap', () => {
-  const supportedRemnawaveVersions = ['2.7.0', '2.7.1', '2.7.2', '2.7.3', '2.7.4'] as const;
+  const supportedRemnawaveVersions = ['2.8.0', '2.8.1'] as const;
   const blockedRemnawaveVersions = [
     { label: 'missing', rawValue: undefined, expectedCode: 'REMNAWAVE_VERSION_UNKNOWN' },
     { label: 'whitespace', rawValue: '   ', expectedCode: 'REMNAWAVE_VERSION_UNKNOWN' },
     { label: 'latest', rawValue: 'latest', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
     { label: '2.7', rawValue: '2.7', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
     { label: '2.7.x', rawValue: '2.7.x', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
-    { label: 'v2.7.4', rawValue: 'v2.7.4', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
-    { label: '2.7.4-beta.1', rawValue: '2.7.4-beta.1', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
+    { label: 'v2.8.1', rawValue: 'v2.8.1', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
+    { label: '2.8.1-beta.1', rawValue: '2.8.1-beta.1', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
     { label: '2.6.4', rawValue: '2.6.4', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
-    { label: '2.8.0', rawValue: '2.8.0', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
-    { label: '2.8.1', rawValue: '2.8.1', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
+    { label: '2.7.4', rawValue: '2.7.4', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
     { label: '3.0.0', rawValue: '3.0.0', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
   ] as const;
 
@@ -30,7 +29,7 @@ describe('discovery bootstrap', () => {
     const config = loadRuntimeConfig({
       REMNAWAVE_BASE_URL: 'https://panel.example.test',
       REMNAWAVE_API_TOKEN: 'token-value',
-      REMNAWAVE_VERSION: '2.7.4',
+      REMNAWAVE_VERSION: '2.8.1',
     });
 
     const manifest = buildDiscoveryManifest(config);
@@ -59,7 +58,7 @@ describe('discovery bootstrap', () => {
     const config = loadRuntimeConfig({
       REMNAWAVE_BASE_URL: 'https://panel.example.test',
       REMNAWAVE_API_TOKEN: 'token-value',
-      REMNAWAVE_VERSION: '2.7.4',
+      REMNAWAVE_VERSION: '2.8.1',
     });
 
     const firstManifest = buildDiscoveryManifest(config);
@@ -130,7 +129,7 @@ describe('discovery bootstrap', () => {
     const config = loadRuntimeConfig({
       REMNAWAVE_BASE_URL: 'https://panel.example.test',
       REMNAWAVE_API_TOKEN: 'token-value',
-      REMNAWAVE_VERSION: '2.7.4',
+      REMNAWAVE_VERSION: '2.8.1',
     });
 
     const manifest = buildDiscoveryManifest(config);
@@ -144,7 +143,7 @@ describe('discovery bootstrap', () => {
     const config = loadRuntimeConfig({
       REMNAWAVE_BASE_URL: 'https://panel.example.test',
       REMNAWAVE_API_TOKEN: 'token-value',
-      REMNAWAVE_VERSION: '2.7.4',
+      REMNAWAVE_VERSION: '2.8.1',
     });
 
     const manifest = buildDiscoveryManifest(config);

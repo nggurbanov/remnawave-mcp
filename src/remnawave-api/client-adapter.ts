@@ -17,9 +17,9 @@ export interface AtomicRuntimeClient {
     action: 'enable' | 'disable' | 'reset-traffic',
     body?: Record<string, unknown>,
   ) => Promise<unknown>;
-  readonly restartNode: (nodeUuid: string) => Promise<unknown>;
+  readonly restartNode: (nodeUuid: string, forceRestart: boolean) => Promise<unknown>;
   readonly getHosts: () => Promise<unknown>;
-  readonly bulkSetHostPort: (hostUuids: readonly string[], port: number) => Promise<unknown>;
+  readonly bulkUpdateHosts: (hostUuids: readonly string[], patch: Record<string, unknown>) => Promise<unknown>;
   readonly getNodeMetadata: (nodeUuid: string) => Promise<unknown>;
   readonly upsertNodeMetadata: (nodeUuid: string, payload: Record<string, unknown>) => Promise<unknown>;
   readonly getUserMetadata: (userUuid: string) => Promise<unknown>;
@@ -80,9 +80,9 @@ export function createRemnawaveApiClientAdapter(remnawaveClient: AtomicRuntimeCl
       action: 'enable' | 'disable' | 'reset-traffic',
       body?: Record<string, unknown>,
     ) => remnawaveClient.setUserState(userUuid, action, body),
-    restartNode: (nodeUuid: string) => remnawaveClient.restartNode(nodeUuid),
+    restartNode: (nodeUuid: string, forceRestart: boolean) => remnawaveClient.restartNode(nodeUuid, forceRestart),
     getHosts: () => remnawaveClient.getHosts(),
-    bulkSetHostPort: (hostUuids: readonly string[], port: number) => remnawaveClient.bulkSetHostPort(hostUuids, port),
+    bulkUpdateHosts: (hostUuids: readonly string[], patch: Record<string, unknown>) => remnawaveClient.bulkUpdateHosts(hostUuids, patch),
     getNodeMetadata: (nodeUuid: string) => remnawaveClient.getNodeMetadata(nodeUuid),
     upsertNodeMetadata: (nodeUuid: string, payload: Record<string, unknown>) => remnawaveClient.upsertNodeMetadata(nodeUuid, payload),
     getUserMetadata: (userUuid: string) => remnawaveClient.getUserMetadata(userUuid),

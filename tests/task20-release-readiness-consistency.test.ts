@@ -38,7 +38,7 @@ describe('task 20 release-readiness consistency', () => {
     });
 
     for (const publishedText of [readme, readiness]) {
-      expect(publishedText).toContain('2.7.4');
+      expect(publishedText).toContain('2.8.1');
       expect(publishedText).toContain('remnawave_api');
     }
 
@@ -59,7 +59,7 @@ describe('task 20 release-readiness consistency', () => {
     const readiness = readRepoFile('docs/release/production-readiness.md');
 
     expect(readiness).toContain('local stdio runtime only');
-    expect(readiness).toContain('Remnawave `2.7.0` through `2.7.4`');
+    expect(readiness).toContain('Remnawave `2.8.0` through `2.8.1`');
     expect(readiness).toContain('single-tool contract');
     expect(readiness).toContain('remnawave_api');
     expect(readiness).toContain('Any broader release claim would overstate the verified implementation.');

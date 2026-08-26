@@ -33,7 +33,7 @@ The Remnawave MCP uses a three-tier risk classification system to govern operati
 - Require explicit gating before execution
 - Two gating styles exist: confirmation (`confirmToken`) and preview/apply (`applyToken`)
 - Confirmation examples: `nodes.restart`, `users.disable`, `users.revoke_subscription`
-- Preview/apply example: `hosts.bulk_set_port`
+- Preview/apply example: `hosts.bulk_update`
 
 ## Side-Effect Classification
 

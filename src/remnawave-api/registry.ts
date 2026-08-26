@@ -99,11 +99,7 @@ export interface RemnawaveApiClient {
   readonly deleteHost?: (hostUuid: string) => Promise<unknown>;
   readonly bulkEnableHosts?: (hostUuids: readonly string[]) => Promise<unknown>;
   readonly bulkDisableHosts?: (hostUuids: readonly string[]) => Promise<unknown>;
-  readonly bulkSetHostInbound?: (
-    hostUuids: readonly string[],
-    inbound: { readonly configProfileUuid: string; readonly configProfileInboundUuid: string },
-  ) => Promise<unknown>;
-  readonly bulkSetHostPort?: (hostUuids: readonly string[], port: number) => Promise<unknown>;
+  readonly bulkUpdateHosts?: (hostUuids: readonly string[], patch: Record<string, unknown>) => Promise<unknown>;
   readonly getProfiles?: () => Promise<unknown>;
   readonly getProfile?: (profileUuid: string) => Promise<unknown>;
   readonly getComputedProfile?: (profileUuid: string) => Promise<unknown>;
@@ -125,7 +121,7 @@ export interface RemnawaveApiClient {
   readonly deleteNode?: (nodeUuid: string) => Promise<unknown>;
   readonly enableNode?: (nodeUuid: string) => Promise<unknown>;
   readonly disableNode?: (nodeUuid: string) => Promise<unknown>;
-  readonly restartNode?: (nodeUuid: string) => Promise<unknown>;
+  readonly restartNode?: (nodeUuid: string, forceRestart: boolean) => Promise<unknown>;
   readonly resetNodeTraffic?: (nodeUuid: string) => Promise<unknown>;
   readonly getInternalSquads?: () => Promise<unknown>;
   readonly bulkAddUsersToInternalSquad?: (squadUuid: string, userUuids: readonly string[]) => Promise<unknown>;
@@ -254,7 +250,7 @@ export interface RuntimeOperationFactoryContext {
   readonly validateCreateUserPayload: typeof validateCreateUserPayload;
   readonly validateUsersDisablePayload: typeof validateUsersDisablePayload;
   readonly validateUsersEnablePayload: typeof validateUsersEnablePayload;
-  readonly validateHostsBulkSetPortPayload: typeof validateHostsBulkSetPortPayload;
+  readonly validateHostsBulkUpdatePayload: typeof validateHostsBulkUpdatePayload;
   readonly validateNodesRestartPayload: typeof validateNodesRestartPayload;
   readonly requireClientMethod: typeof requireClientMethod;
   readonly readUuidPayload: typeof readUuidPayload;
@@ -471,7 +467,7 @@ export function createDefaultOperationRegistry(): OperationRegistry {
     validateCreateUserPayload,
     validateUsersDisablePayload,
     validateUsersEnablePayload,
-    validateHostsBulkSetPortPayload,
+    validateHostsBulkUpdatePayload,
     validateNodesRestartPayload,
     requireClientMethod,
     readUuidPayload,
@@ -751,8 +747,8 @@ function validateHostManageDefinitionPayload(payload: unknown): readonly Validat
   return getSupportedOperationSchema('hosts', 'manage_definition').validatePayload(payload);
 }
 
-function validateHostsBulkSetPortPayload(payload: unknown): readonly ValidationIssue[] {
-  return getSupportedOperationSchema('hosts', 'bulk_set_port').validatePayload(payload);
+function validateHostsBulkUpdatePayload(payload: unknown): readonly ValidationIssue[] {
+  return getSupportedOperationSchema('hosts', 'bulk_update').validatePayload(payload);
 }
 
 function validateInternalSquadManageMembershipPayload(payload: unknown): readonly ValidationIssue[] {

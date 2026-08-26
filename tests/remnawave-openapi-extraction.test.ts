@@ -11,13 +11,13 @@ import {
 import { REMNAWAVE_OPENAPI_EXTRACT } from '../src/remnawave-api/generated/operations.js';
 import { SUPPORTED_REMNAWAVE_OPERATIONS } from '../src/remnawave-api/domains/runtime-scope.js';
 
-const vendoredSnapshotPath = resolve('src/remnawave-api/openapi/remnawave-openapi-2.7.4.json');
+const vendoredSnapshotPath = resolve('src/remnawave-api/openapi/remnawave-openapi-2.8.1.json');
 const sourceSnapshotPath = process.env.REMNAWAVE_OPENAPI_SOURCE_SNAPSHOT ?? resolve('__missing_openapi_source_snapshot__.json');
 
 describe('Remnawave OpenAPI extraction', () => {
   const sourceSnapshotTest = existsSync(sourceSnapshotPath) ? test : test.skip;
 
-  sourceSnapshotTest('vendors the pinned Remnawave 2.7.4 OpenAPI snapshot exactly', () => {
+  sourceSnapshotTest('vendors the pinned Remnawave 2.8.1 OpenAPI snapshot exactly', () => {
     expect(readFileSync(vendoredSnapshotPath, 'utf8')).toBe(readFileSync(sourceSnapshotPath, 'utf8'));
   });
 
@@ -28,9 +28,9 @@ describe('Remnawave OpenAPI extraction', () => {
     expect(extracted).toEqual(REMNAWAVE_OPENAPI_EXTRACT);
     expect(extracted.metadata).toMatchObject({
       openapi: '3.0.0',
-      title: 'Remnawave API v2.7.4',
-      version: '2.7.4',
-      source: 'remnawave-openapi-2.7.4.json',
+      title: 'Remnawave API v2.8.1',
+      version: '2.8.1',
+      source: 'remnawave-openapi-2.8.1.json',
     });
     expect(extracted.operations.map((operation) => operation.key).sort()).toEqual(
       SUPPORTED_REMNAWAVE_OPERATIONS.map((operation) => operation.key).sort(),

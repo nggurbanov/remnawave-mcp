@@ -183,16 +183,16 @@ export class RemnawaveClient {
     return this.requestJson(`${ROUTES.nodes}/${nodeUuid}/actions/disable`, 'POST');
   }
 
-  public async restartNode(nodeUuid: string): Promise<unknown> {
-    return this.requestJson(`${ROUTES.nodes}/${nodeUuid}/actions/restart`, 'POST');
+  public async restartNode(nodeUuid: string, forceRestart: boolean): Promise<unknown> {
+    return this.requestJson(`${ROUTES.nodes}/${nodeUuid}/actions/restart`, 'POST', { forceRestart });
   }
 
   public async resetNodeTraffic(nodeUuid: string): Promise<unknown> {
     return this.requestJson(`${ROUTES.nodes}/${nodeUuid}/actions/reset-traffic`, 'POST');
   }
 
-  public async restartAllNodes(): Promise<unknown> {
-    return this.requestJson(`${ROUTES.nodes}/actions/restart-all`, 'POST');
+  public async restartAllNodes(forceRestart: boolean): Promise<unknown> {
+    return this.requestJson(`${ROUTES.nodes}/actions/restart-all`, 'POST', { forceRestart });
   }
 
   public async reorderNodes(orderedNodeUuids: readonly string[]): Promise<unknown> {
@@ -490,21 +490,8 @@ export class RemnawaveClient {
     return this.sendJson(`${ROUTES.hosts}/bulk/delete`, { uuids: hostUuids });
   }
 
-  public async bulkSetHostInbound(
-    hostUuids: readonly string[],
-    inbound: { configProfileUuid: string; configProfileInboundUuid: string },
-  ): Promise<unknown> {
-    return this.sendJson(`${ROUTES.hosts}/bulk/set-inbound`, {
-      uuids: hostUuids,
-      inbound,
-    });
-  }
-
-  public async bulkSetHostPort(hostUuids: readonly string[], port: number): Promise<unknown> {
-    return this.sendJson(`${ROUTES.hosts}/bulk/set-port`, {
-      uuids: hostUuids,
-      port,
-    });
+  public async bulkUpdateHosts(hostUuids: readonly string[], patch: Record<string, unknown>): Promise<unknown> {
+    return this.requestJson(`${ROUTES.hosts}/bulk/update`, 'PATCH', { uuids: hostUuids, ...patch });
   }
 
   public async patchExternalSquad(squadUuid: string, patch: Record<string, unknown>): Promise<unknown> {

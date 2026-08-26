@@ -39,7 +39,7 @@ function createClient(overrides: Partial<RemnawaveApiClient> = {}): RemnawaveApi
       online: { now: 2, lastDay: 4, lastWeek: 6, never: 0 },
       nodes: { totalOnlineUsers: 3, lifetimeBytes: 0 },
     }),
-    getMetadata: async () => ({ panel: 'rw', version: '2.7.4' }),
+    getMetadata: async () => ({ panel: 'rw', version: '2.8.1' }),
     getSystemHealth: async () => ({ instances: [] }),
     getBandwidthStats: async () => ({ totalBytes: 1024 }),
     getNodesStatistics: async () => ({ items: [] }),
@@ -52,7 +52,7 @@ function createClient(overrides: Partial<RemnawaveApiClient> = {}): RemnawaveApi
     revokeUserSubscription: async (uuid) => ({ uuid, revoked: true }),
     restartNode: async (uuid) => ({ uuid, restarted: true }),
     getHosts: async () => ({ items: [{ uuid: 'host-1', port: 80, enabled: true, fingerprint: 'fp-1' }] }),
-    bulkSetHostPort: async (hostUuids, port) => ({ hostUuids, port, updated: true }),
+    bulkUpdateHosts: async (hostUuids, patch) => ({ hostUuids, ...patch, updated: true }),
     getNodeMetadata: async (uuid) => ({ uuid, metadata: { zone: 'edge' } }),
     upsertNodeMetadata: async (uuid, metadata) => ({ uuid, metadata }),
     getUserMetadata: async (uuid) => ({ uuid, metadata: { segment: 'partner' } }),
@@ -163,10 +163,10 @@ describe('remnawave_api compact v2 contract matrix', () => {
     const confirmSuccess = isConfirmationRequired(confirmFirst)
       ? await routeRemnawaveApiRequest({ domain: 'users', operation: 'revoke_subscription', payload: { uuid: 'user-1' }, confirmToken: confirmFirst.error.token }, client)
       : confirmFirst;
-    const preview = await routeRemnawaveApiRequest({ domain: 'hosts', operation: 'bulk_set_port', payload: { hostUuids: ['host-1'], port: 443 } }, client);
-    const previewFailure = await routeRemnawaveApiRequest({ domain: 'hosts', operation: 'bulk_set_port', payload: { applyToken: '' } }, client);
+    const preview = await routeRemnawaveApiRequest({ domain: 'hosts', operation: 'bulk_update', payload: { hostUuids: ['host-1'], port: 443 } }, client);
+    const previewFailure = await routeRemnawaveApiRequest({ domain: 'hosts', operation: 'bulk_update', payload: { applyToken: '' } }, client);
     const applySuccess = await routeRemnawaveApiRequest(
-      { domain: 'hosts', operation: 'bulk_set_port', payload: { applyToken: (preview as { readonly applyToken: string }).applyToken } },
+      { domain: 'hosts', operation: 'bulk_update', payload: { applyToken: (preview as { readonly applyToken: string }).applyToken } },
       client,
     );
 

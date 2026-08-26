@@ -241,7 +241,7 @@ const PUBLIC_SUBSCRIPTION_CLIENT_TYPE_SCHEMA: OperationValidationSchema = {
   properties: { shortUuid: { type: 'string', required: true, minLength: 1, maxLength: 128 }, clientType: { type: 'string', required: true, minLength: 1, maxLength: 64 } },
 };
 
-const HOSTS_BULK_SET_PORT_SCHEMA: OperationValidationSchema = {
+const HOSTS_BULK_UPDATE_SCHEMA: OperationValidationSchema = {
   type: 'object',
   additionalProperties: false,
   required: ['hostUuids', 'port'],
@@ -675,13 +675,13 @@ export const SUPPORTED_OPERATION_SCHEMAS = {
     payloadExample: {},
     validationSchema: EMPTY_OBJECT_SCHEMA,
   }),
-  'hosts.bulk_set_port': createSchemaDefinition({
-    schemaSummary: 'payload requires hostUuids:string[] and port:integer',
+  'hosts.bulk_update': createSchemaDefinition({
+    schemaSummary: 'payload requires hostUuids:string[] and port:integer for the bulk-update endpoint',
     payloadExample: {
       hostUuids: ['host-uuid'],
       port: 443,
     },
-    validationSchema: HOSTS_BULK_SET_PORT_SCHEMA,
+    validationSchema: HOSTS_BULK_UPDATE_SCHEMA,
   }),
   'hosts.inspect': createSchemaDefinition({
     schemaSummary: 'payload requires uuid:string',
@@ -1212,9 +1212,15 @@ export const SUPPORTED_OPERATION_SCHEMAS = {
     validationSchema: EMPTY_OBJECT_SCHEMA,
   }),
   'nodes.restart': createSchemaDefinition({
-    schemaSummary: 'payload requires uuid:string',
-    payloadExample: { uuid: 'node-uuid' },
-    validationSchema: UUID_ONLY_SCHEMA,
+    schemaSummary: 'payload requires uuid:string and forceRestart:boolean',
+    payloadExample: { uuid: 'node-uuid', forceRestart: false },
+    validationSchema: {
+      type: 'object', additionalProperties: false, required: ['uuid', 'forceRestart'],
+      properties: {
+        uuid: { type: 'string', required: true, minLength: 1, maxLength: 128 },
+        forceRestart: { type: 'boolean', required: true },
+      },
+    },
   }),
   'node_plugins.list': createSchemaDefinition({
     schemaSummary: 'payload must be an empty object',

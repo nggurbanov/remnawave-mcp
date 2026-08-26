@@ -54,7 +54,7 @@ type OperationObject = Record<string, unknown> & {
 };
 
 const HTTP_METHODS = new Set(['get', 'put', 'post', 'delete', 'patch', 'options', 'head', 'trace']);
-const DEFAULT_SOURCE = 'src/remnawave-api/openapi/remnawave-openapi-2.7.4.json';
+const DEFAULT_SOURCE = 'src/remnawave-api/openapi/remnawave-openapi-2.8.1.json';
 const DEFAULT_OUTPUT = 'src/remnawave-api/generated/operations.ts';
 
 export const SELECTED_OPENAPI_OPERATIONS = [
@@ -143,9 +143,9 @@ export const SELECTED_OPENAPI_OPERATIONS = [
     operationId: 'ConfigProfileController_getInboundsByProfileUuid',
   },
   {
-    key: 'hosts.bulk_set_port',
-    method: 'post',
-    path: '/api/hosts/bulk/set-port',
+    key: 'hosts.bulk_update',
+    method: 'patch',
+    path: '/api/hosts/bulk/update',
     operationId: 'HostsBulkActionsController_setPortToHosts',
   },
   {
@@ -363,7 +363,7 @@ export function extractOpenApiSnapshot(
       title: document.info?.title,
       version: document.info?.version,
       extractedAt: 'static',
-      source: 'remnawave-openapi-2.7.4.json',
+      source: 'remnawave-openapi-2.8.1.json',
     }),
     operations: selectedOperations.map((selection) => extractOperation(document, selection)),
   };
@@ -513,7 +513,7 @@ function classifySupportedOperation(operation: OpenApiEnumeration): { readonly k
     'post /api/hosts/bulk/disable': 'hosts.bulk_disable',
     'post /api/hosts/bulk/enable': 'hosts.bulk_enable',
     'post /api/hosts/bulk/set-inbound': 'hosts.bulk_set_inbound',
-    'post /api/hosts/bulk/set-port': 'hosts.bulk_set_port',
+    'patch /api/hosts/bulk/update': 'hosts.bulk_update',
     'get /api/bandwidth-stats/nodes': 'bandwidth_stats.list_nodes_usage',
     'get /api/bandwidth-stats/nodes/{uuid}/users': 'bandwidth_stats.get_node_users_usage',
     'get /api/bandwidth-stats/nodes/{uuid}/users/legacy': 'bandwidth_stats.get_node_user_usage_legacy',

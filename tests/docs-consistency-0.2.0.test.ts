@@ -40,8 +40,8 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
     expect(readme).toContain('preview/apply');
     expect(readme).toContain('confirmToken');
     expect(readme).toContain('applyToken');
-    expect(readme).toContain('2.7.0');
-    expect(readme).toContain('2.7.4');
+    expect(readme).toContain('2.8.0');
+    expect(readme).toContain('2.8.1');
     expect(readme).toContain('unsupported-operation errors');
     expect(readme).toContain('absent from discovery');
   });
@@ -54,10 +54,10 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
     expect(readme).toContain('"retryable": false');
   });
 
-  test('README does not mention stale runtime-discoverable denied/deferred behavior', () => {
+  test('README documents the supported 2.8.0–2.8.1 runtime range', () => {
     const beforeMigration = readme.split('## Migration from 0.1')[0] ?? readme;
-    expect(beforeMigration).not.toContain('2.8.x');
-    expect(beforeMigration).not.toContain('2.8.');
+    expect(beforeMigration).toContain('2.8.0');
+    expect(beforeMigration).toContain('2.8.1');
   });
 
   test('migration guide covers 0.1 to 0.2 transition', () => {
@@ -73,19 +73,15 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
   test('migration guide does not claim deferred/denied are runtime-discoverable', () => {
     expect(migration).not.toContain('deferred');
     expect(migration).not.toContain('denied');
-    expect(migration).not.toContain('2.8.x');
-    expect(migration).not.toContain('2.8.');
   });
 
   test('release readiness aligns with compact v2 and version gate', () => {
     expect(readiness).toContain('0.2.1');
-    expect(readiness).toContain('2.7.0');
-    expect(readiness).toContain('2.7.4');
+    expect(readiness).toContain('2.8.0');
+    expect(readiness).toContain('2.8.1');
     expect(readiness).toContain('compact v2');
     expect(readiness).toContain('absent from runtime discovery');
     expect(readiness).toContain('compact unsupported-operation errors');
-    expect(readiness).not.toContain('2.8.x');
-    expect(readiness).not.toContain('2.8.');
     expect(readiness).not.toContain('deferred domains are documented');
     expect(readiness).not.toContain('visible in discovery');
     expect(readiness).not.toContain('Server version: `0.1.0`');
@@ -158,7 +154,7 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
 
   test('action registry marks itself as planning inventory and keeps node runtime wording atomic', () => {
     expect(actionRegistry).toContain('Historical note: this document is a planning inventory, not the current runtime contract.');
-    expect(actionRegistry).toContain('| nodes | Node restart control | `nodes.restart` | atomic | high | supported | required | none | 2.7.4-verified-surface |');
+    expect(actionRegistry).toContain('| nodes | Node restart control | `nodes.restart` | atomic | high | supported | required | none | 2.8.1-verified-surface |');
     expect(actionRegistry).not.toContain('`nodes.manage_lifecycle`');
     expect(actionRegistry).not.toContain('`nodes.manage_maintenance`');
   });
@@ -171,20 +167,20 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
   test('action registry does not claim template CRUD is deferred', () => {
     expect(actionRegistry).not.toContain('`templates.manage_subscription`');
     expect(actionRegistry).not.toContain('Create/update/delete/reorder semantics remain deferred');
-    expect(actionRegistry).toContain('| templates | Subscription template delete | `templates.delete` | atomic | high | supported | required | none | 2.7.4-verified-surface |');
+    expect(actionRegistry).toContain('| templates | Subscription template delete | `templates.delete` | atomic | high | supported | required | none | 2.8.1-verified-surface |');
   });
 
   test('action registry does not claim snippet CRUD is deferred', () => {
     expect(actionRegistry).not.toContain('`snippets.manage_lifecycle`');
     expect(actionRegistry).not.toContain('Snippet create/update/delete behavior remains deferred');
-    expect(actionRegistry).toContain('| snippets | Snippet delete | `snippets.delete` | atomic | high | supported | required | none | 2.7.4-verified-surface |');
+    expect(actionRegistry).toContain('| snippets | Snippet delete | `snippets.delete` | atomic | high | supported | required | none | 2.8.1-verified-surface |');
   });
 
 
 
   test('priority workflow contract does not publish planning-only seams as current runtime support', () => {
     expect(workflowContract).toContain('It is not the runtime support contract');
-    expect(workflowContract).toContain('`hosts.bulk_set_port` supports only bounded host port updates');
+    expect(workflowContract).toContain('`hosts.bulk_update` supports only bounded host port updates');
     expect(workflowContract).not.toContain('`hosts.manage_routing`');
     expect(workflowContract).not.toContain('`templates.inspect`');
     expect(workflowContract).not.toContain('`subscription_page.manage_configuration`');
@@ -199,7 +195,7 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
   test('release readiness does not overclaim infra billing, inbound attachment, or stale grouped template snippet names', () => {
     const readinessBeforeMigration = readiness.split('## Migration and compatibility')[0] ?? readiness;
     expect(readinessBeforeMigration).toContain('Infra-billing provider, node, mutation, and history workflows');
-    expect(readinessBeforeMigration).toContain('`hosts.bulk_set_port` covers bounded host port changes only');
+    expect(readinessBeforeMigration).toContain('`hosts.bulk_update` covers bounded host port changes only');
     expect(readinessBeforeMigration).not.toContain('currently supported provider/node mutation and history inspect boundary');
     expect(readinessBeforeMigration).not.toContain('inbound attachment');
     expect(readinessBeforeMigration).not.toContain('templates.manage_subscription');
@@ -224,14 +220,10 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
     expect(actionRegistry).toContain('nodes.restart');
   });
 
-  test('docs do not claim 2.8.x support anywhere', () => {
-    for (const text of [readme, migration, readiness]) {
-      expect(text).not.toContain('2.8.x');
-      expect(text).not.toContain('2.8.0');
-      expect(text).not.toContain('2.8.1');
-      expect(text).not.toContain('2.8.2');
-      expect(text).not.toContain('2.8.3');
-      expect(text).not.toContain('2.8.4');
+  test('active runtime docs publish the 2.8.0–2.8.1 support range', () => {
+    for (const text of [readme, readiness]) {
+      expect(text).toContain('2.8.0');
+      expect(text).toContain('2.8.1');
     }
   });
   test('docs do not use legacy compact error kind names', () => {
