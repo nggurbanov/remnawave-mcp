@@ -136,7 +136,7 @@ Tier 3 preview/apply operations use a two-step flow.
 {
   "tool": "remnawave_api",
   "domain": "hosts",
-  "operation": "bulk_set_port",
+  "operation": "bulk_update",
   "payload": {
     "hostUuids": ["host-1"],
     "port": 443
@@ -162,7 +162,7 @@ Response:
 {
   "tool": "remnawave_api",
   "domain": "hosts",
-  "operation": "bulk_set_port",
+  "operation": "bulk_update",
   "payload": {
     "applyToken": "def456"
   }
@@ -200,9 +200,9 @@ These operations require a preview/apply token before execution:
 
 | Domain | Operation | Effect | Why Tier 3 |
 |--------|-----------|--------|------------|
-| `hosts` | `bulk_set_port` | `update` | Can affect multiple routes |
+| `hosts` | `bulk_update` | `update` | Can affect multiple routes |
 | `profiles` | `update`, `delete`, `reorder` | `update/delete` | Changes delivery profile state; preview/apply protects against stale profile state |
-| `hosts` | `delete`, `reorder`, `bulk_delete`, `bulk_disable`, `bulk_enable`, `bulk_set_inbound` | `update/delete` | Changes host routing state; preview/apply protects against stale host inventory |
+| `hosts` | `delete`, `reorder`, `bulk_delete`, `bulk_disable`, `bulk_enable` | `update/delete` | Changes host routing state; preview/apply protects against stale host inventory |
 | `nodes` | `delete`, `reorder`, `bulk_actions`, `bulk_update`, `profile_modification` | `update/delete` | Changes node/control-plane state; preview/apply protects against stale node inventory |
 | `users` | `bulk_*` operations | `bulk update/delete` | Can mutate many users; preview/apply protects against stale user inventory |
 | `subscription_settings` | `update` | `update` | Changes global subscription behavior; preview/apply protects against stale settings |

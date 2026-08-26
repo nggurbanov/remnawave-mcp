@@ -108,8 +108,8 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
     expect(scopeDoc).not.toContain('2.7.4 only');
   });
 
-  test('current capability and scope docs exclude removed 2.7.4 host bulk operations', () => {
-    for (const text of [matrix, scopeDoc]) {
+  test('current capability, scope, migration, and safety docs exclude removed 2.7.4 host bulk operations', () => {
+    for (const text of [matrix, scopeDoc, migration, safetyDoc]) {
       expect(text).toContain('hosts.bulk_update');
       expect(text).not.toContain('hosts.bulk_set_port');
       expect(text).not.toContain('hosts.bulk_set_inbound');
