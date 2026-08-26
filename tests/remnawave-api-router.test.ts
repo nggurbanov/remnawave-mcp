@@ -17,7 +17,7 @@ function createClient(overrides: Partial<RemnawaveApiClient> = {}): RemnawaveApi
       nodes: { totalOnlineUsers: 3, lifetimeBytes: 0n },
     }),
     createUser: async (payload) => ({ uuid: 'user-1', ...payload }),
-    getMetadata: async () => ({ panel: 'rw', version: '2.7.4' }),
+    getMetadata: async () => ({ panel: 'rw', version: '2.8.1' }),
     ...overrides,
   };
 }
@@ -111,7 +111,7 @@ describe('routeRemnawaveApiRequest compact contract', () => {
 
   test('responseMode raw returns upstream output for allowlisted safe system reads', async () => {
     const rawStats = { raw: true, cpu: { cores: 4 } };
-    const rawMetadata = { panel: 'rw', version: '2.7.4' };
+    const rawMetadata = { panel: 'rw', version: '2.8.1' };
     const getSystemStats = vi.fn(async () => rawStats);
     const getMetadata = vi.fn(async () => rawMetadata);
 

@@ -33,7 +33,7 @@ interface SupportedSeed {
 }
 
 const HTTP_METHODS = new Set(['get', 'put', 'post', 'delete', 'patch', 'options', 'head', 'trace']);
-const DEFAULT_SOURCE = 'src/remnawave-api/openapi/remnawave-openapi-2.7.4.json';
+const DEFAULT_SOURCE = 'src/remnawave-api/openapi/remnawave-openapi-2.8.1.json';
 const DEFAULT_OUTPUT = 'src/remnawave-api/generated/operation-inventory.ts';
 
 const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> = {
@@ -340,9 +340,9 @@ const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> 
       summary: 'Restarts one node.',
     },
   },
-  'post /api/hosts/bulk/set-port': {
+  'patch /api/hosts/bulk/update': {
     domain: 'hosts',
-    operation: 'bulk_set_port',
+    operation: 'bulk_update',
     write: true,
     safetyMode: 'preview_apply',
     riskTier: 'tier3',
@@ -370,7 +370,7 @@ export function generateRemnawaveOperationInventory(document: OpenApiDocument): 
     metadata: {
       generatedAt: 'static',
       openapi: document.openapi ?? '',
-      source: 'remnawave-openapi-2.7.4.json',
+      source: 'remnawave-openapi-2.8.1.json',
       title: document.info?.title ?? '',
       totalOperations: operations.length,
       version: document.info?.version ?? '',
@@ -467,7 +467,7 @@ function inferSafetyMode(domain: string, operation: string, source: EnumeratedOp
     || domain === 'subscription_page_configs'
     || (domain === 'profiles' && operation !== 'create')
     || (domain === 'nodes' && ['delete', 'reorder', 'profile_modification', 'bulk_actions', 'bulk_update'].includes(operation))
-    || (domain === 'hosts' && ['delete', 'reorder', 'bulk_delete', 'bulk_disable', 'bulk_enable', 'bulk_set_inbound', 'bulk_set_port'].includes(operation))
+    || (domain === 'hosts' && ['delete', 'reorder', 'bulk_delete', 'bulk_disable', 'bulk_enable', 'bulk_set_inbound', 'bulk_update'].includes(operation))
     || (domain === 'templates' && operation === 'reorder')
   ) return 'preview_apply';
   if (['delete', 'disable', 'restart', 'restart_all', 'reset_traffic', 'revoke_subscription', 'delete_device', 'delete_provider', 'delete_node', 'delete_history_record'].includes(operation)) {

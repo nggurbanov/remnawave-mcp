@@ -6,10 +6,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
   "metadata": {
     "generatedAt": "static",
     "openapi": "3.0.0",
-    "source": "remnawave-openapi-2.7.4.json",
-    "title": "Remnawave API v2.7.4",
-    "totalOperations": 185,
-    "version": "2.7.4"
+    "source": "remnawave-openapi-2.8.1.json",
+    "title": "Remnawave API v2.8.1",
+    "totalOperations": 186,
+    "version": "2.8.1"
   },
   "operations": [
     {
@@ -166,6 +166,24 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       },
       "status": "supported",
       "write": false
+    },
+    {
+      "domain": "bandwidth_stats",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "bandwidth_stats.post_bandwidth_stats_nodes_controller_get_stats_nodes_users_usage_bandwidth_stats_nodes_users",
+      "openapi": {
+        "method": "post",
+        "operationId": "BandwidthStatsNodesController_getStatsNodesUsersUsage",
+        "path": "/api/bandwidth-stats/nodes/users",
+        "requestSchemaKey": "GetStatsNodesUsersUsageRequestDto",
+        "responseSchemaKeys": [
+          "200:GetStatsNodesUsersUsageResponseDto",
+          "400:BandwidthStatsNodesController_getStatsNodesUsersUsage.responses.400",
+          "500:BandwidthStatsNodesController_getStatsNodesUsersUsage.responses.500"
+        ]
+      },
+      "operation": "post_bandwidth_stats_nodes_controller_get_stats_nodes_users_usage_bandwidth_stats_nodes_users",
+      "status": "excluded"
     },
     {
       "domain": "bandwidth_stats",
@@ -925,47 +943,20 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "hosts",
-      "key": "hosts.bulk_set_inbound",
+      "key": "hosts.bulk_update",
       "normalizer": "none",
       "openapi": {
-        "method": "post",
-        "operationId": "HostsBulkActionsController_setInboundToHosts",
-        "path": "/api/hosts/bulk/set-inbound",
-        "requestSchemaKey": "SetInboundToManyHostsRequestDto",
-        "responseSchemaKeys": [
-          "200:SetInboundToManyHostsResponseDto",
-          "400:HostsBulkActionsController_setInboundToHosts.responses.400",
-          "500:HostsBulkActionsController_setInboundToHosts.responses.500"
-        ]
-      },
-      "operation": "bulk_set_inbound",
-      "rawAllowed": false,
-      "rawPolicy": "raw_denied",
-      "riskTier": "tier3",
-      "safetyMode": "preview_apply",
-      "sideEffects": {
-        "kind": "bulk_update",
-        "summary": "Executes hosts.bulk_set_inbound through its OpenAPI endpoint."
-      },
-      "status": "supported",
-      "write": true
-    },
-    {
-      "domain": "hosts",
-      "key": "hosts.bulk_set_port",
-      "normalizer": "none",
-      "openapi": {
-        "method": "post",
+        "method": "patch",
         "operationId": "HostsBulkActionsController_setPortToHosts",
-        "path": "/api/hosts/bulk/set-port",
-        "requestSchemaKey": "SetPortToManyHostsRequestDto",
+        "path": "/api/hosts/bulk/update",
+        "requestSchemaKey": "UpdateManyHostsRequestDto",
         "responseSchemaKeys": [
-          "200:SetPortToManyHostsResponseDto",
+          "200:UpdateManyHostsResponseDto",
           "400:HostsBulkActionsController_setPortToHosts.responses.400",
           "500:HostsBulkActionsController_setPortToHosts.responses.500"
         ]
       },
-      "operation": "bulk_set_port",
+      "operation": "bulk_update",
       "rawAllowed": false,
       "rawPolicy": "raw_denied",
       "riskTier": "tier3",
@@ -2627,7 +2618,7 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodesController_restartNode",
         "path": "/api/nodes/{uuid}/actions/restart",
-        "requestSchemaKey": null,
+        "requestSchemaKey": "RestartNodeRequestBodyDto",
         "responseSchemaKeys": [
           "200:RestartNodeResponseDto",
           "400:NodesController_restartNode.responses.400",
@@ -3813,24 +3804,6 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "system",
-      "exclusionReason": "excluded_system_dangerous",
-      "key": "system.post_system_controller_encrypt_happ_crypto_link_system_tools_happ_encrypt",
-      "openapi": {
-        "method": "post",
-        "operationId": "SystemController_encryptHappCryptoLink",
-        "path": "/api/system/tools/happ/encrypt",
-        "requestSchemaKey": "EncryptHappCryptoLinkRequestDto",
-        "responseSchemaKeys": [
-          "200:EncryptHappCryptoLinkResponseDto",
-          "400:SystemController_encryptHappCryptoLink.responses.400",
-          "500:SystemController_encryptHappCryptoLink.responses.500"
-        ]
-      },
-      "operation": "post_system_controller_encrypt_happ_crypto_link_system_tools_happ_encrypt",
-      "status": "excluded"
-    },
-    {
-      "domain": "system",
       "key": "system.generate_x25519_keypairs",
       "normalizer": "none",
       "openapi": {
@@ -3890,6 +3863,24 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         ]
       },
       "operation": "post_api_tokens_controller_create_tokens",
+      "status": "excluded"
+    },
+    {
+      "domain": "tokens",
+      "exclusionReason": "excluded_tokens",
+      "key": "tokens.get_api_tokens_controller_get_scopes_tokens_scopes",
+      "openapi": {
+        "method": "get",
+        "operationId": "ApiTokensController_getScopes",
+        "path": "/api/tokens/scopes",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetApiTokenScopesResponseDto",
+          "400:ApiTokensController_getScopes.responses.400",
+          "500:ApiTokensController_getScopes.responses.500"
+        ]
+      },
+      "operation": "get_api_tokens_controller_get_scopes_tokens_scopes",
       "status": "excluded"
     },
     {
@@ -4449,6 +4440,24 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       },
       "status": "supported",
       "write": true
+    },
+    {
+      "domain": "users",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "users.get_users_controller_get_users_stream_users_stream",
+      "openapi": {
+        "method": "get",
+        "operationId": "UsersController_getUsersStream",
+        "path": "/api/users/stream",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetUsersStreamResponseDto",
+          "400:UsersController_getUsersStream.responses.400",
+          "500:UsersController_getUsersStream.responses.500"
+        ]
+      },
+      "operation": "get_users_controller_get_users_stream_users_stream",
+      "status": "excluded"
     },
     {
       "domain": "users",

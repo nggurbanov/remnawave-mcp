@@ -4,20 +4,20 @@ export function registerHostOperations(
   registry: OperationRegistry,
   context: RuntimeOperationFactoryContext,
 ): void {
-  registry.register('hosts', 'bulk_set_port', context.supportedWriteOperation(
+  registry.register('hosts', 'bulk_update', context.supportedWriteOperation(
     'hosts',
-    'bulk_set_port',
-    'Set host ports for a bounded host set.',
-    'Send payload with hostUuids and port to set ports through the OpenAPI bulk endpoint.',
-    'Atomic OpenAPI-backed host bulk set-port action.',
+    'bulk_update',
+    'Update ports for a bounded host set.',
+    'Send payload with hostUuids and port through the OpenAPI bulk-update endpoint.',
+    'Atomic OpenAPI-backed host bulk-update action.',
     { hostUuids: ['host-uuid'], port: 443 },
-    'hosts_bulk_set_port',
-    'bulkSetHostPort',
-    context.validateHostsBulkSetPortPayload,
+    'hosts_bulk_update',
+    'bulkUpdateHosts',
+    context.validateHostsBulkUpdatePayload,
     async (client, payload) => ({
-      result: await context.requireClientMethod(client, 'bulkSetHostPort', 'hosts.bulk_set_port')(
-        context.readRequiredStringArrayField(payload, 'hostUuids', 'hosts.bulk_set_port'),
-        context.readRequiredIntegerField(payload, 'port', 'hosts.bulk_set_port'),
+      result: await context.requireClientMethod(client, 'bulkUpdateHosts', 'hosts.bulk_update')(
+        context.readRequiredStringArrayField(payload, 'hostUuids', 'hosts.bulk_update'),
+        { port: context.readRequiredIntegerField(payload, 'port', 'hosts.bulk_update') },
       ),
     }),
   ));

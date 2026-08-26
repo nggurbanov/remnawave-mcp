@@ -24,12 +24,12 @@ function createPanelClient() {
     resolveUser: vi.fn(async (uuid: string) => ({ found: true, match: { uuid, shortUuid: 'short-1', username: 'alice' } })),
     createUser: vi.fn(async (payload: Record<string, unknown>) => ({ uuid: 'user-2', ...payload })),
     setUserState: vi.fn(async (uuid: string, action: string, body?: Record<string, unknown>) => ({ uuid, action, body })),
-    restartNode: vi.fn(async (uuid: string) => ({ uuid, restarted: true })),
+    restartNode: vi.fn(async (uuid: string, forceRestart: boolean) => ({ uuid, forceRestart, restarted: true })),
     getHosts: vi.fn(async () => ({
       total: 1,
       items: [{ uuid: 'host-1', port: 80, enabled: true, fingerprint: 'fp-1' }],
     })),
-    bulkSetHostPort: vi.fn(async (hostUuids: readonly string[], port: number) => ({ hostUuids, port, updated: true })),
+    bulkUpdateHosts: vi.fn(async (hostUuids: readonly string[], patch: Record<string, unknown>) => ({ hostUuids, ...patch, updated: true })),
     getNodeMetadata: vi.fn(async (uuid: string) => ({ uuid, metadata: {} })),
     upsertNodeMetadata: vi.fn(async (uuid: string, metadata: Record<string, unknown>) => ({ uuid, metadata })),
     getUserMetadata: vi.fn(async (uuid: string) => ({ uuid, metadata: {} })),
@@ -204,10 +204,10 @@ const supportedOperationCases = [
   { name: 'users.revoke_subscription', request: { domain: 'users', operation: 'revoke_subscription', payload: { uuid: 'user-1' } }, requiresConfirmation: true, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.revokeUserSubscription).toHaveBeenCalledWith('user-1'); } },
   {
     name: 'nodes.restart',
-    request: { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1' } },
+    request: { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1', forceRestart: false } },
     requiresConfirmation: true,
     assert: (panelClient: ReturnType<typeof createPanelClient>) => {
-      expect(panelClient.restartNode).toHaveBeenCalledWith('node-1');
+      expect(panelClient.restartNode).toHaveBeenCalledWith('node-1', false);
     },
   },
 ];
@@ -226,34 +226,34 @@ describe('Remnawave API client adapter', () => {
     assert(panelClient);
   });
 
-  test('binds hosts.bulk_set_port preview/apply to getHosts and bulkSetHostPort only on apply', async () => {
+  test('binds hosts.bulk_update preview/apply to getHosts and bulkUpdateHosts only on apply', async () => {
     const panelClient = createPanelClient();
     const adapter = createRemnawaveApiClientAdapter(panelClient);
 
     const preview = await routeRemnawaveApiRequest(
-      { domain: 'hosts', operation: 'bulk_set_port', payload: { hostUuids: ['host-1'], port: 443 } },
+      { domain: 'hosts', operation: 'bulk_update', payload: { hostUuids: ['host-1'], port: 443 } },
       adapter,
     );
 
     expect(preview).toMatchObject({ applyToken: expect.any(String) });
     expect(panelClient.getHosts).toHaveBeenCalledTimes(1);
-    expect(panelClient.bulkSetHostPort).not.toHaveBeenCalled();
+    expect(panelClient.bulkUpdateHosts).not.toHaveBeenCalled();
 
     const apply = await routeRemnawaveApiRequest(
-      { domain: 'hosts', operation: 'bulk_set_port', payload: { applyToken: (preview as { applyToken: string }).applyToken } },
+      { domain: 'hosts', operation: 'bulk_update', payload: { applyToken: (preview as { applyToken: string }).applyToken } },
       adapter,
     );
 
     expect(apply).toEqual({ updated: { hostUuids: ['host-1'], port: 443, updated: true } });
     expect(panelClient.getHosts).toHaveBeenCalledTimes(2);
-    expect(panelClient.bulkSetHostPort).toHaveBeenCalledWith(['host-1'], 443);
+    expect(panelClient.bulkUpdateHosts).toHaveBeenCalledWith(['host-1'], { port: 443 });
   });
 
   test('does not expose excluded client methods through the runtime adapter', () => {
     const adapter = createRemnawaveApiClientAdapter(createPanelClient());
 
     expect(Object.keys(adapter).sort()).toEqual(expect.arrayContaining([
-      'bulkSetHostPort',
+      'bulkUpdateHosts',
       'createSnippet',
       'createSubscriptionTemplate',
       'createUser',

@@ -111,8 +111,8 @@ describe('remnawave_api schema metadata and validation', () => {
     expect(DEFAULT_OPERATION_REGISTRY.get('system', 'get_stats')?.validation.validatePayload({})).toEqual([]);
     expect(DEFAULT_OPERATION_REGISTRY.get('users', 'disable')?.validation.validatePayload({ uuid: 'user-1' })).toEqual([]);
     expect(DEFAULT_OPERATION_REGISTRY.get('users', 'enable')?.validation.validatePayload({ uuid: 'user-1' })).toEqual([]);
-    expect(DEFAULT_OPERATION_REGISTRY.get('nodes', 'restart')?.validation.validatePayload({ uuid: 'node-1' })).toEqual([]);
-    expect(DEFAULT_OPERATION_REGISTRY.get('hosts', 'bulk_set_port')?.validation.validatePayload({
+    expect(DEFAULT_OPERATION_REGISTRY.get('nodes', 'restart')?.validation.validatePayload({ uuid: 'node-1', forceRestart: false })).toEqual([]);
+    expect(DEFAULT_OPERATION_REGISTRY.get('hosts', 'bulk_update')?.validation.validatePayload({
       hostUuids: ['host-1'],
       port: 8443,
     })).toEqual([]);
@@ -128,8 +128,8 @@ describe('remnawave_api schema metadata and validation', () => {
     ]);
   });
 
-  test('rejects malformed atomic bulk host port payloads', () => {
-    const issues = DEFAULT_OPERATION_REGISTRY.get('hosts', 'bulk_set_port')?.validation.validatePayload({
+  test('rejects malformed atomic bulk host update payloads', () => {
+    const issues = DEFAULT_OPERATION_REGISTRY.get('hosts', 'bulk_update')?.validation.validatePayload({
       hostUuids: [],
       port: 70000,
     });

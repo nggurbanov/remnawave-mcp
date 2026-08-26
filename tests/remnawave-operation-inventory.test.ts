@@ -8,7 +8,7 @@ import {
 import { REMNAWAVE_OPERATION_INVENTORY } from '../src/remnawave-api/generated/operation-inventory.js';
 import type { RemnawaveOperationContract } from '../src/remnawave-api/operation-contract.js';
 
-const vendoredSnapshotPath = resolve('src/remnawave-api/openapi/remnawave-openapi-2.7.4.json');
+const vendoredSnapshotPath = resolve('src/remnawave-api/openapi/remnawave-openapi-2.8.1.json');
 const httpMethods = new Set(['get', 'put', 'post', 'delete', 'patch', 'options', 'head', 'trace']);
 
 function operationCoordinate(operation: RemnawaveOperationContract): string {
@@ -35,12 +35,12 @@ describe('Remnawave operation inventory', () => {
     expect(REMNAWAVE_OPERATION_INVENTORY.metadata).toEqual({
       generatedAt: 'static',
       openapi: '3.0.0',
-      source: 'remnawave-openapi-2.7.4.json',
-      title: 'Remnawave API v2.7.4',
-      totalOperations: 185,
-      version: '2.7.4',
+      source: 'remnawave-openapi-2.8.1.json',
+      title: 'Remnawave API v2.8.1',
+      totalOperations: 186,
+      version: '2.8.1',
     });
-    expect(Object.keys(document.paths ?? {})).toHaveLength(141);
+    expect(Object.keys(document.paths ?? {})).toHaveLength(142);
   });
 
   test('classifies every OpenAPI path and method exactly once', () => {
@@ -202,7 +202,7 @@ describe('Remnawave operation inventory', () => {
       'users.disable',
       'users.enable',
       'nodes.restart',
-      'hosts.bulk_set_port',
+      'hosts.bulk_update',
     ]));
   });
 });

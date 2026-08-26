@@ -38,7 +38,7 @@ describe('task 20 release-readiness consistency', () => {
     });
 
     for (const publishedText of [readme, readiness]) {
-      expect(publishedText).toContain('2.7.4');
+      expect(publishedText).toContain('2.8.1');
       expect(publishedText).toContain('remnawave_api');
     }
 
@@ -53,13 +53,25 @@ describe('task 20 release-readiness consistency', () => {
     expect(readme).toContain('users.create');
   });
 
+  test('pins the backend contract package and lockfile to the Remnawave 2.8.1 contract release', () => {
+    const packageJson = JSON.parse(readRepoFile('package.json')) as {
+      dependencies: Record<string, string>;
+    };
+    const packageLock = JSON.parse(readRepoFile('package-lock.json')) as {
+      packages: Record<string, { readonly version?: string }>;
+    };
+
+    expect(packageJson.dependencies['@remnawave/backend-contract']).toBe('2.8.35');
+    expect(packageLock.packages['node_modules/@remnawave/backend-contract']?.version).toBe('2.8.35');
+  });
+
   test('anchors final readiness claims to single-tool MVP boundary', () => {
     const readme = readRepoFile('README.md');
     const matrix = readRepoFile('docs/scope/capability-matrix.md');
     const readiness = readRepoFile('docs/release/production-readiness.md');
 
     expect(readiness).toContain('local stdio runtime only');
-    expect(readiness).toContain('Remnawave `2.7.0` through `2.7.4`');
+    expect(readiness).toContain('Remnawave `2.8.0` through `2.8.1`');
     expect(readiness).toContain('single-tool contract');
     expect(readiness).toContain('remnawave_api');
     expect(readiness).toContain('Any broader release claim would overstate the verified implementation.');

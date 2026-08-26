@@ -234,6 +234,7 @@ export interface NormalizedHost {
   readonly sni: string | null;
   readonly securityLayer: string | null;
   readonly fingerprint: string | null;
+  readonly tags: readonly string[];
   readonly nodes: readonly {
     readonly uuid: string;
     readonly name: string;

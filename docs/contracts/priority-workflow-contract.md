@@ -78,7 +78,7 @@ An agent must be able to reconfigure an existing transport topology, including n
 An agent must be able to change routing behavior to produce real chain topologies such as: user → VLESS → RU node → WireGuard → Germany.
 
 Routing / server-routing / response-rule change remains deferred from the current MCP support promise.
-Truthful support today is narrower: `hosts.bulk_set_port` supports only bounded host port updates through preview/apply. It does not expose legacy grouped host routing, inbound association, generic profile routing-rule edits, or response-rule orchestration as executable semantic actions.
+Truthful support today is narrower: `hosts.bulk_update` supports only bounded host port updates through preview/apply. It does not expose legacy grouped host routing, inbound association, generic profile routing-rule edits, or response-rule orchestration as executable semantic actions.
 
 ### Required steps
 1. Inspect the current public profile, bridge profile, relevant inbounds, outbounds, snippets, and response-rule state before editing.

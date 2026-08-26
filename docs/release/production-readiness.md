@@ -12,7 +12,7 @@ The publication boundary described here is based on the current audited repo sta
 - Built entrypoint: `dist/index.js`
 - CLI command: `remnawave-mcp`
 - Required runtimes: Node.js `>=20.11.0`, npm `>=10.0.0`
-- Supported Remnawave version policy: `2.7.0` through `2.7.4`
+- Supported Remnawave version policy: `2.8.0` through `2.8.1`
 
 The publishable npm package is intentionally conservative. It does not claim Docker packaging, remote transport hosting, or compatibility with unknown Remnawave panel versions.
 
@@ -36,12 +36,12 @@ Release readiness therefore depends on two things being true at the same time:
 
 The current compatibility contract is intentionally strict.
 
-- Supported: Remnawave `2.7.0` through `2.7.4`
+- Supported: Remnawave `2.8.0` through `2.8.1`
 - Unsupported explicit versions: startup fails with `REMNAWAVE_VERSION_UNSUPPORTED`
 - Missing or unknown versions: startup fails with `REMNAWAVE_VERSION_UNKNOWN`
 - Discovery gating: the tool is not advertised when version gating fails
 
-This policy remains grounded in the verified `2.7.x` evidence chain rather than newer upstream changelog markers.
+This policy is grounded in the vendored 2.8.1 OpenAPI contract and the verified 2.8.1 release changes.
 
 ## Capability matrix publication status
 
@@ -76,7 +76,7 @@ The shipped boundary for this release is registry-backed and intentionally expli
 
 The currently supported atomic operations include safe system reads, user lookup/create/update/lifecycle/bulk workflows, node and host reads/writes plus guarded bulk workflows, profile lifecycle/reorder operations, metadata get/upsert, template CRUD/reorder, snippet CRUD, supported sensitive key generation, public and protected subscription reads, subscription request-history reads, subscription settings/page-config workflows, squad lifecycle and membership operations, HWID workflows, bandwidth stats, and infra-billing provider/node/history workflows.
 
-Important supported examples include `nodes.restart` through the shared tier3 confirmation gate and Infra-billing provider, node, mutation, and history workflows through the generated runtime adapter. `hosts.bulk_set_port` covers bounded host port changes only; broader host changes use their specific atomic or guarded bulk operations rather than a legacy grouped routing operation.
+Important supported examples include `nodes.restart` through the shared tier3 confirmation gate and Infra-billing provider, node, mutation, and history workflows through the generated runtime adapter. `hosts.bulk_update` covers bounded host port changes only; broader host changes use their specific atomic or guarded bulk operations rather than a legacy grouped routing operation.
 
 - migration guidance remains single-tool-only: callers should use `remnawave_api` with `domain`, `operation`, and `payload`; legacy multi-tool or `tool_name` public surfaces are not part of the published contract
 
@@ -111,7 +111,7 @@ These are intentionally excluded so the published support boundary stays truthfu
 
 ## Known risks and limitations
 
-- **Version drift risk:** upstream materials can reference versions newer than `2.7.4`, but this repo publishes support only for the verified `2.7.0` through `2.7.4` gate.
+- **Version drift risk:** upstream materials can reference versions newer than `2.8.1`, but this repo publishes support only for the verified `2.8.0` through `2.8.1` gate.
 - **Advanced operational drift risk:** metadata, bandwidth, plugin, and composite/operator surfaces are useful but more drift-sensitive than the narrowest stable core.
 - **Environment verification gap:** TypeScript LSP diagnostics are not available in this environment; authoritative verification here is command-based.
 - **Packaging/runtime limitation:** the repo ships local stdio execution only; Docker/container guidance is intentionally unsupported.
@@ -143,7 +143,7 @@ The following checklist must be satisfied before publishing or tagging the v1 si
 ### Version gates
 
 - [ ] package version in `package.json` matches the intended release artifact (`0.2.1`)
-- [ ] supported Remnawave version gate is `2.7.0` through `2.7.4`
+- [ ] supported Remnawave version gate is `2.8.0` through `2.8.1`
 - [ ] startup still fails closed for unsupported versions with `REMNAWAVE_VERSION_UNSUPPORTED`
 - [ ] startup still fails closed for unknown or missing versions with `REMNAWAVE_VERSION_UNKNOWN`
 - [ ] failed version gating still prevents tool advertisement
@@ -160,7 +160,7 @@ The following checklist must be satisfied before publishing or tagging the v1 si
 
 - [ ] preserve the previous published package artifact and release notes before shipping the new docs/version
 - [ ] if the single-tool docs or discovery contract are found to misstate scope, revert the documentation change set and republish corrected release notes before widening support claims
-- [ ] if version gating regresses, roll back to the last known-good artifact that still enforces the `2.7.x` gate before discovery
+- [ ] if version gating regresses, roll back to the last known-good artifact that still enforces the `2.8.0` through `2.8.1` gate before discovery
 - [ ] if migration guidance breaks clients, temporarily restore the last accurate legacy guidance while fixing the `remnawave_api` docs and scope snapshot
 - [ ] after rollback, rerun `npm run check`, `npm test`, and `npm run build` before any republish
 
@@ -170,7 +170,7 @@ Rollback for this release is intentionally simple and documentation-first:
 
 1. revert the release commit or restore the last known-good package artifact
 2. restore the previous README/scope/readiness files if the single-tool messaging is inaccurate
-3. confirm the `2.7.x` gate still blocks unsupported startup before rediscovery is advertised
+3. confirm the `2.8.0` through `2.8.1` gate still blocks unsupported startup before rediscovery is advertised
 4. rerun the standard verification commands before reissuing any release statement
 
 Because the current release is about truthful publication of the v2 compact contract, the main rollback risk is misleading callers about what is executable. The rollback response should prioritize restoring accurate documentation and version-gated behavior over preserving aspirational scope language.
@@ -190,7 +190,7 @@ For Task 0 baseline freeze, the operative truth is the current in-repo runtime, 
 The current repository state is production-ready only within the boundaries described above:
 
 - local stdio runtime only
-- Remnawave `2.7.0` through `2.7.4`
+- Remnawave `2.8.0` through `2.8.1`
 - only the published single-tool boundary described by the current registry-backed scope map
 - compact v2 direct payload and error contract
 
@@ -244,7 +244,7 @@ The published compatibility surface is:
 - Single tool: `remnawave_api` only
 - Domain/operation/payload invocation pattern
 - Registry-backed `supported` operations only
-- Remnawave version `2.7.0` through `2.7.4`
+- Remnawave version `2.8.0` through `2.8.1`
 - Compact v2 direct payload and error contract
 
 No legacy compatibility shims are published or discoverable.

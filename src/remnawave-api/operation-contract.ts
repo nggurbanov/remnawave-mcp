@@ -63,7 +63,7 @@ export interface RemnawaveExcludedOperationContract {
 export type RemnawaveOperationContract = RemnawaveSupportedOperationContract | RemnawaveExcludedOperationContract;
 
 export interface RemnawaveOperationInventoryMetadata {
-  readonly source: 'remnawave-openapi-2.7.4.json';
+  readonly source: 'remnawave-openapi-2.8.1.json';
   readonly openapi: string;
   readonly title: string;
   readonly version: string;

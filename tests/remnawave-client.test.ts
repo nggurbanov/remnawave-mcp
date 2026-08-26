@@ -400,7 +400,7 @@ describe('normalization layer', () => {
             info: { cpus: 2, memoryTotal: 4096, cpuModel: 'x86' },
             stats: { memoryUsed: 1024, memoryFree: 3072, uptime: 100, loadAvg: [0.1] },
           },
-          versions: { node: '2.7.4', xray: '1.8.0' },
+          versions: { node: '2.8.1', xray: '1.8.0' },
           configProfile: {
             inbounds: [
               {

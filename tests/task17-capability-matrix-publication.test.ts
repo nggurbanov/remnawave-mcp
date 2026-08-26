@@ -15,7 +15,7 @@ describe('task 17 published capability matrix and support boundary', () => {
 
     expect(readme).toContain('## Current status');
     expect(readme).toContain('- Runtime model: local stdio server only');
-    expect(readme).toContain('- Supported Remnawave version gate: `2.7.0` through `2.7.4`');
+    expect(readme).toContain('- Supported Remnawave version gate: `2.8.0` through `2.8.1`');
     expect(readme).toContain('## Quickstart: Using the single-tool API');
     expect(readme).toContain('remnawave_api');
     expect(readme).toContain('### Currently executable operations');
@@ -56,8 +56,8 @@ describe('task 17 published capability matrix and support boundary', () => {
   test('publishes internal squad action families as planning-only deferred operations, not as current runtime support', () => {
     const actionRegistry = readRepoFile('docs/panel/action-registry.md');
 
-    expect(actionRegistry).toContain('| internal squads | Internal squad access-definition update | `internal_squads.definition.manage` | atomic | medium | deferred | blocked-until-designed | none | 2.7.4-openapi-evidenced |');
-    expect(actionRegistry).toContain('| internal squads | Internal squad membership update | `internal_squads.membership.manage` | composite | medium | deferred | blocked-until-designed | none | 2.7.4-openapi-evidenced |');
+    expect(actionRegistry).toContain('| internal squads | Internal squad access-definition update | `internal_squads.definition.manage` | atomic | medium | deferred | blocked-until-designed | none | 2.8.1-openapi-evidenced |');
+    expect(actionRegistry).toContain('| internal squads | Internal squad membership update | `internal_squads.membership.manage` | composite | medium | deferred | blocked-until-designed | none | 2.8.1-openapi-evidenced |');
 
     expect(actionRegistry).not.toContain('| internal squads | Internal squad lifecycle | `internal_squads.lifecycle.manage` | atomic | high | dangerous-write | required |');
     expect(actionRegistry).not.toContain('| internal squads | Internal squad membership bulk assignment | `internal_squads.membership.bulk_assign` | composite | high | dangerous-write | required |');
@@ -66,8 +66,8 @@ describe('task 17 published capability matrix and support boundary', () => {
   test('publishes external squad action families as planning-only deferred operations, not as current runtime support', () => {
     const actionRegistry = readRepoFile('docs/panel/action-registry.md');
 
-    expect(actionRegistry).toContain('| external squads | External squad delivery-definition update | `external_squads.definition.manage` | atomic | medium | deferred | blocked-until-designed | none | 2.7.4-openapi-evidenced |');
-    expect(actionRegistry).toContain('| external squads | External squad membership update | `external_squads.membership.manage` | composite | medium | deferred | blocked-until-designed | none | 2.7.4-openapi-evidenced |');
+    expect(actionRegistry).toContain('| external squads | External squad delivery-definition update | `external_squads.definition.manage` | atomic | medium | deferred | blocked-until-designed | none | 2.8.1-openapi-evidenced |');
+    expect(actionRegistry).toContain('| external squads | External squad membership update | `external_squads.membership.manage` | composite | medium | deferred | blocked-until-designed | none | 2.8.1-openapi-evidenced |');
     expect(actionRegistry).not.toContain('| external squads | External squad lifecycle | `external_squads.lifecycle.manage` | atomic | high | dangerous-write | required |');
     expect(actionRegistry).not.toContain('| external squads | External squad membership bulk assignment | `external_squads.membership.bulk_assign` | composite | high | dangerous-write | required |');
   });
@@ -78,7 +78,7 @@ describe('task 17 published capability matrix and support boundary', () => {
     const readiness = readRepoFile('docs/release/production-readiness.md');
 
     expect(actionRegistry).toContain('Historical note: this document is a planning inventory, not the current runtime contract.');
-    expect(actionRegistry).toContain('| nodes | Node restart control | `nodes.restart` | atomic | high | supported | required | none | 2.7.4-verified-surface |');
+    expect(actionRegistry).toContain('| nodes | Node restart control | `nodes.restart` | atomic | high | supported | required | none | 2.8.1-verified-surface |');
     expect(actionRegistry).toContain('shared tier3 confirmation flow');
     expect(actionRegistry).not.toContain('`nodes.manage_lifecycle`');
     expect(actionRegistry).not.toContain('`nodes.manage_maintenance`');
@@ -92,12 +92,12 @@ describe('task 17 published capability matrix and support boundary', () => {
   test('publishes template atomic operations as supported runtime operations and defers only reorder/delivery workflows', () => {
     const actionRegistry = readRepoFile('docs/panel/action-registry.md');
 
-    expect(actionRegistry).toContain('| templates | Subscription template list | `templates.list` | atomic | low | supported | not-required | none | 2.7.4-verified-surface |');
-    expect(actionRegistry).toContain('| templates | Subscription template read | `templates.get` | atomic | low | supported | not-required | none | 2.7.4-verified-surface |');
-    expect(actionRegistry).toContain('| templates | Subscription template create | `templates.create` | atomic | medium | supported | not-required | none | 2.7.4-verified-surface |');
-    expect(actionRegistry).toContain('| templates | Subscription template update | `templates.update` | atomic | medium | supported | not-required | none | 2.7.4-verified-surface |');
-    expect(actionRegistry).toContain('| templates | Subscription template delete | `templates.delete` | atomic | high | supported | required | none | 2.7.4-verified-surface |');
-    expect(actionRegistry).toContain('| templates | Subscription template reorder and broader delivery workflows | `templates.reorder_and_deliver` | composite | medium | deferred | blocked-until-designed | none | 2.7.4-openapi-evidenced |');
+    expect(actionRegistry).toContain('| templates | Subscription template list | `templates.list` | atomic | low | supported | not-required | none | 2.8.1-verified-surface |');
+    expect(actionRegistry).toContain('| templates | Subscription template read | `templates.get` | atomic | low | supported | not-required | none | 2.8.1-verified-surface |');
+    expect(actionRegistry).toContain('| templates | Subscription template create | `templates.create` | atomic | medium | supported | not-required | none | 2.8.1-verified-surface |');
+    expect(actionRegistry).toContain('| templates | Subscription template update | `templates.update` | atomic | medium | supported | not-required | none | 2.8.1-verified-surface |');
+    expect(actionRegistry).toContain('| templates | Subscription template delete | `templates.delete` | atomic | high | supported | required | none | 2.8.1-verified-surface |');
+    expect(actionRegistry).toContain('| templates | Subscription template reorder and broader delivery workflows | `templates.reorder_and_deliver` | composite | medium | deferred | blocked-until-designed | none | 2.8.1-openapi-evidenced |');
 
     expect(actionRegistry).not.toContain('`templates.manage_subscription`');
     expect(actionRegistry).not.toContain('Create/update/delete/reorder semantics remain deferred');
@@ -109,11 +109,11 @@ describe('task 17 published capability matrix and support boundary', () => {
   test('publishes snippet atomic operations as supported runtime operations and defers only reorder/broader lifecycle workflows', () => {
     const actionRegistry = readRepoFile('docs/panel/action-registry.md');
 
-    expect(actionRegistry).toContain('| snippets | Snippet list | `snippets.list` | atomic | low | supported | not-required | none | 2.7.4-verified-surface |');
-    expect(actionRegistry).toContain('| snippets | Snippet create | `snippets.create` | atomic | medium | supported | not-required | none | 2.7.4-verified-surface |');
-    expect(actionRegistry).toContain('| snippets | Snippet update | `snippets.update` | atomic | medium | supported | not-required | none | 2.7.4-verified-surface |');
-    expect(actionRegistry).toContain('| snippets | Snippet delete | `snippets.delete` | atomic | high | supported | required | none | 2.7.4-verified-surface |');
-    expect(actionRegistry).toContain('| snippets | Snippet reorder and broader lifecycle workflows | `snippets.reorder_and_lifecycle` | composite | medium | deferred | blocked-until-designed | none | 2.7.4-openapi-evidenced |');
+    expect(actionRegistry).toContain('| snippets | Snippet list | `snippets.list` | atomic | low | supported | not-required | none | 2.8.1-verified-surface |');
+    expect(actionRegistry).toContain('| snippets | Snippet create | `snippets.create` | atomic | medium | supported | not-required | none | 2.8.1-verified-surface |');
+    expect(actionRegistry).toContain('| snippets | Snippet update | `snippets.update` | atomic | medium | supported | not-required | none | 2.8.1-verified-surface |');
+    expect(actionRegistry).toContain('| snippets | Snippet delete | `snippets.delete` | atomic | high | supported | required | none | 2.8.1-verified-surface |');
+    expect(actionRegistry).toContain('| snippets | Snippet reorder and broader lifecycle workflows | `snippets.reorder_and_lifecycle` | composite | medium | deferred | blocked-until-designed | none | 2.8.1-openapi-evidenced |');
 
     expect(actionRegistry).not.toContain('`snippets.manage_lifecycle`');
     expect(actionRegistry).not.toContain('snippet create/update/delete semantics are not promoted');
@@ -122,7 +122,7 @@ describe('task 17 published capability matrix and support boundary', () => {
 
   test('publishes subscription page config as planning-only deferred', () => {
     const actionRegistry = readRepoFile('docs/panel/action-registry.md');
-    expect(actionRegistry).toContain('| subscription page | Subscription page config mutation | `subscription_page.manage_configuration` | atomic | medium | deferred | blocked-until-designed | none | 2.7.4-openapi-evidenced |');
+    expect(actionRegistry).toContain('| subscription page | Subscription page config mutation | `subscription_page.manage_configuration` | atomic | medium | deferred | blocked-until-designed | none | 2.8.1-openapi-evidenced |');
     expect(actionRegistry).not.toContain('| subscription page | Subscription page configuration lifecycle | `subscription_page.configuration.manage` | atomic | high | dangerous-write | required |');
     expect(actionRegistry).not.toContain('| subscription page | Public subscription page delivery/read flow | `subscription_page.delivery.inspect` | composite | medium | sensitive-read | not-required |');
   });

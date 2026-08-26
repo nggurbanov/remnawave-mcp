@@ -369,7 +369,7 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
     confirmationRequired: false,
     rationale: 'Lists hosts as a read-only inventory without mutating remote state.',
   },
-  'hosts.bulk_set_port': {
+  'hosts.bulk_update': {
     tier: 'tier3',
     effect: 'update',
     scope: 'bounded_set',

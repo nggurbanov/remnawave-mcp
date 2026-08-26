@@ -82,7 +82,7 @@ function createExplicitPassThroughMapper(operationKey: string): OperationRespons
     case 'users.disable':
     case 'users.enable':
     case 'nodes.restart':
-    case 'hosts.bulk_set_port':
+    case 'hosts.bulk_update':
     case 'users.revoke_subscription':
     case 'metadata.upsert_node':
     case 'metadata.upsert_user':
