@@ -53,6 +53,18 @@ describe('task 20 release-readiness consistency', () => {
     expect(readme).toContain('users.create');
   });
 
+  test('pins the backend contract package and lockfile to the Remnawave 2.8.1 contract release', () => {
+    const packageJson = JSON.parse(readRepoFile('package.json')) as {
+      dependencies: Record<string, string>;
+    };
+    const packageLock = JSON.parse(readRepoFile('package-lock.json')) as {
+      packages: Record<string, { readonly version?: string }>;
+    };
+
+    expect(packageJson.dependencies['@remnawave/backend-contract']).toBe('2.8.35');
+    expect(packageLock.packages['node_modules/@remnawave/backend-contract']?.version).toBe('2.8.35');
+  });
+
   test('anchors final readiness claims to single-tool MVP boundary', () => {
     const readme = readRepoFile('README.md');
     const matrix = readRepoFile('docs/scope/capability-matrix.md');

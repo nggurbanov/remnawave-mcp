@@ -85,7 +85,7 @@ These operations are currently `supported` and executable through the v1 single-
 - `users.delete`
 - `users.get_accessible_nodes`
 - `users.reset_traffic`
-- `hosts.bulk_set_port`
+- `hosts.bulk_update`
 - `hosts.list`
 - `hosts.update`
 - `hosts.create`
@@ -93,7 +93,6 @@ These operations are currently `supported` and executable through the v1 single-
 - `hosts.bulk_delete`
 - `hosts.bulk_disable`
 - `hosts.bulk_enable`
-- `hosts.bulk_set_inbound`
 - `hosts.list_tags`
 - `hosts.delete`
 - `hosts.get`
@@ -276,7 +275,7 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
     "users.delete",
     "users.get_accessible_nodes",
     "users.reset_traffic",
-    "hosts.bulk_set_port",
+    "hosts.bulk_update",
     "hosts.list",
     "hosts.update",
     "hosts.create",
@@ -284,7 +283,6 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
     "hosts.bulk_delete",
     "hosts.bulk_disable",
     "hosts.bulk_enable",
-    "hosts.bulk_set_inbound",
     "hosts.list_tags",
     "hosts.delete",
     "hosts.get",
@@ -442,7 +440,7 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
     },
     "hosts": {
       "supported": [
-        "bulk_set_port",
+        "bulk_update",
         "list",
         "update",
         "create",
@@ -450,7 +448,6 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
         "bulk_delete",
         "bulk_disable",
         "bulk_enable",
-        "bulk_set_inbound",
         "list_tags",
         "delete",
         "get"
