@@ -1,7 +1,7 @@
 import type {
-  GetAllNodesCommand,
-  GetAllSubscriptionsCommand,
-  GetAllUsersCommand,
+  GetNodesCommand,
+  GetSubscriptionsCommand,
+  GetUsersCommand,
   GetBandwidthStatsCommand,
   GetMetadataCommand,
   GetRemnawaveHealthCommand,
@@ -183,6 +183,12 @@ export function normalizeSubscriptionTemplatesResponse(payload: unknown): Normal
     total: typeof response.total === 'number' ? response.total : items.length,
     items,
   };
+}
+
+export function normalizeSubscriptionTemplateResponse(payload: unknown): NormalizedSubscriptionTemplateItem {
+  const body = unwrapFixtureBody(payload);
+  const response = isRecord(body) && isRecord(body.response) ? body.response : body;
+  return normalizeSubscriptionTemplate(response, 'subscription_template');
 }
 
 export function normalizeSubscriptionPageConfigsResponse(payload: unknown): NormalizedSubscriptionPageConfigsResponse {
@@ -568,16 +574,16 @@ function getBillingSupportClass(value: unknown, path: string): BillingSupportCla
 }
 
 export type ContractAnchor = {
-  readonly nodes: GetAllNodesCommand.Response;
-  readonly users: GetAllUsersCommand.Response;
+  readonly nodes: GetNodesCommand.Response;
+  readonly users: GetUsersCommand.Response;
   readonly usersResolve: {
     readonly response: {
-      readonly uuid: string;
+      readonly id: number;
       readonly shortUuid: string;
       readonly username: string;
     };
   };
-  readonly subscriptions: GetAllSubscriptionsCommand.Response;
+  readonly subscriptions: GetSubscriptionsCommand.Response;
   readonly systemStats: GetStatsCommand.Response;
   readonly systemHealth: GetRemnawaveHealthCommand.Response;
   readonly bandwidthStats: GetBandwidthStatsCommand.Response;
@@ -607,7 +613,7 @@ function normalizeHwidCountEntry(
 
 function normalizeResolvedUser(user: JsonRecord, path: string): NormalizedResolvedUser {
   return {
-    uuid: getString(user.uuid, `${path}.uuid`),
+    id: getNumber(user.id, `${path}.id`),
     shortUuid: getString(user.shortUuid, `${path}.shortUuid`),
     username: getString(user.username, `${path}.username`),
   };
@@ -802,7 +808,7 @@ function normalizeUser(user: JsonRecord, path: string): NormalizedUser {
   });
 
   return {
-    uuid: getString(user.uuid, `${path}.uuid`),
+    id: getNumber(user.id, `${path}.id`),
     shortUuid: getString(user.shortUuid, `${path}.shortUuid`),
     username: getString(user.username, `${path}.username`),
     status: getUserStatus(user.status, `${path}.status`),

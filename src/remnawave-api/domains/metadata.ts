@@ -17,7 +17,7 @@ function call(client: RemnawaveApiClient, context: RuntimeOperationFactoryContex
 }
 
 export function registerMetadataOperations(registry: OperationRegistry, context: RuntimeOperationFactoryContext): void {
-  for (const target of ['node', 'user'] as const) {
+  for (const target of ['node'] as const) {
     const getMethod = target === 'node' ? 'getNodeMetadata' : 'getUserMetadata';
     const upsertMethod = target === 'node' ? 'upsertNodeMetadata' : 'upsertUserMetadata';
     registry.register('metadata', `get_${target}`, context.supportedReadOperation('metadata', `get_${target}`, `Read one ${target} metadata document.`, `Send payload with uuid to read ${target} metadata.`, 'OpenAPI-backed metadata read.', `metadata_get_${target}`, getMethod, async (client, payload) => ({ result: await call(client, context, getMethod, `metadata.get_${target}`)(text(payload, 'uuid')) })));

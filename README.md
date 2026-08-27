@@ -9,7 +9,7 @@
 - MCP protocol version: `2025-06-18`
 - Runtime model: local stdio server only
 - Built entrypoint: `dist/index.js`
-- Supported Remnawave version gate: `2.8.0` through `2.8.1`
+- Supported Remnawave version gate: `3.3.2`
 - Unsupported or unknown Remnawave versions: startup fails before discovery is advertised
 
 ## Install from npm
@@ -30,7 +30,7 @@ Then configure your MCP client to run `remnawave-mcp` with the required Remnawav
       "env": {
         "REMNAWAVE_BASE_URL": "https://panel.example.test",
         "REMNAWAVE_API_TOKEN": "replace-with-real-token",
-        "REMNAWAVE_VERSION": "2.8.1"
+        "REMNAWAVE_VERSION": "3.3.2"
       }
     }
   }
@@ -105,7 +105,7 @@ Returns the panel statistics directly:
 
 Runtime discovery is supported-only. It lists only operations that are registered, validated, safety-classified, OpenAPI-bound, and executable through the runtime adapter. Excluded and not-yet-implemented OpenAPI surfaces are not discoverable at runtime, and direct calls to them return compact unsupported-operation errors.
 
-These operations are currently `supported` and executable. The runtime exposes 150 supported operations across 19 domains. Use domain-only discovery to retrieve the authoritative operation list for a domain. Representative supported operations include:
+These operations are currently `supported` and executable. The runtime exposes 143 supported operations across 19 domains. Use domain-only discovery to retrieve the authoritative operation list for a domain. Representative supported operations include:
 
 - `system.get_metadata`, `system.get_stats`, `system.get_health`, `system.get_nodes_metrics`, `system.get_recap`, `system.get_bandwidth_stats`, `system.get_node_statistics`
 - `users.list`, `users.create`, `users.get`, `users.update`, lookup reads such as `users.get_by_username`, single-user lifecycle actions, and bulk preview/apply actions such as `users.bulk_update`
@@ -142,7 +142,7 @@ The runtime discovery surface includes only domains that currently contain suppo
 - `subscription_page_configs`
 - `subscription_settings`
 
-Excluded surfaces are intentionally absent from discovery, including `auth`, `tokens`, `ip_control`, `node_plugins`, and `remnawave_settings`. Sensitive key generation is supported through `keygen.generate_node_secret` and `system.generate_x25519_keypairs`, while HAPP encryption and SRR matcher endpoints remain excluded.
+Excluded surfaces are intentionally absent from discovery, including `auth`, `tokens`, `connections`, `node_plugins`, and `remnawave_settings`. Sensitive key generation is supported through `keygen.generate_node_secret` and `system.generate_x25519_keypairs`, while HAPP encryption and SRR matcher endpoints remain excluded.
 
 ### Response mode and raw policy
 
@@ -183,7 +183,7 @@ Every supported operation has a safety mode that determines how it executes:
 {
   "domain": "users",
   "operation": "revoke_subscription",
-  "payload": { "uuid": "user-1" }
+  "payload": { "userId": 1 }
 }
 // Response
 {
@@ -200,12 +200,12 @@ Every supported operation has a safety mode that determines how it executes:
 {
   "domain": "users",
   "operation": "revoke_subscription",
-  "payload": { "uuid": "user-1" },
+  "payload": { "userId": 1 },
   "confirmToken": "abc123"
 }
 // Response
 {
-  "updated": { "uuid": "user-1", "revoked": true }
+  "updated": { "userId": 1, "revoked": true }
 }
 ```
 
@@ -339,7 +339,7 @@ This project ships as a local stdio server. `stdout` is reserved for MCP protoco
 
 Compatibility is intentionally strict:
 
-- supported now: `2.8.0` through `2.8.1`
+- supported now: `3.3.2`
 - unsupported explicit versions: fail with `REMNAWAVE_VERSION_UNSUPPORTED`
 - missing or unknown versions: fail with `REMNAWAVE_VERSION_UNKNOWN`
 
@@ -349,7 +349,7 @@ Compatibility is intentionally strict:
 |---|---|---|
 | `REMNAWAVE_BASE_URL` | yes | Base URL for the Remnawave panel API |
 | `REMNAWAVE_API_TOKEN` | yes | API token used for Remnawave requests |
-| `REMNAWAVE_VERSION` | recommended | Explicit Remnawave version gate. Versions `2.8.0` through `2.8.1` are supported |
+| `REMNAWAVE_VERSION` | recommended | Explicit Remnawave version gate. Versions `3.3.2` are supported |
 | `LOG_LEVEL` | no | One of `debug`, `info`, `warn`, `error`. Defaults to `info` |
 
 Example:
@@ -357,7 +357,7 @@ Example:
 ```bash
 export REMNAWAVE_BASE_URL="https://panel.example.test"
 export REMNAWAVE_API_TOKEN="replace-with-real-token"
-export REMNAWAVE_VERSION="2.8.1"
+export REMNAWAVE_VERSION="3.3.2"
 export LOG_LEVEL="info"
 ```
 
@@ -366,7 +366,7 @@ export LOG_LEVEL="info"
 ```bash
 REMNAWAVE_BASE_URL="https://panel.example.test" \
 REMNAWAVE_API_TOKEN="replace-with-real-token" \
-REMNAWAVE_VERSION="2.8.1" \
+REMNAWAVE_VERSION="3.3.2" \
 remnawave-mcp
 ```
 

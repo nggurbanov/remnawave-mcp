@@ -6,14 +6,13 @@
     "method": "POST",
     "path": "/api/users/resolve",
     "body": {
-      "uuid": "<REDACTED>"
+      "id": 2726
     }
   },
   "response": {
     "status": 200,
     "body": {
       "response": {
-        "uuid": "<REDACTED>",
         "id": 2726,
         "shortUuid": "<REDACTED>",
         "username": "<REDACTED>"

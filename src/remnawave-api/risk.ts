@@ -1,6 +1,8 @@
 import { randomBytes } from 'node:crypto';
 
 import { computePreviewBindingHash } from '../safety/contract.js';
+import { SUPPORTED_REMNAWAVE_OPERATIONS } from './domains/runtime-scope.js';
+import type { RemnawaveSupportedOperationContract } from './operation-contract.js';
 
 export type RiskTier = 'tier1' | 'tier2' | 'tier3';
 export type RiskEffect = 'read' | 'create' | 'update' | 'delete' | 'restart';
@@ -46,7 +48,7 @@ interface ConfirmationTokenEntry {
 
 const confirmationTokens = new Map<string, ConfirmationTokenEntry>();
 
-export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProfile>> = {
+const HANDWRITTEN_OPERATION_RISK: Readonly<Record<string, OperationRiskProfile>> = {
   // Tiering is based on operator impact: this is a pure read with response-only scope.
   'system.get_stats': {
     tier: 'tier1',
@@ -151,7 +153,7 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
     scope: 'single_response',
     blastRadius: 'single_response',
     confirmationRequired: false,
-    rationale: 'Reads one user by UUID without mutating remote state.',
+    rationale: 'Reads one user by numeric ID without mutating remote state.',
   },
   'users.disable': {
     tier: 'tier3',
@@ -233,14 +235,6 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
     confirmationRequired: false,
     rationale: 'Reads one protected subscription by short UUID without mutating remote state.',
   },
-  'subscriptions.get': {
-    tier: 'tier1',
-    effect: 'read',
-    scope: 'single_response',
-    blastRadius: 'single_response',
-    confirmationRequired: false,
-    rationale: 'Reads one protected subscription by UUID without mutating remote state.',
-  },
   'subscriptions.get_raw_by_short_uuid': {
     tier: 'tier1',
     effect: 'read',
@@ -257,7 +251,7 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
     confirmationRequired: false,
     rationale: 'Reads one protected subscription subpage config without mutating remote state.',
   },
-  'subscriptions.get_connection_keys_by_uuid': {
+  'subscriptions.get_connection_keys_by_user_id': {
     tier: 'tier1',
     effect: 'read',
     scope: 'single_response',
@@ -433,13 +427,21 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
     confirmationRequired: false,
     rationale: 'Reads one internal squad access view without mutating remote state.',
   },
-  'internal_squads.manage_membership': {
-    tier: 'tier2',
+  'internal_squads.add_users': {
+    tier: 'tier3',
     effect: 'update',
-    scope: 'single_entity',
-    blastRadius: 'single_entity',
-    confirmationRequired: false,
-    rationale: 'Adds or removes a bounded user set for one internal squad without broader definition changes.',
+    scope: 'fleet',
+    blastRadius: 'mass_or_destructive',
+    confirmationRequired: true,
+    rationale: 'Adds every user to one internal squad, so the fleet-wide membership change requires confirmation.',
+  },
+  'internal_squads.remove_users': {
+    tier: 'tier3',
+    effect: 'update',
+    scope: 'fleet',
+    blastRadius: 'mass_or_destructive',
+    confirmationRequired: true,
+    rationale: 'Removes every user from one internal squad, so the fleet-wide membership change requires confirmation.',
   },
   'internal_squads.manage_definition': {
     tier: 'tier2',
@@ -465,13 +467,21 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
     confirmationRequired: false,
     rationale: 'Reads one external squad delivery policy without mutating remote state.',
   },
-  'external_squads.manage_membership': {
-    tier: 'tier2',
+  'external_squads.add_users': {
+    tier: 'tier3',
     effect: 'update',
-    scope: 'single_entity',
-    blastRadius: 'single_entity',
-    confirmationRequired: false,
-    rationale: 'Adds or removes a bounded user set for one external squad without changing delivery-policy definitions.',
+    scope: 'fleet',
+    blastRadius: 'mass_or_destructive',
+    confirmationRequired: true,
+    rationale: 'Adds every user to one external squad, so the fleet-wide membership change requires confirmation.',
+  },
+  'external_squads.remove_users': {
+    tier: 'tier3',
+    effect: 'update',
+    scope: 'fleet',
+    blastRadius: 'mass_or_destructive',
+    confirmationRequired: true,
+    rationale: 'Removes every user from one external squad, so the fleet-wide membership change requires confirmation.',
   },
   'external_squads.manage_definition': {
     tier: 'tier2',
@@ -496,6 +506,14 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
     blastRadius: 'mass_or_destructive',
     confirmationRequired: true,
     rationale: 'Restarting one node can interrupt active traffic and requires confirmation.',
+  },
+  'nodes.restart_all': {
+    tier: 'tier3',
+    effect: 'restart',
+    scope: 'fleet',
+    blastRadius: 'mass_or_destructive',
+    confirmationRequired: true,
+    rationale: 'Restarting all nodes can interrupt fleet-wide traffic and requires confirmation.',
   },
   'nodes.inspect': {
     tier: 'tier1',
@@ -569,14 +587,6 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
     confirmationRequired: false,
     rationale: 'Reads torrent-blocker report statistics without mutating remote state.',
   },
-  'metadata.read_user': {
-    tier: 'tier1',
-    effect: 'read',
-    scope: 'single_response',
-    blastRadius: 'single_response',
-    confirmationRequired: false,
-    rationale: 'Reads one user metadata document without mutating remote state.',
-  },
   'metadata.read_node': {
     tier: 'tier1',
     effect: 'read',
@@ -584,14 +594,6 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
     blastRadius: 'single_response',
     confirmationRequired: false,
     rationale: 'Reads one node metadata document without mutating remote state.',
-  },
-  'metadata.manage_user': {
-    tier: 'tier2',
-    effect: 'update',
-    scope: 'single_entity',
-    blastRadius: 'single_entity',
-    confirmationRequired: false,
-    rationale: 'Updates one user metadata document without broader fleet-wide or destructive side effects.',
   },
   'infra_billing.list_providers': {
     tier: 'tier1',
@@ -657,30 +659,6 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
     confirmationRequired: false,
     rationale: 'Reads one infra billing history record from the current billing history inventory without mutating remote state.',
   },
-  'ip_control.submit_user_fetch_job': {
-    tier: 'tier2',
-    effect: 'update',
-    scope: 'single_entity',
-    blastRadius: 'single_entity',
-    confirmationRequired: false,
-    rationale: 'Submits one user-scoped IP-control fetch job without destructive side effects.',
-  },
-  'ip_control.submit_node_fetch_job': {
-    tier: 'tier2',
-    effect: 'update',
-    scope: 'single_entity',
-    blastRadius: 'single_entity',
-    confirmationRequired: false,
-    rationale: 'Submits one node-scoped IP-control fetch job without destructive side effects.',
-  },
-  'ip_control.inspect_job': {
-    tier: 'tier1',
-    effect: 'read',
-    scope: 'single_response',
-    blastRadius: 'single_response',
-    confirmationRequired: false,
-    rationale: 'Reads one async IP-control job state without mutating remote state.',
-  },
   'templates.inspect': {
     tier: 'tier1',
     effect: 'read',
@@ -707,9 +685,19 @@ export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProf
   },
 };
 
+export const SUPPORTED_OPERATION_RISK: Readonly<Record<string, OperationRiskProfile>> = Object.freeze(
+  Object.fromEntries(
+    SUPPORTED_REMNAWAVE_OPERATIONS.map((contract) => [contract.key, buildInventoryRiskProfile(contract)]),
+  ),
+);
+
 export function getSupportedOperationRisk(domain: string, operation: string): OperationRiskProfile {
   const key = `${domain}.${operation}`;
-  const profile = SUPPORTED_OPERATION_RISK[key];
+  const profile = SUPPORTED_OPERATION_RISK[key] ?? HANDWRITTEN_OPERATION_RISK[key];
+  const contract = SUPPORTED_REMNAWAVE_OPERATIONS.find((candidate) => candidate.key === key);
+  if (contract !== undefined) {
+    return SUPPORTED_OPERATION_RISK[key] ?? buildInventoryRiskProfile(contract);
+  }
   if (profile === undefined) {
     if (operation.startsWith('get') || operation === 'list' || operation === 'list_inbounds') {
       return {
@@ -742,6 +730,52 @@ export function getSupportedOperationRisk(domain: string, operation: string): Op
   }
 
   return profile;
+}
+
+function buildInventoryRiskProfile(contract: RemnawaveSupportedOperationContract): OperationRiskProfile {
+  const effect = toRiskEffect(contract);
+  const fleet = contract.operation.includes('_all')
+    || contract.operation === 'restart_all'
+    || ((contract.domain === 'internal_squads' || contract.domain === 'external_squads')
+      && (contract.operation === 'add_users' || contract.operation === 'remove_users'));
+  const boundedSet = contract.sideEffects.kind === 'bulk_update' || contract.sideEffects.kind === 'bulk_delete';
+  const scope: RiskScope = effect === 'read'
+    ? 'single_response'
+    : fleet
+      ? 'fleet'
+      : boundedSet
+        ? 'bounded_set'
+        : 'single_entity';
+
+  return {
+    tier: contract.riskTier,
+    effect,
+    scope,
+    blastRadius: contract.riskTier === 'tier3'
+      ? 'mass_or_destructive'
+      : scope === 'fleet'
+        ? 'bounded_set'
+        : scope,
+    confirmationRequired: contract.safetyMode === 'confirm',
+    rationale: contract.sideEffects.summary,
+  };
+}
+
+function toRiskEffect(contract: RemnawaveSupportedOperationContract): RiskEffect {
+  switch (contract.sideEffects.kind) {
+    case 'none':
+      return 'read';
+    case 'create':
+      return 'create';
+    case 'delete':
+    case 'bulk_delete':
+      return 'delete';
+    case 'restart':
+      return 'restart';
+    case 'update':
+    case 'bulk_update':
+      return 'update';
+  }
 }
 
 export function buildTier3ConfirmationState(input: Tier3ConfirmationInput): Tier3ConfirmationResult {

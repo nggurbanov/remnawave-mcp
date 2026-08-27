@@ -33,7 +33,7 @@ interface SupportedSeed {
 }
 
 const HTTP_METHODS = new Set(['get', 'put', 'post', 'delete', 'patch', 'options', 'head', 'trace']);
-const DEFAULT_SOURCE = 'src/remnawave-api/openapi/remnawave-openapi-2.8.1.json';
+const DEFAULT_SOURCE = 'src/remnawave-api/openapi/remnawave-openapi-3.3.2.json';
 const DEFAULT_OUTPUT = 'src/remnawave-api/generated/operation-inventory.ts';
 
 const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> = {
@@ -49,9 +49,9 @@ const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> 
     domain: 'subscriptions', operation: 'get_by_short_uuid', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
     sideEffects: { kind: 'none', summary: 'Reads one protected subscription by short UUID without mutating panel state.' },
   },
-  'get /api/subscriptions/by-uuid/{uuid}': {
-    domain: 'subscriptions', operation: 'get_by_uuid', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
-    sideEffects: { kind: 'none', summary: 'Reads one protected subscription by UUID without mutating panel state.' },
+  'get /api/subscriptions/by-id/{userId}': {
+    domain: 'subscriptions', operation: 'get_by_id', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
+    sideEffects: { kind: 'none', summary: 'Reads one protected subscription by numeric user ID without mutating panel state.' },
   },
   'get /api/subscriptions/by-short-uuid/{shortUuid}/raw': {
     domain: 'subscriptions', operation: 'get_raw_by_short_uuid', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
@@ -61,8 +61,8 @@ const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> 
     domain: 'subscriptions', operation: 'get_subpage_config_by_short_uuid', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
     sideEffects: { kind: 'none', summary: 'Reads one protected subscription subpage config without mutating panel state.' },
   },
-  'get /api/subscriptions/connection-keys/{uuid}': {
-    domain: 'subscriptions', operation: 'get_connection_keys_by_uuid', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
+  'get /api/subscriptions/connection-keys/{userId}': {
+    domain: 'subscriptions', operation: 'get_connection_keys_by_user_id', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
     sideEffects: { kind: 'none', summary: 'Reads protected subscription connection keys without mutating panel state.' },
   },
   'get /api/subscription-request-history': {
@@ -73,7 +73,7 @@ const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> 
     domain: 'subscription_request_history', operation: 'get_stats', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
     sideEffects: { kind: 'none', summary: 'Reads subscription request-history stats without mutating panel state.' },
   },
-  'get /api/users/{uuid}/subscription-request-history': {
+  'get /api/users/{userId}/subscription-request-history': {
     domain: 'users', operation: 'get_subscription_request_history', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
     sideEffects: { kind: 'none', summary: 'Reads one user subscription request-history trail without mutating panel state.' },
   },
@@ -103,7 +103,7 @@ const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> 
       summary: 'Reads user inventory without mutating panel state.',
     },
   },
-  'get /api/users/{uuid}': {
+  'get /api/users/{userId}': {
     domain: 'users',
     operation: 'get',
     write: false,
@@ -113,7 +113,7 @@ const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> 
     normalizer: 'user',
     sideEffects: {
       kind: 'none',
-      summary: 'Reads one user by UUID without mutating panel state.',
+      summary: 'Reads one user by numeric ID without mutating panel state.',
     },
   },
   'get /api/system/stats': {
@@ -225,11 +225,11 @@ const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> 
     domain: 'metadata', operation: 'upsert_node', write: true, safetyMode: 'direct', riskTier: 'tier2', rawAllowed: false, normalizer: 'none',
     sideEffects: { kind: 'update', summary: 'Upserts one node metadata document.' },
   },
-  'get /api/metadata/user/{uuid}': {
+  'get /api/metadata/user/{userId}': {
     domain: 'metadata', operation: 'get_user', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
     sideEffects: { kind: 'none', summary: 'Reads one user metadata document without mutating panel state.' },
   },
-  'put /api/metadata/user/{uuid}': {
+  'put /api/metadata/user/{userId}': {
     domain: 'metadata', operation: 'upsert_user', write: true, safetyMode: 'direct', riskTier: 'tier2', rawAllowed: false, normalizer: 'none',
     sideEffects: { kind: 'update', summary: 'Upserts one user metadata document.' },
   },
@@ -297,11 +297,11 @@ const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> 
     domain: 'profiles', operation: 'list_inbounds', write: false, safetyMode: 'direct', riskTier: 'tier1', rawAllowed: false, normalizer: 'none',
     sideEffects: { kind: 'none', summary: 'Lists inbounds for one config profile without mutating panel state.' },
   },
-  'post /api/users/{uuid}/actions/revoke': {
+  'post /api/users/{userId}/actions/revoke': {
     domain: 'users', operation: 'revoke_subscription', write: true, safetyMode: 'confirm', riskTier: 'tier3', rawAllowed: false, normalizer: 'none',
     sideEffects: { kind: 'update', summary: 'Revokes one user subscription credentials.' },
   },
-  'post /api/users/{uuid}/actions/disable': {
+  'post /api/users/{userId}/actions/disable': {
     domain: 'users',
     operation: 'disable',
     write: true,
@@ -314,7 +314,7 @@ const LEGACY_SUPPORTED_OPERATION_SEEDS: Readonly<Record<string, SupportedSeed>> 
       summary: 'Disables one user account.',
     },
   },
-  'post /api/users/{uuid}/actions/enable': {
+  'post /api/users/{userId}/actions/enable': {
     domain: 'users',
     operation: 'enable',
     write: true,
@@ -370,7 +370,7 @@ export function generateRemnawaveOperationInventory(document: OpenApiDocument): 
     metadata: {
       generatedAt: 'static',
       openapi: document.openapi ?? '',
-      source: 'remnawave-openapi-2.8.1.json',
+      source: 'remnawave-openapi-3.3.2.json',
       title: document.info?.title ?? '',
       totalOperations: operations.length,
       version: document.info?.version ?? '',
@@ -440,7 +440,7 @@ function getSupportedSeed(operation: EnumeratedOperation): SupportedSeed | undef
   }
 
   const [domain, op] = extracted.key.split('.') as [string, string];
-  const write = operation.method !== 'get';
+  const write = operation.method !== 'get' && !(domain === 'users' && op === 'resolve');
   const safetyMode = inferSafetyMode(domain, op, operation);
   return {
     domain,
@@ -460,6 +460,10 @@ function getSupportedSeed(operation: EnumeratedOperation): SupportedSeed | undef
 function inferSafetyMode(domain: string, operation: string, source: EnumeratedOperation): SupportedSeed['safetyMode'] {
   if (source.method === 'get') return 'direct';
   if (
+    (domain === 'internal_squads' || domain === 'external_squads')
+    && (operation === 'add_users' || operation === 'remove_users')
+  ) return 'confirm';
+  if (
     operation.includes('bulk')
     || operation === 'reorder'
     || operation === 'delete_all_devices'
@@ -467,7 +471,7 @@ function inferSafetyMode(domain: string, operation: string, source: EnumeratedOp
     || domain === 'subscription_page_configs'
     || (domain === 'profiles' && operation !== 'create')
     || (domain === 'nodes' && ['delete', 'reorder', 'profile_modification', 'bulk_actions', 'bulk_update'].includes(operation))
-    || (domain === 'hosts' && ['delete', 'reorder', 'bulk_delete', 'bulk_disable', 'bulk_enable', 'bulk_set_inbound', 'bulk_update'].includes(operation))
+    || (domain === 'hosts' && ['delete', 'reorder', 'bulk_delete', 'bulk_disable', 'bulk_enable', 'bulk_update'].includes(operation))
     || (domain === 'templates' && operation === 'reorder')
   ) return 'preview_apply';
   if (['delete', 'disable', 'restart', 'restart_all', 'reset_traffic', 'revoke_subscription', 'delete_device', 'delete_provider', 'delete_node', 'delete_history_record'].includes(operation)) {
@@ -570,8 +574,8 @@ function exclusionReasonForPath(path: string): RemnawaveExclusionReason {
   if (path.startsWith('/api/tokens')) {
     return 'excluded_tokens';
   }
-  if (path.startsWith('/api/ip-control')) {
-    return 'excluded_ip_control';
+  if (path.startsWith('/api/connections')) {
+    return 'excluded_connections';
   }
   if (path.startsWith('/api/node-plugins')) {
     return 'excluded_node_plugins';
@@ -588,7 +592,7 @@ function exclusionReasonForPath(path: string): RemnawaveExclusionReason {
 function inferDomain(path: string): string {
   if (path.startsWith('/api/auth')) return 'auth';
   if (path.startsWith('/api/tokens')) return 'tokens';
-  if (path.startsWith('/api/ip-control')) return 'ip_control';
+  if (path.startsWith('/api/connections')) return 'connections';
   if (path.startsWith('/api/node-plugins')) return 'node_plugins';
   if (path.startsWith('/api/remnawave-settings')) return 'remnawave_settings';
   if (path.startsWith('/api/keygen')) return 'keygen';

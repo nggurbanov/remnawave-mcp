@@ -1,4 +1,6 @@
-# Remnawave Contract Validation Report (Task 3)
+# Historical Remnawave 2.7.4 Contract Validation Report (Task 3)
+
+> Historical evidence only. This 2026-03-30 live-panel capture must not be used as current evidence for Remnawave 3.3.2. See `remnawave-3.3.2-contract-report.md` for the current contract baseline.
 
 ## Capture scope
 

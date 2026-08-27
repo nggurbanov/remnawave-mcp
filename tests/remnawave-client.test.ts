@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { createServer } from 'node:http';
 import path from 'node:path';
 
 import { describe, expect, test, vi } from 'vitest';
@@ -23,6 +24,7 @@ import {
   normalizeUsersResolveResponse,
   normalizeUsersResponse,
 } from '../src/client/index.js';
+import type { ContractAnchor } from '../src/client/normalize.js';
 import { REMNAWAVE_OPERATION_INVENTORY } from '../src/remnawave-api/generated/operation-inventory.js';
 
 const fixturesDir = path.resolve(import.meta.dirname, '..', 'fixtures', 'contracts');
@@ -32,6 +34,16 @@ function readFixture(name: string): unknown {
 }
 
 describe('normalization layer', () => {
+  test('pins users.resolve to the numeric 3.3.2 response contract', () => {
+    const anchor = {
+      usersResolve: {
+        response: { id: 1, shortUuid: 'short-1', username: 'alice' },
+      },
+    } satisfies Pick<ContractAnchor, 'usersResolve'>;
+
+    expect(anchor.usersResolve.response.id).toBe(1);
+  });
+
   test('normalizes nodes fixture into stable internal shape', () => {
     const normalized = normalizeNodesResponse(readFixture('nodes.json'));
 
@@ -87,6 +99,7 @@ describe('normalization layer', () => {
 
     expect(normalized.total).toBe(2691);
     expect(normalized.items[0]).toMatchObject({
+      id: 2726,
       status: 'ACTIVE',
       traffic: {
         usedBytes: 0,
@@ -106,11 +119,30 @@ describe('normalization layer', () => {
     expect(normalized).toEqual({
       found: true,
       match: {
-        uuid: '<REDACTED>',
+        id: 2726,
         shortUuid: '<REDACTED>',
         username: '<REDACTED>',
       },
     });
+  });
+
+  test('normalizes official 3.3.2 user responses without the removed uuid field', () => {
+    const normalized = normalizeUsersResponse({
+      response: {
+        total: 1,
+        users: [{
+          id: 42,
+          shortUuid: 'short-42',
+          username: 'alice',
+          status: 'ACTIVE',
+          trafficLimitBytes: 0,
+          activeInternalSquads: [],
+        }],
+      },
+    });
+
+    expect(normalized.items[0]).toMatchObject({ id: 42, shortUuid: 'short-42', username: 'alice' });
+    expect(normalized.items[0]).not.toHaveProperty('uuid');
   });
 
   test('normalizes subscriptions fixture into stable internal shape', () => {
@@ -400,7 +432,7 @@ describe('normalization layer', () => {
             info: { cpus: 2, memoryTotal: 4096, cpuModel: 'x86' },
             stats: { memoryUsed: 1024, memoryFree: 3072, uptime: 100, loadAvg: [0.1] },
           },
-          versions: { node: '2.8.1', xray: '1.8.0' },
+          versions: { node: '3.3.2', xray: '1.8.0' },
           configProfile: {
             inbounds: [
               {
@@ -673,6 +705,69 @@ describe('normalization layer', () => {
 });
 
 describe('RemnawaveClient', () => {
+  test('sends the required 3.3.2 JSON request body on the protected GET subpage-config route', async () => {
+    let capturedMethod: string | undefined;
+    let capturedUrl: string | undefined;
+    let capturedAuthorization: string | undefined;
+    let capturedBody = '';
+    const upstream = createServer((request, response) => {
+      capturedMethod = request.method;
+      capturedUrl = request.url;
+      capturedAuthorization = request.headers.authorization;
+      request.setEncoding('utf8');
+      request.on('data', (chunk: string) => {
+        capturedBody += chunk;
+      });
+      request.on('end', () => {
+        response.writeHead(200, { 'content-type': 'application/json' });
+        response.end(JSON.stringify({ response: { ok: true } }));
+      });
+    });
+    await new Promise<void>((resolve) => upstream.listen(0, '127.0.0.1', resolve));
+    const address = upstream.address();
+    if (address === null || typeof address === 'string') throw new Error('test upstream did not bind');
+
+    try {
+      const client = new RemnawaveClient({
+        baseUrl: `http://127.0.0.1:${address.port}`,
+        apiToken: 'token-value',
+      });
+      await client.getSubscriptionSubpageConfigByShortUuid('short-1', {
+        requestHeaders: { 'user-agent': 'qa-client' },
+      });
+
+      expect(capturedMethod).toBe('GET');
+      expect(capturedUrl).toBe('/api/subscriptions/subpage-config/short-1');
+      expect(capturedAuthorization).toBe('Bearer token-value');
+      expect(JSON.parse(capturedBody)).toEqual({ requestHeaders: { 'user-agent': 'qa-client' } });
+    } finally {
+      await new Promise<void>((resolve, reject) => upstream.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
+  test('rejects oversized responses from the GET-with-body transport', async () => {
+    const upstream = createServer((_request, response) => {
+      response.writeHead(200, { 'content-type': 'application/json' });
+      response.end(Buffer.alloc((10 * 1024 * 1024) + 1, 'x'));
+    });
+    await new Promise<void>((resolve) => upstream.listen(0, '127.0.0.1', resolve));
+    const address = upstream.address();
+    if (address === null || typeof address === 'string') throw new Error('test upstream did not bind');
+
+    try {
+      const client = new RemnawaveClient({
+        baseUrl: `http://127.0.0.1:${address.port}`,
+        apiToken: 'token-value',
+      });
+
+      await expect(client.getSubscriptionSubpageConfigByShortUuid('short-1', {
+        requestHeaders: { 'user-agent': 'qa-client' },
+      })).rejects.toThrow('Remnawave response exceeds 10485760 bytes.');
+    } finally {
+      await new Promise<void>((resolve, reject) => upstream.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
   test('uses centralized replacement routes and normalizes responses', async () => {
     const fetchMock = vi.fn(
       async (_input: string | URL | Request, _init?: RequestInit) => new Response(),
@@ -702,6 +797,36 @@ describe('RemnawaveClient', () => {
       }),
     );
     expect(normalized.windows.currentYear.current).toBe('65.19 TiB');
+  });
+
+  test('reads one subscription template through its bound item endpoint', async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({
+      response: {
+        uuid: '00000000-0000-4000-8000-000000000001',
+        name: 'Default',
+        templateType: 'XRAY_JSON',
+      },
+    }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    }));
+    const client = new RemnawaveClient({
+      baseUrl: 'https://panel.example.test',
+      apiToken: 'token-value',
+      fetch: fetchMock,
+    });
+
+    const template = await client.getSubscriptionTemplateByUuid('00000000-0000-4000-8000-000000000001');
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://panel.example.test/api/subscription-templates/00000000-0000-4000-8000-000000000001',
+      expect.objectContaining({ method: 'GET' }),
+    );
+    expect(template).toMatchObject({
+      uuid: '00000000-0000-4000-8000-000000000001',
+      name: 'Default',
+      templateType: 'XRAY_JSON',
+    });
   });
 
   test('raises structured API errors for non-success responses', async () => {
@@ -787,11 +912,87 @@ describe('RemnawaveClient', () => {
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://panel.example.test/api/bandwidth-stats/nodes?topNodesLimit=5&start=2026-05-01&end=2026-05-06',
+      'https://panel.example.test/api/bandwidth-stats/nodes?start=2026-05-01&end=2026-05-06&topNodesLimit=5',
       expect.objectContaining({
         method: 'GET',
         body: undefined,
       }),
+    );
+  });
+
+  test('serializes structured 3.3.2 list query parameters', async () => {
+    const fetchMock = vi.fn(
+      async (_input: string | URL | Request, _init?: RequestInit) => new Response(JSON.stringify({ response: { users: [], total: 0 } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const operation = REMNAWAVE_OPERATION_INVENTORY.operations.find((entry) => entry.key === 'users.list');
+    if (operation?.status !== 'supported') {
+      throw new Error('users.list operation fixture is missing.');
+    }
+    const client = new RemnawaveClient({
+      baseUrl: 'https://panel.example.test',
+      apiToken: 'token-value',
+      fetch: fetchMock,
+    });
+
+    await client.executeOpenApiOperation(operation, {
+      start: 0,
+      size: 25,
+      filters: [{ id: 'status', value: 'ACTIVE' }],
+      filterModes: { status: 'equals' },
+      globalFilterMode: 'and',
+      sorting: [{ id: 'username', desc: false }],
+    });
+
+    const requestUrl = new URL(String(fetchMock.mock.calls[0]?.[0]));
+    expect(requestUrl.pathname).toBe('/api/users');
+    expect(requestUrl.searchParams.get('start')).toBe('0');
+    expect(requestUrl.searchParams.get('size')).toBe('25');
+    expect(requestUrl.searchParams.get('filters')).toBe(JSON.stringify([{ id: 'status', value: 'ACTIVE' }]));
+    expect(requestUrl.searchParams.get('filterModes[status]')).toBe('equals');
+    expect(requestUrl.searchParams.get('globalFilterMode')).toBe('and');
+    expect(requestUrl.searchParams.get('sorting')).toBe(JSON.stringify([{ id: 'username', desc: false }]));
+  });
+
+  test('uses the 3.3.2 all-user squad routes without a request body', async () => {
+    const fetchMock = vi.fn(
+      async (_input: string | URL | Request, _init?: RequestInit) => new Response(JSON.stringify({ response: { ok: true } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const client = new RemnawaveClient({
+      baseUrl: 'https://panel.example.test',
+      apiToken: 'token-value',
+      fetch: fetchMock,
+    });
+
+    await client.bulkAddUsersToInternalSquad('internal-1');
+    await client.bulkRemoveUsersFromInternalSquad('internal-1');
+    await client.bulkAddUsersToExternalSquad('external-1');
+    await client.bulkRemoveUsersFromExternalSquad('external-1');
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      'https://panel.example.test/api/internal-squads/internal-1/bulk-actions/add-users',
+      expect.objectContaining({ method: 'POST', body: undefined }),
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      'https://panel.example.test/api/internal-squads/internal-1/bulk-actions/remove-users',
+      expect.objectContaining({ method: 'DELETE', body: undefined }),
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      3,
+      'https://panel.example.test/api/external-squads/external-1/bulk-actions/add-users',
+      expect.objectContaining({ method: 'POST', body: undefined }),
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      4,
+      'https://panel.example.test/api/external-squads/external-1/bulk-actions/remove-users',
+      expect.objectContaining({ method: 'DELETE', body: undefined }),
     );
   });
 
@@ -836,13 +1037,13 @@ describe('RemnawaveClient', () => {
       fetch: fetchMock,
     });
 
-    const resolved = await client.resolveUser('user-uuid');
+    const resolved = await client.resolveUser({ id: 2726 });
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://panel.example.test/api/users/resolve',
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify({ uuid: 'user-uuid' }),
+        body: JSON.stringify({ id: 2726 }),
         headers: expect.objectContaining({
           Authorization: 'Bearer token-value',
         }),
@@ -851,7 +1052,7 @@ describe('RemnawaveClient', () => {
     expect(resolved).toEqual({
       found: true,
       match: {
-        uuid: '<REDACTED>',
+        id: 2726,
         shortUuid: '<REDACTED>',
         username: '<REDACTED>',
       },
@@ -875,7 +1076,7 @@ describe('RemnawaveClient', () => {
       fetch: fetchMock,
     });
 
-    await client.patchUserSettings('user-uuid', {
+    await client.patchUserSettings(2726, {
       status: 'ACTIVE',
       expireAt: '2026-04-01T00:00:00.000Z',
     });
@@ -885,7 +1086,7 @@ describe('RemnawaveClient', () => {
       expect.objectContaining({
         method: 'PATCH',
         body: JSON.stringify({
-          uuid: 'user-uuid',
+          id: 2726,
           status: 'ACTIVE',
           expireAt: '2026-04-01T00:00:00.000Z',
         }),
@@ -1105,117 +1306,4 @@ describe('RemnawaveClient', () => {
     );
   });
 
-  test('routes IP-control async submit and poll endpoints with explicit job-id semantics', async () => {
-    const fetchMock = vi.fn(
-      async (_input: string | URL | Request, _init?: RequestInit) => new Response(),
-    );
-
-    fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify({ jobId: 'job-user-1' }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
-    fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify({ jobId: 'job-node-1' }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
-    fetchMock.mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          jobId: 'job-user-1',
-          isCompleted: true,
-          isFailed: false,
-          progress: 100,
-          result: { items: [] },
-        }),
-        {
-          status: 200,
-          headers: { 'content-type': 'application/json' },
-        },
-      ),
-    );
-    fetchMock.mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          jobId: 'job-node-1',
-          isCompleted: false,
-          isFailed: false,
-          progress: null,
-          result: null,
-        }),
-        {
-          status: 200,
-          headers: { 'content-type': 'application/json' },
-        },
-      ),
-    );
-    fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify({ queued: true }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
-
-    const client = new RemnawaveClient({
-      baseUrl: 'https://panel.example.test',
-      apiToken: 'token-value',
-      fetch: fetchMock,
-    });
-
-    const userJob = await client.fetchIpsForUser('user-1');
-    const nodeJob = await client.fetchUsersIpsForNode('node-1');
-    const userJobResult = await client.getUserIpsFetchJobResult('job-user-1');
-    const nodeJobResult = await client.getNodeUsersIpsFetchJobResult('job-node-1');
-    const drop = await client.dropConnections({ nodeUuid: 'node-1', userUuid: 'user-1' });
-
-    expect(fetchMock).toHaveBeenNthCalledWith(
-      1,
-      'https://panel.example.test/api/ip-control/fetch-ips/user-1',
-      expect.objectContaining({ method: 'POST' }),
-    );
-    expect(fetchMock).toHaveBeenNthCalledWith(
-      2,
-      'https://panel.example.test/api/ip-control/fetch-users-ips/node-1',
-      expect.objectContaining({ method: 'POST' }),
-    );
-    expect(fetchMock).toHaveBeenNthCalledWith(
-      3,
-      'https://panel.example.test/api/ip-control/fetch-ips/result/job-user-1',
-      expect.objectContaining({ method: 'GET' }),
-    );
-    expect(fetchMock).toHaveBeenNthCalledWith(
-      4,
-      'https://panel.example.test/api/ip-control/fetch-users-ips/result/job-node-1',
-      expect.objectContaining({ method: 'GET' }),
-    );
-    expect(fetchMock).toHaveBeenNthCalledWith(
-      5,
-      'https://panel.example.test/api/ip-control/drop-connections',
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify({ nodeUuid: 'node-1', userUuid: 'user-1' }),
-      }),
-    );
-
-    expect(userJob).toEqual({ jobId: 'job-user-1' });
-    expect(nodeJob).toEqual({ jobId: 'job-node-1' });
-    expect(userJobResult).toEqual({
-      jobId: 'job-user-1',
-      isCompleted: true,
-      isFailed: false,
-      progress: 100,
-      result: { items: [] },
-    });
-    expect(nodeJobResult).toEqual({
-      jobId: 'job-node-1',
-      isCompleted: false,
-      isFailed: false,
-      progress: null,
-      result: null,
-    });
-    expect(drop).toEqual({ queued: true });
-  });
 });

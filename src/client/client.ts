@@ -1,3 +1,6 @@
+import { request as httpRequest } from 'node:http';
+import { request as httpsRequest } from 'node:https';
+
 import {
   normalizeBillingHistoryResponse,
   normalizeBillingNodesResponse,
@@ -14,6 +17,7 @@ import {
   normalizeNodesResponse,
   normalizeNodePluginsResponse,
   normalizeSubscriptionPolicySettingsResponse,
+  normalizeSubscriptionTemplateResponse,
   normalizeSubscriptionsResponse,
   normalizeSubscriptionTemplatesResponse,
   normalizeSubscriptionPageConfigsResponse,
@@ -68,17 +72,14 @@ const DEFAULT_HEADERS = {
   'X-Forwarded-Proto': 'https',
   'X-Forwarded-For': '127.0.0.1',
 } as const;
+const GET_BODY_REQUEST_TIMEOUT_MS = 30_000;
+const GET_BODY_MAX_RESPONSE_BYTES = 10 * 1024 * 1024;
 
 
 function buildQueryPath(path: string, params: Readonly<Record<string, unknown>> = {}): string {
   const searchParams = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      searchParams.set(key, String(value));
-    }
-    if (typeof value === 'boolean') {
-      searchParams.set(key, String(value));
-    }
+    appendQueryParameter(searchParams, key, value, key === 'filterModes' ? 'deepObject' : undefined);
   }
   const query = searchParams.toString();
   return query === '' ? path : `${path}?${query}`;
@@ -134,11 +135,6 @@ const ROUTES = {
   happEncrypt: '/api/system/tools/happ/encrypt',
   configProfiles: '/api/config-profiles',
   configProfilesInbounds: '/api/config-profiles/inbounds',
-  ipControlFetchIps: '/api/ip-control/fetch-ips',
-  ipControlFetchUsersIps: '/api/ip-control/fetch-users-ips',
-  ipControlFetchIpsResult: '/api/ip-control/fetch-ips/result',
-  ipControlFetchUsersIpsResult: '/api/ip-control/fetch-users-ips/result',
-  ipControlDropConnections: '/api/ip-control/drop-connections',
   infraBillingProviders: '/api/infra-billing/providers',
   infraBillingHistory: '/api/infra-billing/history',
   infraBillingNodes: '/api/infra-billing/nodes',
@@ -148,11 +144,13 @@ export class RemnawaveClient {
   private readonly baseUrl: string;
   private readonly apiToken: string;
   private readonly fetchImpl: typeof globalThis.fetch;
+  private readonly usesDefaultFetch: boolean;
 
   public constructor(options: RemnawaveClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/+$/, '');
     this.apiToken = options.apiToken;
     this.fetchImpl = options.fetch ?? globalThis.fetch;
+    this.usesDefaultFetch = options.fetch === undefined;
   }
 
   public async getNodes(): Promise<NormalizedNodesResponse> {
@@ -251,7 +249,7 @@ export class RemnawaveClient {
     return payload as NormalizedSystemRecap | unknown;
   }
 
-  public async getSubscriptionRequestHistory(params?: { readonly size?: number; readonly start?: number }): Promise<NormalizedSubscriptionRequestHistory | unknown> {
+  public async getSubscriptionRequestHistory(params?: Readonly<Record<string, unknown>>): Promise<NormalizedSubscriptionRequestHistory | unknown> {
     const [items, stats] = await Promise.all([
       this.getJson(buildQueryPath(ROUTES.subscriptionRequestHistory, params)),
       this.getSubscriptionRequestHistoryStats(),
@@ -276,12 +274,12 @@ export class RemnawaveClient {
     return this.getJson(ROUTES.subscriptionRequestHistoryStats);
   }
 
-  public async getUsers(): Promise<NormalizedUsersResponse> {
-    return normalizeUsersResponse(await this.getJson(ROUTES.users));
+  public async getUsers(params?: Readonly<Record<string, unknown>>): Promise<NormalizedUsersResponse> {
+    return normalizeUsersResponse(await this.getJson(buildQueryPath(ROUTES.users, params)));
   }
 
-  public async resolveUser(uuid: string): Promise<NormalizedUsersResolveResponse> {
-    return normalizeUsersResolveResponse(await this.sendJson(ROUTES.usersResolve, { uuid }));
+  public async resolveUser(selector: Readonly<{ id?: number; shortUuid?: string; username?: string }>): Promise<NormalizedUsersResolveResponse> {
+    return normalizeUsersResolveResponse(await this.sendJson(ROUTES.usersResolve, selector));
   }
 
   public async executeOpenApiOperation(
@@ -289,18 +287,18 @@ export class RemnawaveClient {
     payload: Record<string, unknown>,
   ): Promise<unknown> {
     const path = buildOpenApiPath(operation, payload);
-    const body = operation.openapi.method === 'get' || operation.openapi.method === 'delete'
+    const body = operation.openapi.requestSchemaKey === null
       ? undefined
       : omitPathAndQueryParams(payload, operation);
     return this.requestJson(path, operation.openapi.method.toUpperCase() as 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', body);
   }
 
-  public async getUserSubscriptionRequestHistory(userUuid: string): Promise<NormalizedUserSubscriptionHistoryResponse> {
-    return this.requestJson(`${ROUTES.users}/${userUuid}/subscription-request-history`, 'GET') as Promise<NormalizedUserSubscriptionHistoryResponse>;
+  public async getUserSubscriptionRequestHistory(userId: number): Promise<NormalizedUserSubscriptionHistoryResponse> {
+    return this.requestJson(`${ROUTES.users}/${userId}/subscription-request-history`, 'GET') as Promise<NormalizedUserSubscriptionHistoryResponse>;
   }
 
-  public async getUserHwidDevices(userUuid: string): Promise<NormalizedUserHwidDevicesResponse> {
-    return this.requestJson(`${ROUTES.hwidDevices}/${userUuid}`, 'GET') as Promise<NormalizedUserHwidDevicesResponse>;
+  public async getUserHwidDevices(userId: number): Promise<NormalizedUserHwidDevicesResponse> {
+    return this.requestJson(`${ROUTES.hwidDevices}/${userId}`, 'GET') as Promise<NormalizedUserHwidDevicesResponse>;
   }
 
   public async getSubscriptions(params?: { readonly size?: number; readonly start?: number }): Promise<NormalizedSubscriptionsResponse> {
@@ -315,8 +313,8 @@ export class RemnawaveClient {
     return this.getJson(`${ROUTES.subscriptions}/by-short-uuid/${encodeURIComponent(shortUuid)}`);
   }
 
-  public async getSubscriptionByUuid(uuid: string): Promise<unknown> {
-    return this.getJson(`${ROUTES.subscriptions}/by-uuid/${encodeURIComponent(uuid)}`);
+  public async getSubscriptionById(userId: number): Promise<unknown> {
+    return this.getJson(`${ROUTES.subscriptions}/by-id/${encodeURIComponent(userId)}`);
   }
 
   public async getRawSubscriptionByShortUuid(shortUuid: string, params?: { readonly withDisabledHosts?: boolean }): Promise<unknown> {
@@ -327,8 +325,8 @@ export class RemnawaveClient {
     return this.requestJson(`${ROUTES.subscriptions}/subpage-config/${encodeURIComponent(shortUuid)}`, 'GET', body);
   }
 
-  public async getSubscriptionConnectionKeysByUuid(uuid: string): Promise<unknown> {
-    return this.getJson(`${ROUTES.subscriptions}/connection-keys/${encodeURIComponent(uuid)}`);
+  public async getSubscriptionConnectionKeysByUserId(userId: number): Promise<unknown> {
+    return this.getJson(`${ROUTES.subscriptions}/connection-keys/${encodeURIComponent(userId)}`);
   }
 
   public async getSubscriptionPolicySettings(): Promise<NormalizedSubscriptionPolicySettings> {
@@ -383,12 +381,12 @@ export class RemnawaveClient {
     return this.requestJson(ROUTES.internalSquads, 'PATCH', { uuid: squadUuid, ...patch });
   }
 
-  public async bulkAddUsersToInternalSquad(squadUuid: string, userUuids: readonly string[]): Promise<unknown> {
-    return this.sendJson(`${ROUTES.internalSquads}/${squadUuid}/bulk-actions/add-users`, { userUuids });
+  public async bulkAddUsersToInternalSquad(squadUuid: string): Promise<unknown> {
+    return this.requestJson(`${ROUTES.internalSquads}/${squadUuid}/bulk-actions/add-users`, 'POST');
   }
 
-  public async bulkRemoveUsersFromInternalSquad(squadUuid: string, userUuids: readonly string[]): Promise<unknown> {
-    return this.sendJson(`${ROUTES.internalSquads}/${squadUuid}/bulk-actions/remove-users`, { userUuids });
+  public async bulkRemoveUsersFromInternalSquad(squadUuid: string): Promise<unknown> {
+    return this.requestJson(`${ROUTES.internalSquads}/${squadUuid}/bulk-actions/remove-users`, 'DELETE');
   }
 
   public async getExternalSquads(): Promise<NormalizedExternalSquadsResponse> {
@@ -498,12 +496,12 @@ export class RemnawaveClient {
     return this.requestJson(ROUTES.externalSquads, 'PATCH', { uuid: squadUuid, ...patch });
   }
 
-  public async bulkAddUsersToExternalSquad(squadUuid: string, userUuids: readonly string[]): Promise<unknown> {
-    return this.sendJson(`${ROUTES.externalSquads}/${squadUuid}/bulk-actions/add-users`, { userUuids });
+  public async bulkAddUsersToExternalSquad(squadUuid: string): Promise<unknown> {
+    return this.requestJson(`${ROUTES.externalSquads}/${squadUuid}/bulk-actions/add-users`, 'POST');
   }
 
-  public async bulkRemoveUsersFromExternalSquad(squadUuid: string, userUuids: readonly string[]): Promise<unknown> {
-    return this.sendJson(`${ROUTES.externalSquads}/${squadUuid}/bulk-actions/remove-users`, { userUuids });
+  public async bulkRemoveUsersFromExternalSquad(squadUuid: string): Promise<unknown> {
+    return this.requestJson(`${ROUTES.externalSquads}/${squadUuid}/bulk-actions/remove-users`, 'DELETE');
   }
 
   public async reorderExternalSquads(orderedSquadUuids: readonly string[]): Promise<unknown> {
@@ -535,12 +533,9 @@ export class RemnawaveClient {
   }
 
   public async getSubscriptionTemplateByUuid(templateUuid: string): Promise<NormalizedSubscriptionTemplatesResponse['items'][number]> {
-    const templates = await this.getSubscriptionTemplates();
-    const match = templates.items.find((entry) => entry.uuid === templateUuid);
-    if (match === undefined) {
-      throw new Error('Subscription template was not found.');
-    }
-    return match;
+    return normalizeSubscriptionTemplateResponse(
+      await this.getJson(`${ROUTES.subscriptionTemplates}/${encodeURIComponent(templateUuid)}`),
+    );
   }
 
   public async createSubscriptionTemplate(payload: Record<string, unknown>): Promise<unknown> {
@@ -615,12 +610,12 @@ export class RemnawaveClient {
     return this.requestJson(ROUTES.snippets, 'DELETE', { name: snippetName });
   }
 
-  public async getUserMetadata(userUuid: string): Promise<unknown> {
-    return this.getJson(`${ROUTES.userMetadata}/${userUuid}`);
+  public async getUserMetadata(userId: number): Promise<unknown> {
+    return this.getJson(`${ROUTES.userMetadata}/${userId}`);
   }
 
-  public async upsertUserMetadata(userUuid: string, payload: Record<string, unknown>): Promise<unknown> {
-    return this.requestJson(`${ROUTES.userMetadata}/${userUuid}`, 'PUT', payload);
+  public async upsertUserMetadata(userId: number, payload: Record<string, unknown>): Promise<unknown> {
+    return this.requestJson(`${ROUTES.userMetadata}/${userId}`, 'PUT', payload);
   }
 
   public async getKeygenMaterial(): Promise<unknown> {
@@ -646,36 +641,36 @@ export class RemnawaveClient {
     });
   }
 
-  public async regenerateSubscription(userUuid: string): Promise<unknown> {
-    return this.requestJson(`${ROUTES.users}/${userUuid}/actions/revoke`, 'POST', { revokeOnlyPasswords: true });
+  public async regenerateSubscription(userId: number): Promise<unknown> {
+    return this.requestJson(`${ROUTES.users}/${userId}/actions/revoke`, 'POST', { revokeOnlyPasswords: true });
   }
 
-  public async repairSubscription(userUuid: string): Promise<unknown> {
-    return this.requestJson(`${ROUTES.users}/${userUuid}/actions/enable`, 'POST');
+  public async repairSubscription(userId: number): Promise<unknown> {
+    return this.requestJson(`${ROUTES.users}/${userId}/actions/enable`, 'POST');
   }
 
   public async createUser(payload: Record<string, unknown>): Promise<unknown> {
     return this.sendJson(ROUTES.users, payload);
   }
 
-  public async patchUserSettings(userUuid: string, settings: Record<string, unknown>): Promise<unknown> {
-    return this.requestJson(ROUTES.users, 'PATCH', { uuid: userUuid, ...settings });
+  public async patchUserSettings(userId: number, settings: Record<string, unknown>): Promise<unknown> {
+    return this.requestJson(ROUTES.users, 'PATCH', { id: userId, ...settings });
   }
 
   public async setUserState(
-    userUuid: string,
+    userId: number,
     action: 'enable' | 'disable' | 'revoke' | 'reset-traffic',
     body?: Record<string, unknown>,
   ): Promise<unknown> {
-    return this.requestJson(`${ROUTES.users}/${userUuid}/actions/${action}`, 'POST', body);
+    return this.requestJson(`${ROUTES.users}/${userId}/actions/${action}`, 'POST', body);
   }
 
-  public async deleteUserHwidDevice(userUuid: string, hwid: string): Promise<unknown> {
-    return this.sendJson(ROUTES.hwidDelete, { userUuid, hwid });
+  public async deleteUserHwidDevice(userId: number, hwid: string): Promise<unknown> {
+    return this.sendJson(ROUTES.hwidDelete, { userId, hwid });
   }
 
-  public async revokeUserSubscription(userUuid: string): Promise<unknown> {
-    return this.setUserState(userUuid, 'revoke', { revokeOnlyPasswords: true });
+  public async revokeUserSubscription(userId: number): Promise<unknown> {
+    return this.setUserState(userId, 'revoke', { revokeOnlyPasswords: true });
   }
 
   public async getSystemStats(): Promise<NormalizedSystemStats> {
@@ -755,26 +750,6 @@ export class RemnawaveClient {
     return normalizeHwidInspectionResponse(await this.getJson(ROUTES.hwidInspection));
   }
 
-  public async fetchIpsForUser(userUuid: string): Promise<unknown> {
-    return this.requestJson(`${ROUTES.ipControlFetchIps}/${userUuid}`, 'POST');
-  }
-
-  public async fetchUsersIpsForNode(nodeUuid: string): Promise<unknown> {
-    return this.requestJson(`${ROUTES.ipControlFetchUsersIps}/${nodeUuid}`, 'POST');
-  }
-
-  public async getUserIpsFetchJobResult(jobId: string): Promise<unknown> {
-    return this.getJson(`${ROUTES.ipControlFetchIpsResult}/${jobId}`);
-  }
-
-  public async getNodeUsersIpsFetchJobResult(jobId: string): Promise<unknown> {
-    return this.getJson(`${ROUTES.ipControlFetchUsersIpsResult}/${jobId}`);
-  }
-
-  public async dropConnections(payload: Record<string, unknown>): Promise<unknown> {
-    return this.sendJson(ROUTES.ipControlDropConnections, payload);
-  }
-
   private async getJson(path: string): Promise<unknown> {
     return this.requestJson(path, 'GET');
   }
@@ -784,14 +759,15 @@ export class RemnawaveClient {
   }
 
   private async requestJson(path: string, method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', body?: unknown): Promise<unknown> {
-    const response = await this.fetchImpl(`${this.baseUrl}${path}`, {
-      method,
-      headers: {
-        ...DEFAULT_HEADERS,
-        Authorization: `Bearer ${this.apiToken}`,
-      },
-      body: body === undefined ? undefined : JSON.stringify(body),
-    });
+    const url = `${this.baseUrl}${path}`;
+    const headers = {
+      ...DEFAULT_HEADERS,
+      Authorization: `Bearer ${this.apiToken}`,
+    };
+    const serializedBody = body === undefined ? undefined : JSON.stringify(body);
+    const response = method === 'GET' && serializedBody !== undefined && this.usesDefaultFetch
+      ? await requestGetWithJsonBody(url, headers, serializedBody)
+      : await this.fetchImpl(url, { method, headers, body: serializedBody });
 
     const payload = await parseResponseBody(response);
 
@@ -802,6 +778,66 @@ export class RemnawaveClient {
 
     return payload;
   }
+}
+
+async function requestGetWithJsonBody(
+  url: string,
+  headers: Readonly<Record<string, string>>,
+  body: string,
+): Promise<Response> {
+  const target = new URL(url);
+  const request = target.protocol === 'https:'
+    ? httpsRequest
+    : target.protocol === 'http:'
+      ? httpRequest
+      : null;
+  if (request === null) {
+    throw new TypeError(`Unsupported Remnawave URL protocol: ${target.protocol}`);
+  }
+
+  return new Promise<Response>((resolve, reject) => {
+    const outgoing = request(target, {
+      method: 'GET',
+      headers: {
+        ...headers,
+        'Content-Length': String(Buffer.byteLength(body)),
+      },
+    }, (incoming) => {
+      const chunks: Buffer[] = [];
+      let receivedBytes = 0;
+      incoming.on('data', (chunk: Buffer | string) => {
+        const buffer = typeof chunk === 'string' ? Buffer.from(chunk) : chunk;
+        receivedBytes += buffer.length;
+        if (receivedBytes > GET_BODY_MAX_RESPONSE_BYTES) {
+          incoming.destroy(new Error(`Remnawave response exceeds ${GET_BODY_MAX_RESPONSE_BYTES} bytes.`));
+          return;
+        }
+        chunks.push(buffer);
+      });
+      incoming.on('error', reject);
+      incoming.on('end', () => {
+        const responseHeaders = new Headers();
+        for (const [name, value] of Object.entries(incoming.headers)) {
+          if (Array.isArray(value)) {
+            for (const item of value) responseHeaders.append(name, item);
+          } else if (value !== undefined) {
+            responseHeaders.set(name, value);
+          }
+        }
+        const responseBody = Buffer.concat(chunks);
+        resolve(new Response(responseBody.length === 0 ? null : responseBody, {
+          status: incoming.statusCode ?? 500,
+          statusText: incoming.statusMessage,
+          headers: responseHeaders,
+        }));
+      });
+    });
+    outgoing.on('error', reject);
+    outgoing.setTimeout(GET_BODY_REQUEST_TIMEOUT_MS, () => {
+      outgoing.destroy(new Error(`Remnawave request timed out after ${GET_BODY_REQUEST_TIMEOUT_MS} ms.`));
+    });
+    outgoing.end(body);
+  });
 }
 
 async function parseResponseBody(response: Response): Promise<unknown> {
@@ -821,13 +857,15 @@ function buildOpenApiPath(operation: RemnawaveSupportedOperationContract, payloa
     return encodeURIComponent(typeof value === 'string' || typeof value === 'number' ? String(value) : '');
   });
 
-  const queryParameterNames = getOpenApiParameterNames(operation.key, 'query');
+  const queryParameters = getOpenApiParameters(operation.key, 'query');
   const query = new URLSearchParams();
-  for (const key of queryParameterNames) {
-    const value = payload[key];
-    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-      query.set(key, String(value));
-    }
+  for (const parameter of queryParameters) {
+    appendQueryParameter(
+      query,
+      parameter.name,
+      payload[parameter.name],
+      'style' in parameter && parameter.style === 'deepObject' ? 'deepObject' : undefined,
+    );
   }
   const queryString = query.toString();
   if (queryString !== '') {
@@ -848,10 +886,45 @@ function omitPathAndQueryParams(payload: Record<string, unknown>, operation: Rem
 }
 
 function getOpenApiParameterNames(operationKey: string, location: 'path' | 'query'): readonly string[] {
+  return getOpenApiParameters(operationKey, location).map((parameter) => parameter.name);
+}
+
+function getOpenApiParameters(operationKey: string, location: 'path' | 'query') {
   const operation = REMNAWAVE_OPENAPI_EXTRACT.operations.find((entry) => entry.key === operationKey);
   return operation?.parameters
-    .filter((parameter) => parameter.in === location)
-    .map((parameter) => parameter.name) ?? [];
+    .filter((parameter) => parameter.in === location) ?? [];
+}
+
+function appendQueryParameter(
+  query: URLSearchParams,
+  name: string,
+  value: unknown,
+  style?: 'deepObject',
+): void {
+  if (typeof value === 'string' || typeof value === 'boolean' || (typeof value === 'number' && Number.isFinite(value))) {
+    query.set(name, String(value));
+    return;
+  }
+
+  if (style === 'deepObject' && isPlainRecord(value)) {
+    for (const [property, nestedValue] of Object.entries(value)) {
+      if (typeof nestedValue === 'string' || typeof nestedValue === 'boolean' || (typeof nestedValue === 'number' && Number.isFinite(nestedValue))) {
+        query.set(`${name}[${property}]`, String(nestedValue));
+      }
+    }
+    return;
+  }
+
+  if (Array.isArray(value) || isPlainRecord(value)) {
+    const encoded = JSON.stringify(value);
+    if (encoded !== undefined) {
+      query.set(name, encoded);
+    }
+  }
+}
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function extractErrorMessage(payload: unknown, fallback: string): string {

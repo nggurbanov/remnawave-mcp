@@ -546,7 +546,6 @@ function uuidEntityReader(domain: string, client: RemnawaveApiClient): ((uuid: s
   if (domain === 'profiles' && client.getProfile !== undefined) return client.getProfile;
   if (domain === 'nodes' && client.getNode !== undefined) return client.getNode;
   if (domain === 'external_squads' && client.getExternalSquadByUuid !== undefined) return client.getExternalSquadByUuid;
-  if (domain === 'subscriptions' && client.getSubscriptionByUuid !== undefined) return client.getSubscriptionByUuid;
   if (domain === 'metadata' && client.getNodeMetadata !== undefined) return client.getNodeMetadata;
   return null;
 }

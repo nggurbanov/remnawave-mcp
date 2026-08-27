@@ -6,10 +6,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
   "metadata": {
     "generatedAt": "static",
     "openapi": "3.0.0",
-    "source": "remnawave-openapi-2.8.1.json",
-    "title": "Remnawave API v2.8.1",
-    "totalOperations": 186,
-    "version": "2.8.1"
+    "source": "remnawave-openapi-3.3.2.json",
+    "title": "Remnawave API v3.3.2",
+    "totalOperations": 205,
+    "version": "3.3.2"
   },
   "operations": [
     {
@@ -20,12 +20,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "AuthController_login",
         "path": "/api/auth/login",
-        "requestSchemaKey": "LoginRequestDto",
+        "requestSchemaKey": "LoginBodyDto",
         "responseSchemaKeys": [
+          "200:LoginResponseDto",
           "400:AuthController_login.responses.400",
-          "401:AuthController_login.responses.401",
-          "500:AuthController_login.responses.500",
-          "default:LoginResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_auth_controller_login_auth_login",
@@ -39,11 +39,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "AuthController_oauth2Authorize",
         "path": "/api/auth/oauth2/authorize",
-        "requestSchemaKey": "OAuth2AuthorizeRequestDto",
+        "requestSchemaKey": "OAuth2AuthorizeBodyDto",
         "responseSchemaKeys": [
+          "200:OAuth2AuthorizeResponseDto",
           "400:AuthController_oauth2Authorize.responses.400",
-          "500:AuthController_oauth2Authorize.responses.500",
-          "default:OAuth2AuthorizeResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_auth_controller_oauth2_authorize_auth_oauth2_authorize",
@@ -57,11 +58,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "AuthController_oauth2Callback",
         "path": "/api/auth/oauth2/callback",
-        "requestSchemaKey": "OAuth2CallbackRequestDto",
+        "requestSchemaKey": "OAuth2CallbackBodyDto",
         "responseSchemaKeys": [
+          "200:OAuth2CallbackResponseDto",
           "400:AuthController_oauth2Callback.responses.400",
-          "500:AuthController_oauth2Callback.responses.500",
-          "default:OAuth2CallbackResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_auth_controller_oauth2_callback_auth_oauth2_callback",
@@ -77,9 +79,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/auth/passkey/authentication/options",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
+          "200:GetPasskeyAuthenticationOptionsResponseDto",
           "400:AuthController_passkeyAuthenticationOptions.responses.400",
-          "500:AuthController_passkeyAuthenticationOptions.responses.500",
-          "default:GetPasskeyAuthenticationOptionsResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_auth_controller_passkey_authentication_options_auth_passkey_authentication_options",
@@ -93,11 +96,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "AuthController_passkeyAuthenticationVerify",
         "path": "/api/auth/passkey/authentication/verify",
-        "requestSchemaKey": "VerifyPasskeyAuthenticationRequestDto",
+        "requestSchemaKey": "VerifyPasskeyAuthenticationBodyDto",
         "responseSchemaKeys": [
+          "200:VerifyPasskeyAuthenticationResponseDto",
           "400:AuthController_passkeyAuthenticationVerify.responses.400",
-          "500:AuthController_passkeyAuthenticationVerify.responses.500",
-          "default:VerifyPasskeyAuthenticationResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_auth_controller_passkey_authentication_verify_auth_passkey_authentication_verify",
@@ -111,12 +115,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "AuthController_register",
         "path": "/api/auth/register",
-        "requestSchemaKey": "RegisterRequestDto",
+        "requestSchemaKey": "RegisterBodyDto",
         "responseSchemaKeys": [
+          "201:RegisterResponseDto",
           "400:AuthController_register.responses.400",
-          "403:AuthController_register.responses.403",
-          "500:AuthController_register.responses.500",
-          "default:RegisterResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_auth_controller_register_auth_register",
@@ -132,12 +136,51 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/auth/status",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
+          "200:GetStatusResponseDto",
           "400:AuthController_getStatus.responses.400",
-          "500:AuthController_getStatus.responses.500",
-          "default:GetStatusResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_auth_controller_get_status_auth_status",
+      "status": "excluded"
+    },
+    {
+      "domain": "bandwidth_stats",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "bandwidth_stats.get_internal_squad_stats_controller_get_internal_squad_user_usage_bandwidth_stats_internal_squads_squad_uuid_users_user_id_usage",
+      "openapi": {
+        "method": "get",
+        "operationId": "InternalSquadStatsController_getInternalSquadUserUsage",
+        "path": "/api/bandwidth-stats/internal-squads/{squadUuid}/users/{userId}/usage",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetInternalSquadUserUsageResponseDto",
+          "400:InternalSquadStatsController_getInternalSquadUserUsage.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_internal_squad_stats_controller_get_internal_squad_user_usage_bandwidth_stats_internal_squads_squad_uuid_users_user_id_usage",
+      "status": "excluded"
+    },
+    {
+      "domain": "bandwidth_stats",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "bandwidth_stats.get_internal_squad_stats_controller_get_internal_squad_usage_bandwidth_stats_internal_squads_uuid_usage",
+      "openapi": {
+        "method": "get",
+        "operationId": "InternalSquadStatsController_getInternalSquadUsage",
+        "path": "/api/bandwidth-stats/internal-squads/{uuid}/usage",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetInternalSquadUsageResponseDto",
+          "400:InternalSquadStatsController_getInternalSquadUsage.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_internal_squad_stats_controller_get_internal_squad_usage_bandwidth_stats_internal_squads_uuid_usage",
       "status": "excluded"
     },
     {
@@ -152,7 +195,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetStatsNodesUsageResponseDto",
           "400:NodesUsageHistoryController_getStatsNodesUsage.responses.400",
-          "500:NodesUsageHistoryController_getStatsNodesUsage.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list_nodes_usage",
@@ -170,16 +214,36 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     {
       "domain": "bandwidth_stats",
       "exclusionReason": "not_selected_initial_inventory",
+      "key": "bandwidth_stats.post_bandwidth_stats_nodes_controller_get_node_usage_bandwidth_stats_nodes_usage",
+      "openapi": {
+        "method": "post",
+        "operationId": "BandwidthStatsNodesController_getNodeUsage",
+        "path": "/api/bandwidth-stats/nodes/usage",
+        "requestSchemaKey": "GetNodeUsageBodyDto",
+        "responseSchemaKeys": [
+          "200:GetNodeUsageResponseDto",
+          "400:BandwidthStatsNodesController_getNodeUsage.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_bandwidth_stats_nodes_controller_get_node_usage_bandwidth_stats_nodes_usage",
+      "status": "excluded"
+    },
+    {
+      "domain": "bandwidth_stats",
+      "exclusionReason": "not_selected_initial_inventory",
       "key": "bandwidth_stats.post_bandwidth_stats_nodes_controller_get_stats_nodes_users_usage_bandwidth_stats_nodes_users",
       "openapi": {
         "method": "post",
         "operationId": "BandwidthStatsNodesController_getStatsNodesUsersUsage",
         "path": "/api/bandwidth-stats/nodes/users",
-        "requestSchemaKey": "GetStatsNodesUsersUsageRequestDto",
+        "requestSchemaKey": "GetStatsNodesUsersUsageBodyDto",
         "responseSchemaKeys": [
           "200:GetStatsNodesUsersUsageResponseDto",
           "400:BandwidthStatsNodesController_getStatsNodesUsersUsage.responses.400",
-          "500:BandwidthStatsNodesController_getStatsNodesUsersUsage.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_bandwidth_stats_nodes_controller_get_stats_nodes_users_usage_bandwidth_stats_nodes_users",
@@ -197,7 +261,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetStatsNodeUsersUsageResponseDto",
           "400:BandwidthStatsNodesController_getStatsNodeUsersUsage.responses.400",
-          "500:BandwidthStatsNodesController_getStatsNodeUsersUsage.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_node_users_usage",
@@ -214,44 +279,18 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "bandwidth_stats",
-      "key": "bandwidth_stats.get_node_user_usage_legacy",
-      "normalizer": "none",
-      "openapi": {
-        "method": "get",
-        "operationId": "BandwidthStatsNodesController_getNodeUserUsage",
-        "path": "/api/bandwidth-stats/nodes/{uuid}/users/legacy",
-        "requestSchemaKey": null,
-        "responseSchemaKeys": [
-          "200:GetLegacyStatsNodesUsersUsageResponseDto",
-          "400:BandwidthStatsNodesController_getNodeUserUsage.responses.400",
-          "500:BandwidthStatsNodesController_getNodeUserUsage.responses.500"
-        ]
-      },
-      "operation": "get_node_user_usage_legacy",
-      "rawAllowed": false,
-      "rawPolicy": "raw_denied",
-      "riskTier": "tier1",
-      "safetyMode": "direct",
-      "sideEffects": {
-        "kind": "none",
-        "summary": "Reads bandwidth_stats.get_node_user_usage_legacy without mutating panel state."
-      },
-      "status": "supported",
-      "write": false
-    },
-    {
-      "domain": "bandwidth_stats",
       "key": "bandwidth_stats.get_user_usage",
       "normalizer": "none",
       "openapi": {
         "method": "get",
         "operationId": "BandwidthStatsUsersController_getStatsNodesUsage",
-        "path": "/api/bandwidth-stats/users/{uuid}",
+        "path": "/api/bandwidth-stats/users/{userId}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
           "200:GetStatsUserUsageResponseDto",
           "400:BandwidthStatsUsersController_getStatsNodesUsage.responses.400",
-          "500:BandwidthStatsUsersController_getStatsNodesUsage.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_user_usage",
@@ -262,33 +301,6 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "sideEffects": {
         "kind": "none",
         "summary": "Reads bandwidth_stats.get_user_usage without mutating panel state."
-      },
-      "status": "supported",
-      "write": false
-    },
-    {
-      "domain": "bandwidth_stats",
-      "key": "bandwidth_stats.get_user_usage_legacy",
-      "normalizer": "none",
-      "openapi": {
-        "method": "get",
-        "operationId": "BandwidthStatsUsersController_getUserUsageByRange",
-        "path": "/api/bandwidth-stats/users/{uuid}/legacy",
-        "requestSchemaKey": null,
-        "responseSchemaKeys": [
-          "200:GetLegacyStatsUserUsageResponseDto",
-          "400:BandwidthStatsUsersController_getUserUsageByRange.responses.400",
-          "500:BandwidthStatsUsersController_getUserUsageByRange.responses.500"
-        ]
-      },
-      "operation": "get_user_usage_legacy",
-      "rawAllowed": false,
-      "rawPolicy": "raw_denied",
-      "riskTier": "tier1",
-      "safetyMode": "direct",
-      "sideEffects": {
-        "kind": "none",
-        "summary": "Reads bandwidth_stats.get_user_usage_legacy without mutating panel state."
       },
       "status": "supported",
       "write": false
@@ -305,7 +317,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetConfigProfilesResponseDto",
           "400:ConfigProfileController_getConfigProfiles.responses.400",
-          "500:ConfigProfileController_getConfigProfiles.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -328,11 +341,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "ConfigProfileController_updateConfigProfile",
         "path": "/api/config-profiles",
-        "requestSchemaKey": "UpdateConfigProfileRequestDto",
+        "requestSchemaKey": "UpdateConfigProfileBodyDto",
         "responseSchemaKeys": [
           "200:UpdateConfigProfileResponseDto",
           "400:ConfigProfileController_updateConfigProfile.responses.400",
-          "500:ConfigProfileController_updateConfigProfile.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update",
@@ -355,11 +369,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "ConfigProfileController_createConfigProfile",
         "path": "/api/config-profiles",
-        "requestSchemaKey": "CreateConfigProfileRequestDto",
+        "requestSchemaKey": "CreateConfigProfileBodyDto",
         "responseSchemaKeys": [
           "201:CreateConfigProfileResponseDto",
           "400:ConfigProfileController_createConfigProfile.responses.400",
-          "500:ConfigProfileController_createConfigProfile.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create",
@@ -382,11 +397,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "ConfigProfileController_reorderConfigProfiles",
         "path": "/api/config-profiles/actions/reorder",
-        "requestSchemaKey": "ReorderConfigProfilesRequestDto",
+        "requestSchemaKey": "ReorderConfigProfilesBodyDto",
         "responseSchemaKeys": [
           "200:ReorderConfigProfilesResponseDto",
           "400:ConfigProfileController_reorderConfigProfiles.responses.400",
-          "500:ConfigProfileController_reorderConfigProfiles.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "reorder",
@@ -413,7 +429,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetAllInboundsResponseDto",
           "400:ConfigProfileController_getAllInbounds.responses.400",
-          "500:ConfigProfileController_getAllInbounds.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list_all_inbounds",
@@ -438,9 +455,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/config-profiles/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteConfigProfileResponseDto",
           "400:ConfigProfileController_deleteConfigProfileByUuid.responses.400",
-          "500:ConfigProfileController_deleteConfigProfileByUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete",
@@ -467,7 +484,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetConfigProfileByUuidResponseDto",
           "400:ConfigProfileController_getConfigProfileByUuid.responses.400",
-          "500:ConfigProfileController_getConfigProfileByUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get",
@@ -494,7 +512,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetComputedConfigProfileByUuidResponseDto",
           "400:ConfigProfileController_getComputedConfigProfileByUuid.responses.400",
-          "500:ConfigProfileController_getComputedConfigProfileByUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_computed",
@@ -521,7 +540,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetInboundsByProfileUuidResponseDto",
           "400:ConfigProfileController_getInboundsByProfileUuid.responses.400",
-          "500:ConfigProfileController_getInboundsByProfileUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list_inbounds",
@@ -537,6 +557,138 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "write": false
     },
     {
+      "domain": "connections",
+      "exclusionReason": "excluded_connections",
+      "key": "connections.get_connections_controller_connections_by_node_result_connections_by_node_job_id",
+      "openapi": {
+        "method": "get",
+        "operationId": "ConnectionsController_connectionsByNodeResult",
+        "path": "/api/connections/by-node/{jobId}",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:ConnectionsByNodeResultResponseDto",
+          "400:ConnectionsController_connectionsByNodeResult.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_connections_controller_connections_by_node_result_connections_by_node_job_id",
+      "status": "excluded"
+    },
+    {
+      "domain": "connections",
+      "exclusionReason": "excluded_connections",
+      "key": "connections.post_connections_controller_connections_by_node_connections_by_node_node_uuid",
+      "openapi": {
+        "method": "post",
+        "operationId": "ConnectionsController_connectionsByNode",
+        "path": "/api/connections/by-node/{nodeUuid}",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "201:ConnectionsByNodeResponseDto",
+          "400:ConnectionsController_connectionsByNode.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_connections_controller_connections_by_node_connections_by_node_node_uuid",
+      "status": "excluded"
+    },
+    {
+      "domain": "connections",
+      "exclusionReason": "excluded_connections",
+      "key": "connections.get_connections_controller_connections_by_user_result_connections_by_user_job_id",
+      "openapi": {
+        "method": "get",
+        "operationId": "ConnectionsController_connectionsByUserResult",
+        "path": "/api/connections/by-user/{jobId}",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:ConnectionsByUserResultResponseDto",
+          "400:ConnectionsController_connectionsByUserResult.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_connections_controller_connections_by_user_result_connections_by_user_job_id",
+      "status": "excluded"
+    },
+    {
+      "domain": "connections",
+      "exclusionReason": "excluded_connections",
+      "key": "connections.post_connections_controller_connections_by_user_connections_by_user_user_id",
+      "openapi": {
+        "method": "post",
+        "operationId": "ConnectionsController_connectionsByUser",
+        "path": "/api/connections/by-user/{userId}",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "201:ConnectionsByUserResponseDto",
+          "400:ConnectionsController_connectionsByUser.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_connections_controller_connections_by_user_connections_by_user_user_id",
+      "status": "excluded"
+    },
+    {
+      "domain": "connections",
+      "exclusionReason": "excluded_connections",
+      "key": "connections.post_connections_controller_drop_connections_connections_drop",
+      "openapi": {
+        "method": "post",
+        "operationId": "ConnectionsController_dropConnections",
+        "path": "/api/connections/drop",
+        "requestSchemaKey": "DropConnectionsBodyDto",
+        "responseSchemaKeys": [
+          "400:ConnectionsController_dropConnections.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_connections_controller_drop_connections_connections_drop",
+      "status": "excluded"
+    },
+    {
+      "domain": "connections",
+      "exclusionReason": "excluded_connections",
+      "key": "connections.get_connections_controller_geocheck_by_node_result_connections_geocheck_job_id",
+      "openapi": {
+        "method": "get",
+        "operationId": "ConnectionsController_geocheckByNodeResult",
+        "path": "/api/connections/geocheck/{jobId}",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GeocheckByNodeResultResponseDto",
+          "400:ConnectionsController_geocheckByNodeResult.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_connections_controller_geocheck_by_node_result_connections_geocheck_job_id",
+      "status": "excluded"
+    },
+    {
+      "domain": "connections",
+      "exclusionReason": "excluded_connections",
+      "key": "connections.post_connections_controller_geocheck_by_node_connections_geocheck_node_uuid",
+      "openapi": {
+        "method": "post",
+        "operationId": "ConnectionsController_geocheckByNode",
+        "path": "/api/connections/geocheck/{nodeUuid}",
+        "requestSchemaKey": "GeocheckByNodeBodyDto",
+        "responseSchemaKeys": [
+          "201:GeocheckByNodeResponseDto",
+          "400:ConnectionsController_geocheckByNode.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_connections_controller_geocheck_by_node_connections_geocheck_node_uuid",
+      "status": "excluded"
+    },
+    {
       "domain": "external_squads",
       "key": "external_squads.list",
       "normalizer": "none",
@@ -548,7 +700,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetExternalSquadsResponseDto",
           "400:ExternalSquadController_getExternalSquads.responses.400",
-          "500:ExternalSquadController_getExternalSquads.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -571,11 +724,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "ExternalSquadController_updateExternalSquad",
         "path": "/api/external-squads",
-        "requestSchemaKey": "UpdateExternalSquadRequestDto",
+        "requestSchemaKey": "UpdateExternalSquadBodyDto",
         "responseSchemaKeys": [
           "200:UpdateExternalSquadResponseDto",
           "400:ExternalSquadController_updateExternalSquad.responses.400",
-          "500:ExternalSquadController_updateExternalSquad.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update",
@@ -598,11 +752,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "ExternalSquadController_createExternalSquad",
         "path": "/api/external-squads",
-        "requestSchemaKey": "CreateExternalSquadRequestDto",
+        "requestSchemaKey": "CreateExternalSquadBodyDto",
         "responseSchemaKeys": [
           "201:CreateExternalSquadResponseDto",
           "400:ExternalSquadController_createExternalSquad.responses.400",
-          "500:ExternalSquadController_createExternalSquad.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create",
@@ -625,11 +780,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "ExternalSquadController_reorderExternalSquads",
         "path": "/api/external-squads/actions/reorder",
-        "requestSchemaKey": "ReorderExternalSquadsRequestDto",
+        "requestSchemaKey": "ReorderExternalSquadsBodyDto",
         "responseSchemaKeys": [
           "200:ReorderExternalSquadsResponseDto",
           "400:ExternalSquadController_reorderExternalSquads.responses.400",
-          "500:ExternalSquadController_reorderExternalSquads.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "reorder",
@@ -654,9 +810,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/external-squads/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteExternalSquadResponseDto",
           "400:ExternalSquadController_deleteExternalSquad.responses.400",
-          "500:ExternalSquadController_deleteExternalSquad.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete",
@@ -683,7 +839,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetExternalSquadByUuidResponseDto",
           "400:ExternalSquadController_getExternalSquadByUuid.responses.400",
-          "500:ExternalSquadController_getExternalSquadByUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get",
@@ -708,16 +865,16 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/external-squads/{uuid}/bulk-actions/add-users",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:AddUsersToExternalSquadResponseDto",
           "400:ExternalSquadController_addUsersToExternalSquad.responses.400",
-          "500:ExternalSquadController_addUsersToExternalSquad.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "add_users",
       "rawAllowed": false,
       "rawPolicy": "raw_denied",
-      "riskTier": "tier2",
-      "safetyMode": "direct",
+      "riskTier": "tier3",
+      "safetyMode": "confirm",
       "sideEffects": {
         "kind": "update",
         "summary": "Executes external_squads.add_users through its OpenAPI endpoint."
@@ -735,16 +892,16 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/external-squads/{uuid}/bulk-actions/remove-users",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:RemoveUsersFromExternalSquadResponseDto",
           "400:ExternalSquadController_removeUsersFromExternalSquad.responses.400",
-          "500:ExternalSquadController_removeUsersFromExternalSquad.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "remove_users",
       "rawAllowed": false,
       "rawPolicy": "raw_denied",
-      "riskTier": "tier2",
-      "safetyMode": "direct",
+      "riskTier": "tier3",
+      "safetyMode": "confirm",
       "sideEffects": {
         "kind": "update",
         "summary": "Executes external_squads.remove_users through its OpenAPI endpoint."
@@ -758,13 +915,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "get",
-        "operationId": "HostsController_getAllHosts",
+        "operationId": "HostsController_getHosts",
         "path": "/api/hosts",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetAllHostsResponseDto",
-          "400:HostsController_getAllHosts.responses.400",
-          "500:HostsController_getAllHosts.responses.500"
+          "200:GetHostsResponseDto",
+          "400:HostsController_getHosts.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -787,11 +945,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "HostsController_updateHost",
         "path": "/api/hosts",
-        "requestSchemaKey": "UpdateHostRequestDto",
+        "requestSchemaKey": "UpdateHostBodyDto",
         "responseSchemaKeys": [
-          "200:UpdateHostResponseDto",
+          "200:HostResponseDto",
           "400:HostsController_updateHost.responses.400",
-          "500:HostsController_updateHost.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update",
@@ -814,11 +973,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "HostsController_createHost",
         "path": "/api/hosts",
-        "requestSchemaKey": "CreateHostRequestDto",
+        "requestSchemaKey": "CreateHostBodyDto",
         "responseSchemaKeys": [
-          "201:CreateHostResponseDto",
+          "201:HostResponseDto",
           "400:HostsController_createHost.responses.400",
-          "500:HostsController_createHost.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create",
@@ -841,11 +1001,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "HostsController_reorderHosts",
         "path": "/api/hosts/actions/reorder",
-        "requestSchemaKey": "ReorderHostRequestDto",
+        "requestSchemaKey": "ReorderHostsBodyDto",
         "responseSchemaKeys": [
-          "200:ReorderHostResponseDto",
+          "200:ReorderHostsResponseDto",
           "400:HostsController_reorderHosts.responses.400",
-          "500:HostsController_reorderHosts.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "reorder",
@@ -868,11 +1029,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "HostsBulkActionsController_deleteHosts",
         "path": "/api/hosts/bulk/delete",
-        "requestSchemaKey": "BulkDeleteHostsRequestDto",
+        "requestSchemaKey": "BulkDeleteHostsBodyDto",
         "responseSchemaKeys": [
-          "200:BulkDeleteHostsResponseDto",
           "400:HostsBulkActionsController_deleteHosts.responses.400",
-          "500:HostsBulkActionsController_deleteHosts.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_delete",
@@ -895,11 +1056,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "HostsBulkActionsController_disableHosts",
         "path": "/api/hosts/bulk/disable",
-        "requestSchemaKey": "BulkDisableHostsRequestDto",
+        "requestSchemaKey": "BulkDisableHostsBodyDto",
         "responseSchemaKeys": [
-          "200:BulkDisableHostsResponseDto",
           "400:HostsBulkActionsController_disableHosts.responses.400",
-          "500:HostsBulkActionsController_disableHosts.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_disable",
@@ -922,11 +1083,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "HostsBulkActionsController_enableHosts",
         "path": "/api/hosts/bulk/enable",
-        "requestSchemaKey": "BulkEnableHostsRequestDto",
+        "requestSchemaKey": "BulkEnableHostsBodyDto",
         "responseSchemaKeys": [
-          "200:BulkEnableHostsResponseDto",
           "400:HostsBulkActionsController_enableHosts.responses.400",
-          "500:HostsBulkActionsController_enableHosts.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_enable",
@@ -949,11 +1110,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "HostsBulkActionsController_setPortToHosts",
         "path": "/api/hosts/bulk/update",
-        "requestSchemaKey": "UpdateManyHostsRequestDto",
+        "requestSchemaKey": "UpdateManyHostsBodyDto",
         "responseSchemaKeys": [
-          "200:UpdateManyHostsResponseDto",
           "400:HostsBulkActionsController_setPortToHosts.responses.400",
-          "500:HostsBulkActionsController_setPortToHosts.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_update",
@@ -974,13 +1135,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "get",
-        "operationId": "HostsController_getAllHostTags",
+        "operationId": "HostsController_getHostsTags",
         "path": "/api/hosts/tags",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetAllHostTagsResponseDto",
-          "400:HostsController_getAllHostTags.responses.400",
-          "500:HostsController_getAllHostTags.responses.500"
+          "200:GetHostsTagsResponseDto",
+          "400:HostsController_getHostsTags.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list_tags",
@@ -1005,9 +1167,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/hosts/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteHostResponseDto",
           "400:HostsController_deleteHost.responses.400",
-          "500:HostsController_deleteHost.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete",
@@ -1032,9 +1194,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/hosts/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetOneHostResponseDto",
+          "200:HostResponseDto",
           "400:HostsController_getOneHost.responses.400",
-          "500:HostsController_getOneHost.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get",
@@ -1059,9 +1222,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/hwid/devices",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetAllHwidDevicesResponseDto",
+          "200:GetHwidDevicesQueryResponseDto",
           "400:HwidUserDevicesController_getAllUsers.responses.400",
-          "500:HwidUserDevicesController_getAllUsers.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list_users",
@@ -1084,11 +1248,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "HwidUserDevicesController_createUserHwidDevice",
         "path": "/api/hwid/devices",
-        "requestSchemaKey": "CreateUserHwidDeviceRequestDto",
+        "requestSchemaKey": "CreateUserHwidDeviceBodyDto",
         "responseSchemaKeys": [
           "200:CreateUserHwidDeviceResponseDto",
           "400:HwidUserDevicesController_createUserHwidDevice.responses.400",
-          "500:HwidUserDevicesController_createUserHwidDevice.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create_device",
@@ -1111,11 +1276,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "HwidUserDevicesController_deleteUserHwidDevice",
         "path": "/api/hwid/devices/delete",
-        "requestSchemaKey": "DeleteUserHwidDeviceRequestDto",
+        "requestSchemaKey": "DeleteUserHwidDeviceBodyDto",
         "responseSchemaKeys": [
           "200:DeleteUserHwidDeviceResponseDto",
           "400:HwidUserDevicesController_deleteUserHwidDevice.responses.400",
-          "500:HwidUserDevicesController_deleteUserHwidDevice.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete_device",
@@ -1138,11 +1304,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "HwidUserDevicesController_deleteAllUserHwidDevices",
         "path": "/api/hwid/devices/delete-all",
-        "requestSchemaKey": "DeleteAllUserHwidDevicesRequestDto",
+        "requestSchemaKey": "DeleteAllUserHwidDevicesBodyDto",
         "responseSchemaKeys": [
           "200:DeleteAllUserHwidDevicesResponseDto",
           "400:HwidUserDevicesController_deleteAllUserHwidDevices.responses.400",
-          "500:HwidUserDevicesController_deleteAllUserHwidDevices.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete_all_devices",
@@ -1169,7 +1336,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetHwidDevicesStatsResponseDto",
           "400:HwidUserDevicesController_getHwidDevicesStats.responses.400",
-          "500:HwidUserDevicesController_getHwidDevicesStats.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_stats",
@@ -1196,7 +1364,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetTopUsersByHwidDevicesResponseDto",
           "400:HwidUserDevicesController_getTopUsersByHwidDevices.responses.400",
-          "500:HwidUserDevicesController_getTopUsersByHwidDevices.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_top_users",
@@ -1218,12 +1387,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "openapi": {
         "method": "get",
         "operationId": "HwidUserDevicesController_getUserHwidDevices",
-        "path": "/api/hwid/devices/{userUuid}",
+        "path": "/api/hwid/devices/{userId}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
           "200:GetUserHwidDevicesResponseDto",
           "400:HwidUserDevicesController_getUserHwidDevices.responses.400",
-          "500:HwidUserDevicesController_getUserHwidDevices.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_user_devices",
@@ -1244,13 +1414,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "get",
-        "operationId": "InfraBillingController_getInfraBillingHistoryRecords",
+        "operationId": "InfraBillingController_getInfraBillingRecords",
         "path": "/api/infra-billing/history",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetInfraBillingHistoryRecordsResponseDto",
-          "400:InfraBillingController_getInfraBillingHistoryRecords.responses.400",
-          "500:InfraBillingController_getInfraBillingHistoryRecords.responses.500"
+          "200:GetInfraBillingRecordsResponseDto",
+          "400:InfraBillingController_getInfraBillingRecords.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list_history",
@@ -1271,13 +1442,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "post",
-        "operationId": "InfraBillingController_createInfraBillingHistoryRecord",
+        "operationId": "InfraBillingController_createInfraBillingRecord",
         "path": "/api/infra-billing/history",
-        "requestSchemaKey": "CreateInfraBillingHistoryRecordRequestDto",
+        "requestSchemaKey": "CreateInfraBillingRecordBodyDto",
         "responseSchemaKeys": [
-          "201:CreateInfraBillingHistoryRecordResponseDto",
-          "400:InfraBillingController_createInfraBillingHistoryRecord.responses.400",
-          "500:InfraBillingController_createInfraBillingHistoryRecord.responses.500"
+          "201:CreateInfraBillingRecordResponseDto",
+          "400:InfraBillingController_createInfraBillingRecord.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create_history_record",
@@ -1298,13 +1470,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "delete",
-        "operationId": "InfraBillingController_deleteInfraBillingHistoryRecordByUuid",
+        "operationId": "InfraBillingController_deleteInfraBillingRecord",
         "path": "/api/infra-billing/history/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteInfraBillingHistoryRecordByUuidResponseDto",
-          "400:InfraBillingController_deleteInfraBillingHistoryRecordByUuid.responses.400",
-          "500:InfraBillingController_deleteInfraBillingHistoryRecordByUuid.responses.500"
+          "400:InfraBillingController_deleteInfraBillingRecord.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete_history_record",
@@ -1331,7 +1503,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetInfraBillingNodesResponseDto",
           "400:InfraBillingController_getBillingNodes.responses.400",
-          "500:InfraBillingController_getBillingNodes.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list_nodes",
@@ -1354,11 +1527,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "InfraBillingController_updateInfraBillingNode",
         "path": "/api/infra-billing/nodes",
-        "requestSchemaKey": "UpdateInfraBillingNodeRequestDto",
+        "requestSchemaKey": "UpdateInfraBillingNodeBodyDto",
         "responseSchemaKeys": [
           "200:UpdateInfraBillingNodeResponseDto",
           "400:InfraBillingController_updateInfraBillingNode.responses.400",
-          "500:InfraBillingController_updateInfraBillingNode.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update_node",
@@ -1381,11 +1555,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "InfraBillingController_createInfraBillingNode",
         "path": "/api/infra-billing/nodes",
-        "requestSchemaKey": "CreateInfraBillingNodeRequestDto",
+        "requestSchemaKey": "CreateInfraBillingNodeBodyDto",
         "responseSchemaKeys": [
           "201:CreateInfraBillingNodeResponseDto",
           "400:InfraBillingController_createInfraBillingNode.responses.400",
-          "500:InfraBillingController_createInfraBillingNode.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create_node",
@@ -1406,13 +1581,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "delete",
-        "operationId": "InfraBillingController_deleteInfraBillingNodeByUuid",
+        "operationId": "InfraBillingController_deleteInfraBillingNode",
         "path": "/api/infra-billing/nodes/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteInfraBillingNodeByUuidResponseDto",
-          "400:InfraBillingController_deleteInfraBillingNodeByUuid.responses.400",
-          "500:InfraBillingController_deleteInfraBillingNodeByUuid.responses.500"
+          "400:InfraBillingController_deleteInfraBillingNode.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete_node",
@@ -1439,7 +1614,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetInfraProvidersResponseDto",
           "400:InfraBillingController_getInfraProviders.responses.400",
-          "500:InfraBillingController_getInfraProviders.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list_providers",
@@ -1462,11 +1638,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "InfraBillingController_updateInfraProvider",
         "path": "/api/infra-billing/providers",
-        "requestSchemaKey": "UpdateInfraProviderRequestDto",
+        "requestSchemaKey": "UpdateInfraProviderBodyDto",
         "responseSchemaKeys": [
           "200:UpdateInfraProviderResponseDto",
           "400:InfraBillingController_updateInfraProvider.responses.400",
-          "500:InfraBillingController_updateInfraProvider.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update_provider",
@@ -1489,11 +1666,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "InfraBillingController_createInfraProvider",
         "path": "/api/infra-billing/providers",
-        "requestSchemaKey": "CreateInfraProviderRequestDto",
+        "requestSchemaKey": "CreateInfraProviderBodyDto",
         "responseSchemaKeys": [
           "201:CreateInfraProviderResponseDto",
           "400:InfraBillingController_createInfraProvider.responses.400",
-          "500:InfraBillingController_createInfraProvider.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create_provider",
@@ -1514,13 +1692,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "delete",
-        "operationId": "InfraBillingController_deleteInfraProviderByUuid",
+        "operationId": "InfraBillingController_delteInfraProvider",
         "path": "/api/infra-billing/providers/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteInfraProviderByUuidResponseDto",
-          "400:InfraBillingController_deleteInfraProviderByUuid.responses.400",
-          "500:InfraBillingController_deleteInfraProviderByUuid.responses.500"
+          "400:InfraBillingController_delteInfraProvider.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete_provider",
@@ -1541,13 +1719,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "get",
-        "operationId": "InfraBillingController_getInfraProviderByUuid",
+        "operationId": "InfraBillingController_getInfraProvider",
         "path": "/api/infra-billing/providers/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetInfraProviderByUuidResponseDto",
-          "400:InfraBillingController_getInfraProviderByUuid.responses.400",
-          "500:InfraBillingController_getInfraProviderByUuid.responses.500"
+          "200:GetInfraProviderResponseDto",
+          "400:InfraBillingController_getInfraProvider.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_provider",
@@ -1574,7 +1753,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetInternalSquadsResponseDto",
           "400:InternalSquadController_getInternalSquads.responses.400",
-          "500:InternalSquadController_getInternalSquads.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -1597,11 +1777,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "InternalSquadController_updateInternalSquad",
         "path": "/api/internal-squads",
-        "requestSchemaKey": "UpdateInternalSquadRequestDto",
+        "requestSchemaKey": "UpdateInternalSquadBodyDto",
         "responseSchemaKeys": [
           "200:UpdateInternalSquadResponseDto",
           "400:InternalSquadController_updateInternalSquad.responses.400",
-          "500:InternalSquadController_updateInternalSquad.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update",
@@ -1624,11 +1805,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "InternalSquadController_createInternalSquad",
         "path": "/api/internal-squads",
-        "requestSchemaKey": "CreateInternalSquadRequestDto",
+        "requestSchemaKey": "CreateInternalSquadBodyDto",
         "responseSchemaKeys": [
           "201:CreateInternalSquadResponseDto",
           "400:InternalSquadController_createInternalSquad.responses.400",
-          "500:InternalSquadController_createInternalSquad.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create",
@@ -1651,11 +1833,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "InternalSquadController_reorderInternalSquads",
         "path": "/api/internal-squads/actions/reorder",
-        "requestSchemaKey": "ReorderInternalSquadsRequestDto",
+        "requestSchemaKey": "ReorderInternalSquadsBodyDto",
         "responseSchemaKeys": [
           "200:ReorderInternalSquadsResponseDto",
           "400:InternalSquadController_reorderInternalSquads.responses.400",
-          "500:InternalSquadController_reorderInternalSquads.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "reorder",
@@ -1680,9 +1863,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/internal-squads/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteInternalSquadResponseDto",
           "400:InternalSquadController_deleteInternalSquad.responses.400",
-          "500:InternalSquadController_deleteInternalSquad.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete",
@@ -1707,9 +1890,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/internal-squads/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetInternalSquadByUuidResponseDto",
+          "200:GetInternalSquadResponseDto",
           "400:InternalSquadController_getInternalSquadByUuid.responses.400",
-          "500:InternalSquadController_getInternalSquadByUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get",
@@ -1736,7 +1920,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetInternalSquadAccessibleNodesResponseDto",
           "400:InternalSquadController_getInternalSquadAccessibleNodes.responses.400",
-          "500:InternalSquadController_getInternalSquadAccessibleNodes.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_accessible_nodes",
@@ -1753,6 +1938,24 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "internal_squads",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "internal_squads.post_internal_squad_controller_add_many_users_to_internal_squad_internal_squads_uuid_bulk_actions_add_many_users",
+      "openapi": {
+        "method": "post",
+        "operationId": "InternalSquadController_addManyUsersToInternalSquad",
+        "path": "/api/internal-squads/{uuid}/bulk-actions/add-many-users",
+        "requestSchemaKey": "AddManyUsersToInternalSquadBodyDto",
+        "responseSchemaKeys": [
+          "400:InternalSquadController_addManyUsersToInternalSquad.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_internal_squad_controller_add_many_users_to_internal_squad_internal_squads_uuid_bulk_actions_add_many_users",
+      "status": "excluded"
+    },
+    {
+      "domain": "internal_squads",
       "key": "internal_squads.add_users",
       "normalizer": "none",
       "openapi": {
@@ -1761,22 +1964,40 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/internal-squads/{uuid}/bulk-actions/add-users",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:AddUsersToInternalSquadResponseDto",
           "400:InternalSquadController_addUsersToInternalSquad.responses.400",
-          "500:InternalSquadController_addUsersToInternalSquad.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "add_users",
       "rawAllowed": false,
       "rawPolicy": "raw_denied",
-      "riskTier": "tier2",
-      "safetyMode": "direct",
+      "riskTier": "tier3",
+      "safetyMode": "confirm",
       "sideEffects": {
         "kind": "update",
         "summary": "Executes internal_squads.add_users through its OpenAPI endpoint."
       },
       "status": "supported",
       "write": true
+    },
+    {
+      "domain": "internal_squads",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "internal_squads.delete_internal_squad_controller_remove_many_users_from_internal_squad_internal_squads_uuid_bulk_actions_remove_many_users",
+      "openapi": {
+        "method": "delete",
+        "operationId": "InternalSquadController_removeManyUsersFromInternalSquad",
+        "path": "/api/internal-squads/{uuid}/bulk-actions/remove-many-users",
+        "requestSchemaKey": "DeleteManyUsersFromInternalSquadBodyDto",
+        "responseSchemaKeys": [
+          "400:InternalSquadController_removeManyUsersFromInternalSquad.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "delete_internal_squad_controller_remove_many_users_from_internal_squad_internal_squads_uuid_bulk_actions_remove_many_users",
+      "status": "excluded"
     },
     {
       "domain": "internal_squads",
@@ -1788,16 +2009,16 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/internal-squads/{uuid}/bulk-actions/remove-users",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:RemoveUsersFromInternalSquadResponseDto",
           "400:InternalSquadController_removeUsersFromInternalSquad.responses.400",
-          "500:InternalSquadController_removeUsersFromInternalSquad.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "remove_users",
       "rawAllowed": false,
       "rawPolicy": "raw_denied",
-      "riskTier": "tier2",
-      "safetyMode": "direct",
+      "riskTier": "tier3",
+      "safetyMode": "confirm",
       "sideEffects": {
         "kind": "update",
         "summary": "Executes internal_squads.remove_users through its OpenAPI endpoint."
@@ -1806,93 +2027,22 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "write": true
     },
     {
-      "domain": "ip_control",
-      "exclusionReason": "excluded_ip_control",
-      "key": "ip_control.post_ip_control_controller_drop_connections_ip_control_drop_connections",
-      "openapi": {
-        "method": "post",
-        "operationId": "IpControlController_dropConnections",
-        "path": "/api/ip-control/drop-connections",
-        "requestSchemaKey": "DropConnectionsRequestDto",
-        "responseSchemaKeys": [
-          "200:DropConnectionsResponseDto",
-          "400:IpControlController_dropConnections.responses.400",
-          "500:IpControlController_dropConnections.responses.500"
-        ]
-      },
-      "operation": "post_ip_control_controller_drop_connections_ip_control_drop_connections",
-      "status": "excluded"
-    },
-    {
-      "domain": "ip_control",
-      "exclusionReason": "excluded_ip_control",
-      "key": "ip_control.get_ip_control_controller_get_fetch_ips_result_ip_control_fetch_ips_result_job_id",
+      "domain": "internal_squads",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "internal_squads.get_internal_squad_controller_get_internal_squad_usage_internal_squads_uuid_usage",
       "openapi": {
         "method": "get",
-        "operationId": "IpControlController_getFetchIpsResult",
-        "path": "/api/ip-control/fetch-ips/result/{jobId}",
+        "operationId": "InternalSquadController_getInternalSquadUsage",
+        "path": "/api/internal-squads/{uuid}/usage",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:FetchIpsResultResponseDto",
-          "400:IpControlController_getFetchIpsResult.responses.400",
-          "500:IpControlController_getFetchIpsResult.responses.500"
+          "200:GetInternalSquadUsageResponseDto",
+          "400:InternalSquadController_getInternalSquadUsage.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
-      "operation": "get_ip_control_controller_get_fetch_ips_result_ip_control_fetch_ips_result_job_id",
-      "status": "excluded"
-    },
-    {
-      "domain": "ip_control",
-      "exclusionReason": "excluded_ip_control",
-      "key": "ip_control.post_ip_control_controller_fetch_user_ips_ip_control_fetch_ips_uuid",
-      "openapi": {
-        "method": "post",
-        "operationId": "IpControlController_fetchUserIps",
-        "path": "/api/ip-control/fetch-ips/{uuid}",
-        "requestSchemaKey": null,
-        "responseSchemaKeys": [
-          "200:FetchIpsResponseDto",
-          "400:IpControlController_fetchUserIps.responses.400",
-          "500:IpControlController_fetchUserIps.responses.500"
-        ]
-      },
-      "operation": "post_ip_control_controller_fetch_user_ips_ip_control_fetch_ips_uuid",
-      "status": "excluded"
-    },
-    {
-      "domain": "ip_control",
-      "exclusionReason": "excluded_ip_control",
-      "key": "ip_control.get_ip_control_controller_get_fetch_users_ips_result_ip_control_fetch_users_ips_result_job_id",
-      "openapi": {
-        "method": "get",
-        "operationId": "IpControlController_getFetchUsersIpsResult",
-        "path": "/api/ip-control/fetch-users-ips/result/{jobId}",
-        "requestSchemaKey": null,
-        "responseSchemaKeys": [
-          "200:FetchUsersIpsResultResponseDto",
-          "400:IpControlController_getFetchUsersIpsResult.responses.400",
-          "500:IpControlController_getFetchUsersIpsResult.responses.500"
-        ]
-      },
-      "operation": "get_ip_control_controller_get_fetch_users_ips_result_ip_control_fetch_users_ips_result_job_id",
-      "status": "excluded"
-    },
-    {
-      "domain": "ip_control",
-      "exclusionReason": "excluded_ip_control",
-      "key": "ip_control.post_ip_control_controller_fetch_users_ips_ip_control_fetch_users_ips_node_uuid",
-      "openapi": {
-        "method": "post",
-        "operationId": "IpControlController_fetchUsersIps",
-        "path": "/api/ip-control/fetch-users-ips/{nodeUuid}",
-        "requestSchemaKey": null,
-        "responseSchemaKeys": [
-          "200:FetchUsersIpsResponseDto",
-          "400:IpControlController_fetchUsersIps.responses.400",
-          "500:IpControlController_fetchUsersIps.responses.500"
-        ]
-      },
-      "operation": "post_ip_control_controller_fetch_users_ips_ip_control_fetch_users_ips_node_uuid",
+      "operation": "get_internal_squad_controller_get_internal_squad_usage_internal_squads_uuid_usage",
       "status": "excluded"
     },
     {
@@ -1905,9 +2055,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/keygen",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetPubKeyResponseDto",
+          "200:GetNodeSecretKeyResponseDto",
           "400:KeygenController_generateKey.responses.400",
-          "500:KeygenController_generateKey.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "generate_node_secret",
@@ -1934,8 +2085,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetNodeMetadataResponseDto",
           "400:MetadataController_getNodeMetadata.responses.400",
-          "404:MetadataController_getNodeMetadata.responses.404",
-          "500:MetadataController_getNodeMetadata.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_node",
@@ -1958,12 +2109,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "put",
         "operationId": "MetadataController_upsertNodeMetadata",
         "path": "/api/metadata/node/{uuid}",
-        "requestSchemaKey": "UpsertNodeMetadataRequestBodyDto",
+        "requestSchemaKey": "UpsertNodeMetadataBodyDto",
         "responseSchemaKeys": [
           "200:UpsertNodeMetadataResponseDto",
           "400:MetadataController_upsertNodeMetadata.responses.400",
-          "404:MetadataController_upsertNodeMetadata.responses.404",
-          "500:MetadataController_upsertNodeMetadata.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "upsert_node",
@@ -1985,13 +2136,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "openapi": {
         "method": "get",
         "operationId": "MetadataController_getUserMetadata",
-        "path": "/api/metadata/user/{uuid}",
+        "path": "/api/metadata/user/{userId}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
           "200:GetUserMetadataResponseDto",
           "400:MetadataController_getUserMetadata.responses.400",
-          "404:MetadataController_getUserMetadata.responses.404",
-          "500:MetadataController_getUserMetadata.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_user",
@@ -2013,13 +2164,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "openapi": {
         "method": "put",
         "operationId": "MetadataController_upsertUserMetadata",
-        "path": "/api/metadata/user/{uuid}",
-        "requestSchemaKey": "UpsertUserMetadataRequestBodyDto",
+        "path": "/api/metadata/user/{userId}",
+        "requestSchemaKey": "UpsertUserMetadataBodyDto",
         "responseSchemaKeys": [
           "200:UpsertUserMetadataResponseDto",
           "400:MetadataController_upsertUserMetadata.responses.400",
-          "404:MetadataController_upsertUserMetadata.responses.404",
-          "500:MetadataController_upsertUserMetadata.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "upsert_user",
@@ -2035,6 +2186,100 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "write": true
     },
     {
+      "domain": "node_integrations",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "node_integrations.get_node_integration_controller_get_all_integrations_node_integrations",
+      "openapi": {
+        "method": "get",
+        "operationId": "NodeIntegrationController_getAllIntegrations",
+        "path": "/api/node-integrations",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetNodeIntegrationsResponseDto",
+          "400:NodeIntegrationController_getAllIntegrations.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_node_integration_controller_get_all_integrations_node_integrations",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_integrations",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "node_integrations.patch_node_integration_controller_update_integration_node_integrations",
+      "openapi": {
+        "method": "patch",
+        "operationId": "NodeIntegrationController_updateIntegration",
+        "path": "/api/node-integrations",
+        "requestSchemaKey": "UpdateNodeIntegrationBodyDto",
+        "responseSchemaKeys": [
+          "200:UpdateNodeIntegrationResponseDto",
+          "400:NodeIntegrationController_updateIntegration.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "patch_node_integration_controller_update_integration_node_integrations",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_integrations",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "node_integrations.post_node_integration_controller_create_integration_node_integrations",
+      "openapi": {
+        "method": "post",
+        "operationId": "NodeIntegrationController_createIntegration",
+        "path": "/api/node-integrations",
+        "requestSchemaKey": "CreateNodeIntegrationBodyDto",
+        "responseSchemaKeys": [
+          "201:CreateNodeIntegrationResponseDto",
+          "400:NodeIntegrationController_createIntegration.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_node_integration_controller_create_integration_node_integrations",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_integrations",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "node_integrations.delete_node_integration_controller_delete_integration_node_integrations_uuid",
+      "openapi": {
+        "method": "delete",
+        "operationId": "NodeIntegrationController_deleteIntegration",
+        "path": "/api/node-integrations/{uuid}",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "400:NodeIntegrationController_deleteIntegration.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "delete_node_integration_controller_delete_integration_node_integrations_uuid",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_integrations",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "node_integrations.get_node_integration_controller_get_integration_by_uuid_node_integrations_uuid",
+      "openapi": {
+        "method": "get",
+        "operationId": "NodeIntegrationController_getIntegrationByUuid",
+        "path": "/api/node-integrations/{uuid}",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetNodeIntegrationResponseDto",
+          "400:NodeIntegrationController_getIntegrationByUuid.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_node_integration_controller_get_integration_by_uuid_node_integrations_uuid",
+      "status": "excluded"
+    },
+    {
       "domain": "node_plugins",
       "exclusionReason": "excluded_node_plugins",
       "key": "node_plugins.get_node_plugin_controller_get_all_configs_node_plugins",
@@ -2046,7 +2291,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetNodePluginsResponseDto",
           "400:NodePluginController_getAllConfigs.responses.400",
-          "500:NodePluginController_getAllConfigs.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_node_plugin_controller_get_all_configs_node_plugins",
@@ -2060,11 +2306,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "NodePluginController_updateConfig",
         "path": "/api/node-plugins",
-        "requestSchemaKey": "UpdateNodePluginRequestDto",
+        "requestSchemaKey": "UpdateNodePluginBodyDto",
         "responseSchemaKeys": [
           "200:UpdateNodePluginResponseDto",
           "400:NodePluginController_updateConfig.responses.400",
-          "500:NodePluginController_updateConfig.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "patch_node_plugin_controller_update_config_node_plugins",
@@ -2078,11 +2325,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodePluginController_createConfig",
         "path": "/api/node-plugins",
-        "requestSchemaKey": "CreateNodePluginRequestDto",
+        "requestSchemaKey": "CreateNodePluginBodyDto",
         "responseSchemaKeys": [
-          "200:CreateNodePluginResponseDto",
+          "201:CreateNodePluginResponseDto",
           "400:NodePluginController_createConfig.responses.400",
-          "500:NodePluginController_createConfig.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_node_plugin_controller_create_config_node_plugins",
@@ -2096,11 +2344,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodePluginController_cloneNodePlugin",
         "path": "/api/node-plugins/actions/clone",
-        "requestSchemaKey": "CloneNodePluginRequestDto",
+        "requestSchemaKey": "CloneNodePluginBodyDto",
         "responseSchemaKeys": [
           "200:CloneNodePluginResponseDto",
           "400:NodePluginController_cloneNodePlugin.responses.400",
-          "500:NodePluginController_cloneNodePlugin.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_node_plugin_controller_clone_node_plugin_node_plugins_actions_clone",
@@ -2114,14 +2363,33 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodePluginController_reorderNodePlugins",
         "path": "/api/node-plugins/actions/reorder",
-        "requestSchemaKey": "ReorderNodePluginsRequestDto",
+        "requestSchemaKey": "ReorderNodePluginsBodyDto",
         "responseSchemaKeys": [
           "200:ReorderNodePluginsResponseDto",
           "400:NodePluginController_reorderNodePlugins.responses.400",
-          "500:NodePluginController_reorderNodePlugins.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_node_plugin_controller_reorder_node_plugins_node_plugins_actions_reorder",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_plugins",
+      "exclusionReason": "excluded_node_plugins",
+      "key": "node_plugins.post_node_plugin_controller_sync_node_plugin_node_plugins_actions_sync",
+      "openapi": {
+        "method": "post",
+        "operationId": "NodePluginController_syncNodePlugin",
+        "path": "/api/node-plugins/actions/sync",
+        "requestSchemaKey": "SyncNodePluginBodyDto",
+        "responseSchemaKeys": [
+          "400:NodePluginController_syncNodePlugin.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_node_plugin_controller_sync_node_plugin_node_plugins_actions_sync",
       "status": "excluded"
     },
     {
@@ -2132,14 +2400,126 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodePluginController_pluginExecutor",
         "path": "/api/node-plugins/executor",
-        "requestSchemaKey": "PluginExecutorRequestDto",
+        "requestSchemaKey": "PluginExecutorBodyDto",
         "responseSchemaKeys": [
-          "200:PluginExecutorResponseDto",
           "400:NodePluginController_pluginExecutor.responses.400",
-          "500:NodePluginController_pluginExecutor.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_node_plugin_controller_plugin_executor_node_plugins_executor",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_plugins",
+      "exclusionReason": "excluded_node_plugins",
+      "key": "node_plugins.get_node_plugin_controller_get_all_shared_lists_node_plugins_shared_lists",
+      "openapi": {
+        "method": "get",
+        "operationId": "NodePluginController_getAllSharedLists",
+        "path": "/api/node-plugins/shared-lists",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetSharedListsResponseDto",
+          "400:NodePluginController_getAllSharedLists.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_node_plugin_controller_get_all_shared_lists_node_plugins_shared_lists",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_plugins",
+      "exclusionReason": "excluded_node_plugins",
+      "key": "node_plugins.patch_node_plugin_controller_update_shared_list_node_plugins_shared_lists",
+      "openapi": {
+        "method": "patch",
+        "operationId": "NodePluginController_updateSharedList",
+        "path": "/api/node-plugins/shared-lists",
+        "requestSchemaKey": "UpdateSharedListBodyDto",
+        "responseSchemaKeys": [
+          "200:UpdateSharedListResponseDto",
+          "400:NodePluginController_updateSharedList.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "patch_node_plugin_controller_update_shared_list_node_plugins_shared_lists",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_plugins",
+      "exclusionReason": "excluded_node_plugins",
+      "key": "node_plugins.post_node_plugin_controller_create_shared_list_node_plugins_shared_lists",
+      "openapi": {
+        "method": "post",
+        "operationId": "NodePluginController_createSharedList",
+        "path": "/api/node-plugins/shared-lists",
+        "requestSchemaKey": "CreateSharedListBodyDto",
+        "responseSchemaKeys": [
+          "201:CreateSharedListResponseDto",
+          "400:NodePluginController_createSharedList.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_node_plugin_controller_create_shared_list_node_plugins_shared_lists",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_plugins",
+      "exclusionReason": "excluded_node_plugins",
+      "key": "node_plugins.post_node_plugin_controller_sync_shared_list_node_plugins_shared_lists_actions_sync",
+      "openapi": {
+        "method": "post",
+        "operationId": "NodePluginController_syncSharedList",
+        "path": "/api/node-plugins/shared-lists/actions/sync",
+        "requestSchemaKey": "SyncSharedListBodyDto",
+        "responseSchemaKeys": [
+          "400:NodePluginController_syncSharedList.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_node_plugin_controller_sync_shared_list_node_plugins_shared_lists_actions_sync",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_plugins",
+      "exclusionReason": "excluded_node_plugins",
+      "key": "node_plugins.delete_node_plugin_controller_delete_shared_list_node_plugins_shared_lists_name",
+      "openapi": {
+        "method": "delete",
+        "operationId": "NodePluginController_deleteSharedList",
+        "path": "/api/node-plugins/shared-lists/{name}",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "400:NodePluginController_deleteSharedList.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "delete_node_plugin_controller_delete_shared_list_node_plugins_shared_lists_name",
+      "status": "excluded"
+    },
+    {
+      "domain": "node_plugins",
+      "exclusionReason": "excluded_node_plugins",
+      "key": "node_plugins.get_node_plugin_controller_get_shared_list_by_name_node_plugins_shared_lists_name",
+      "openapi": {
+        "method": "get",
+        "operationId": "NodePluginController_getSharedListByName",
+        "path": "/api/node-plugins/shared-lists/{name}",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetSharedListResponseDto",
+          "400:NodePluginController_getSharedListByName.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_node_plugin_controller_get_shared_list_by_name_node_plugins_shared_lists_name",
       "status": "excluded"
     },
     {
@@ -2154,7 +2534,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetTorrentBlockerReportsResponseDto",
           "400:TorrentBlockerReportsController_getTorrentBlockerReports.responses.400",
-          "500:TorrentBlockerReportsController_getTorrentBlockerReports.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_torrent_blocker_reports_controller_get_torrent_blocker_reports_node_plugins_torrent_blocker",
@@ -2172,7 +2553,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetTorrentBlockerReportsStatsResponseDto",
           "400:TorrentBlockerReportsController_getTorrentBlockerReportsStats.responses.400",
-          "500:TorrentBlockerReportsController_getTorrentBlockerReportsStats.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_torrent_blocker_reports_controller_get_torrent_blocker_reports_stats_node_plugins_torrent_blocker_stats",
@@ -2188,9 +2570,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/node-plugins/torrent-blocker/truncate",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:TruncateTorrentBlockerReportsResponseDto",
           "400:TorrentBlockerReportsController_truncateTorrentBlockerReports.responses.400",
-          "500:TorrentBlockerReportsController_truncateTorrentBlockerReports.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete_torrent_blocker_reports_controller_truncate_torrent_blocker_reports_node_plugins_torrent_blocker_truncate",
@@ -2206,9 +2588,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/node-plugins/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteNodePluginResponseDto",
           "400:NodePluginController_deleteConfig.responses.400",
-          "500:NodePluginController_deleteConfig.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete_node_plugin_controller_delete_config_node_plugins_uuid",
@@ -2226,7 +2608,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetNodePluginResponseDto",
           "400:NodePluginController_getConfigByUuid.responses.400",
-          "500:NodePluginController_getConfigByUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_node_plugin_controller_get_config_by_uuid_node_plugins_uuid",
@@ -2238,13 +2621,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "get",
-        "operationId": "NodesController_getAllNodes",
+        "operationId": "NodesController_getNodes",
         "path": "/api/nodes",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetAllNodesResponseDto",
-          "400:NodesController_getAllNodes.responses.400",
-          "500:NodesController_getAllNodes.responses.500"
+          "200:GetNodesResponseDto",
+          "400:NodesController_getNodes.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -2267,11 +2651,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "NodesController_updateNode",
         "path": "/api/nodes",
-        "requestSchemaKey": "UpdateNodeRequestDto",
+        "requestSchemaKey": "UpdateNodeBodyDto",
         "responseSchemaKeys": [
-          "200:UpdateNodeResponseDto",
+          "200:NodeResponseDto",
           "400:NodesController_updateNode.responses.400",
-          "500:NodesController_updateNode.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update",
@@ -2294,11 +2679,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodesController_createNode",
         "path": "/api/nodes",
-        "requestSchemaKey": "CreateNodeRequestDto",
+        "requestSchemaKey": "CreateNodeBodyDto",
         "responseSchemaKeys": [
-          "201:CreateNodeResponseDto",
+          "201:NodeResponseDto",
           "400:NodesController_createNode.responses.400",
-          "500:NodesController_createNode.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create",
@@ -2321,11 +2707,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodesController_reorderNodes",
         "path": "/api/nodes/actions/reorder",
-        "requestSchemaKey": "ReorderNodeRequestDto",
+        "requestSchemaKey": "ReorderNodesBodyDto",
         "responseSchemaKeys": [
-          "200:ReorderNodeResponseDto",
+          "200:ReorderNodesResponseDto",
           "400:NodesController_reorderNodes.responses.400",
-          "500:NodesController_reorderNodes.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "reorder",
@@ -2348,11 +2735,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodesController_restartAllNodes",
         "path": "/api/nodes/actions/restart-all",
-        "requestSchemaKey": "RestartAllNodesRequestBodyDto",
+        "requestSchemaKey": "RestartAllNodesBodyDto",
         "responseSchemaKeys": [
-          "200:RestartAllNodesResponseDto",
           "400:NodesController_restartAllNodes.responses.400",
-          "500:NodesController_restartAllNodes.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "restart_all",
@@ -2375,11 +2762,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodesController_bulkNodesActions",
         "path": "/api/nodes/bulk-actions",
-        "requestSchemaKey": "BulkNodesActionsRequestDto",
+        "requestSchemaKey": "BulkNodesActionsBodyDto",
         "responseSchemaKeys": [
-          "200:BulkNodesActionsResponseDto",
           "400:NodesController_bulkNodesActions.responses.400",
-          "500:NodesController_bulkNodesActions.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_actions",
@@ -2402,11 +2789,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodesController_profileModification",
         "path": "/api/nodes/bulk-actions/profile-modification",
-        "requestSchemaKey": "ProfileModificationRequestDto",
+        "requestSchemaKey": "ProfileModificationBodyDto",
         "responseSchemaKeys": [
-          "200:ProfileModificationResponseDto",
           "400:NodesController_profileModification.responses.400",
-          "500:NodesController_profileModification.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "profile_modification",
@@ -2429,11 +2816,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodesController_bulkNodesUpdate",
         "path": "/api/nodes/bulk-actions/update",
-        "requestSchemaKey": "BulkNodesUpdateRequestDto",
+        "requestSchemaKey": "BulkNodesUpdateBodyDto",
         "responseSchemaKeys": [
-          "200:BulkNodesUpdateResponseDto",
           "400:NodesController_bulkNodesUpdate.responses.400",
-          "500:NodesController_bulkNodesUpdate.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_update",
@@ -2454,13 +2841,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "get",
-        "operationId": "NodesController_getAllNodesTags",
+        "operationId": "NodesController_getNodesTags",
         "path": "/api/nodes/tags",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetAllNodesTagsResponseDto",
-          "400:NodesController_getAllNodesTags.responses.400",
-          "500:NodesController_getAllNodesTags.responses.500"
+          "200:GetNodesTagsResponseDto",
+          "400:NodesController_getNodesTags.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list_tags",
@@ -2485,9 +2873,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/nodes/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteNodeResponseDto",
           "400:NodesController_deleteNode.responses.400",
-          "500:NodesController_deleteNode.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete",
@@ -2508,13 +2896,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "get",
-        "operationId": "NodesController_getOneNode",
+        "operationId": "NodesController_getNode",
         "path": "/api/nodes/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetOneNodeResponseDto",
-          "400:NodesController_getOneNode.responses.400",
-          "500:NodesController_getOneNode.responses.500"
+          "200:NodeResponseDto",
+          "400:NodesController_getNode.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get",
@@ -2539,9 +2928,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/nodes/{uuid}/actions/disable",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DisableNodeResponseDto",
+          "200:NodeResponseDto",
           "400:NodesController_disableNode.responses.400",
-          "500:NodesController_disableNode.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "disable",
@@ -2566,9 +2956,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/nodes/{uuid}/actions/enable",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:EnableNodeResponseDto",
+          "200:NodeResponseDto",
           "400:NodesController_enableNode.responses.400",
-          "500:NodesController_enableNode.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "enable",
@@ -2593,9 +2984,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/nodes/{uuid}/actions/reset-traffic",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:ResetNodeTrafficResponseDto",
           "400:NodesController_resetNodeTraffic.responses.400",
-          "500:NodesController_resetNodeTraffic.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "reset_traffic",
@@ -2618,11 +3009,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "NodesController_restartNode",
         "path": "/api/nodes/{uuid}/actions/restart",
-        "requestSchemaKey": "RestartNodeRequestBodyDto",
+        "requestSchemaKey": "RestartNodeBodyDto",
         "responseSchemaKeys": [
-          "200:RestartNodeResponseDto",
           "400:NodesController_restartNode.responses.400",
-          "500:NodesController_restartNode.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "restart",
@@ -2645,11 +3036,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "delete",
         "operationId": "PasskeyController_deletePasskey",
         "path": "/api/passkeys",
-        "requestSchemaKey": "DeletePasskeyRequestDto",
+        "requestSchemaKey": "DeletePasskeyBodyDto",
         "responseSchemaKeys": [
           "400:PasskeyController_deletePasskey.responses.400",
-          "500:PasskeyController_deletePasskey.responses.500",
-          "default:DeletePasskeyResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete_passkey_controller_delete_passkey_passkeys",
@@ -2665,9 +3056,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/passkeys",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
+          "200:GetPasskeysResponseDto",
           "400:PasskeyController_getActivePasskeys.responses.400",
-          "500:PasskeyController_getActivePasskeys.responses.500",
-          "default:GetAllPasskeysResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_passkey_controller_get_active_passkeys_passkeys",
@@ -2681,11 +3073,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "PasskeyController_updatePasskey",
         "path": "/api/passkeys",
-        "requestSchemaKey": "UpdatePasskeyRequestDto",
+        "requestSchemaKey": "UpdatePasskeyBodyDto",
         "responseSchemaKeys": [
+          "200:UpdatePasskeyResponseDto",
           "400:PasskeyController_updatePasskey.responses.400",
-          "500:PasskeyController_updatePasskey.responses.500",
-          "default:UpdatePasskeyResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "patch_passkey_controller_update_passkey_passkeys",
@@ -2701,9 +3094,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/passkeys/registration/options",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
+          "200:GetPasskeyRegistrationOptionsResponseDto",
           "400:PasskeyController_passkeyRegistrationOptions.responses.400",
-          "500:PasskeyController_passkeyRegistrationOptions.responses.500",
-          "default:GetPasskeyRegistrationOptionsResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_passkey_controller_passkey_registration_options_passkeys_registration_options",
@@ -2717,11 +3111,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "PasskeyController_passkeyRegistrationVerify",
         "path": "/api/passkeys/registration/verify",
-        "requestSchemaKey": "VerifyPasskeyRegistrationRequestDto",
+        "requestSchemaKey": "VerifyPasskeyRegistrationBodyDto",
         "responseSchemaKeys": [
+          "200:VerifyPasskeyRegistrationResponseDto",
           "400:PasskeyController_passkeyRegistrationVerify.responses.400",
-          "500:PasskeyController_passkeyRegistrationVerify.responses.500",
-          "default:VerifyPasskeyRegistrationResponseDto"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_passkey_controller_passkey_registration_verify_passkeys_registration_verify",
@@ -2739,7 +3134,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetRemnawaveSettingsResponseDto",
           "400:RemnawaveSettingsController_getSettings.responses.400",
-          "500:RemnawaveSettingsController_getSettings.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_remnawave_settings_controller_get_settings_remnawave_settings",
@@ -2753,11 +3149,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "RemnawaveSettingsController_updateSettings",
         "path": "/api/remnawave-settings",
-        "requestSchemaKey": "UpdateRemnawaveSettingsRequestDto",
+        "requestSchemaKey": "UpdateRemnawaveSettingsBodyDto",
         "responseSchemaKeys": [
           "200:UpdateRemnawaveSettingsResponseDto",
           "400:RemnawaveSettingsController_updateSettings.responses.400",
-          "500:RemnawaveSettingsController_updateSettings.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "patch_remnawave_settings_controller_update_settings_remnawave_settings",
@@ -2771,11 +3168,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "delete",
         "operationId": "SnippetsController_deleteSnippetByName",
         "path": "/api/snippets",
-        "requestSchemaKey": "DeleteSnippetRequestDto",
+        "requestSchemaKey": "DeleteSnippetBodyDto",
         "responseSchemaKeys": [
-          "200:DeleteSnippetResponseDto",
           "400:SnippetsController_deleteSnippetByName.responses.400",
-          "500:SnippetsController_deleteSnippetByName.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete",
@@ -2802,7 +3199,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetSnippetsResponseDto",
           "400:SnippetsController_getSnippets.responses.400",
-          "500:SnippetsController_getSnippets.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -2825,11 +3223,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "SnippetsController_updateSnippet",
         "path": "/api/snippets",
-        "requestSchemaKey": "UpdateSnippetRequestDto",
+        "requestSchemaKey": "UpdateSnippetBodyDto",
         "responseSchemaKeys": [
           "200:UpdateSnippetResponseDto",
           "400:SnippetsController_updateSnippet.responses.400",
-          "500:SnippetsController_updateSnippet.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update",
@@ -2852,11 +3251,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "SnippetsController_createSnippet",
         "path": "/api/snippets",
-        "requestSchemaKey": "CreateSnippetRequestDto",
+        "requestSchemaKey": "CreateSnippetBodyDto",
         "responseSchemaKeys": [
           "201:CreateSnippetResponseDto",
           "400:SnippetsController_createSnippet.responses.400",
-          "500:SnippetsController_createSnippet.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create",
@@ -2872,6 +3272,24 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "write": true
     },
     {
+      "domain": "snippets",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "snippets.post_snippets_controller_sync_snippet_snippets_actions_sync",
+      "openapi": {
+        "method": "post",
+        "operationId": "SnippetsController_syncSnippet",
+        "path": "/api/snippets/actions/sync",
+        "requestSchemaKey": "SyncSnippetBodyDto",
+        "responseSchemaKeys": [
+          "400:SnippetsController_syncSnippet.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_snippets_controller_sync_snippet_snippets_actions_sync",
+      "status": "excluded"
+    },
+    {
       "domain": "public_subscriptions",
       "key": "public_subscriptions.get",
       "normalizer": "none",
@@ -2880,7 +3298,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "operationId": "SubscriptionController_getSubscription",
         "path": "/api/sub/{shortUuid}",
         "requestSchemaKey": null,
-        "responseSchemaKeys": []
+        "responseSchemaKeys": [
+          "400:SubscriptionController_getSubscription.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
       },
       "operation": "get",
       "rawAllowed": false,
@@ -2906,7 +3328,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetSubscriptionInfoResponseDto",
           "400:SubscriptionController_getSubscriptionInfoByShortUuid.responses.400",
-          "500:SubscriptionController_getSubscriptionInfoByShortUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_info",
@@ -2930,7 +3353,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "operationId": "SubscriptionController_getSubscriptionByClientType",
         "path": "/api/sub/{shortUuid}/{clientType}",
         "requestSchemaKey": null,
-        "responseSchemaKeys": []
+        "responseSchemaKeys": [
+          "400:SubscriptionController_getSubscriptionByClientType.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
       },
       "operation": "get_by_client_type",
       "rawAllowed": false,
@@ -2954,9 +3381,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/subscription-page-configs",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetSubscriptionPageConfigsResponseDto",
+          "200:GetSubpageConfigsResponseDto",
           "400:SubscriptionPageConfigController_getAllConfigs.responses.400",
-          "500:SubscriptionPageConfigController_getAllConfigs.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -2979,11 +3407,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "SubscriptionPageConfigController_updateConfig",
         "path": "/api/subscription-page-configs",
-        "requestSchemaKey": "UpdateSubscriptionPageConfigRequestDto",
+        "requestSchemaKey": "UpdateSubpageConfigBodyDto",
         "responseSchemaKeys": [
-          "200:UpdateSubscriptionPageConfigResponseDto",
+          "200:UpdateSubpageConfigResponseDto",
           "400:SubscriptionPageConfigController_updateConfig.responses.400",
-          "500:SubscriptionPageConfigController_updateConfig.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update",
@@ -3006,11 +3435,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "SubscriptionPageConfigController_createConfig",
         "path": "/api/subscription-page-configs",
-        "requestSchemaKey": "CreateSubscriptionPageConfigRequestDto",
+        "requestSchemaKey": "CreateSubpageConfigBodyDto",
         "responseSchemaKeys": [
-          "200:CreateSubscriptionPageConfigResponseDto",
+          "201:CreateSubpageConfigResponseDto",
           "400:SubscriptionPageConfigController_createConfig.responses.400",
-          "500:SubscriptionPageConfigController_createConfig.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create",
@@ -3033,11 +3463,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "SubscriptionPageConfigController_cloneSubscriptionPageConfig",
         "path": "/api/subscription-page-configs/actions/clone",
-        "requestSchemaKey": "CloneSubscriptionPageConfigRequestDto",
+        "requestSchemaKey": "CloneSubpageConfigBodyDto",
         "responseSchemaKeys": [
-          "200:CloneSubscriptionPageConfigResponseDto",
+          "200:CloneSubpageConfigResponseDto",
           "400:SubscriptionPageConfigController_cloneSubscriptionPageConfig.responses.400",
-          "500:SubscriptionPageConfigController_cloneSubscriptionPageConfig.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "clone",
@@ -3060,11 +3491,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "SubscriptionPageConfigController_reorderSubscriptionPageConfigs",
         "path": "/api/subscription-page-configs/actions/reorder",
-        "requestSchemaKey": "ReorderSubscriptionPageConfigsRequestDto",
+        "requestSchemaKey": "ReorderSubpageConfigsBodyDto",
         "responseSchemaKeys": [
-          "200:ReorderSubscriptionPageConfigsResponseDto",
+          "200:ReorderSubpageConfigsResponseDto",
           "400:SubscriptionPageConfigController_reorderSubscriptionPageConfigs.responses.400",
-          "500:SubscriptionPageConfigController_reorderSubscriptionPageConfigs.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "reorder",
@@ -3089,9 +3521,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/subscription-page-configs/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteSubscriptionPageConfigResponseDto",
           "400:SubscriptionPageConfigController_deleteConfig.responses.400",
-          "500:SubscriptionPageConfigController_deleteConfig.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete",
@@ -3116,9 +3548,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/subscription-page-configs/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetSubscriptionPageConfigResponseDto",
+          "200:GetSubpageConfigResponseDto",
           "400:SubscriptionPageConfigController_getConfigByUuid.responses.400",
-          "500:SubscriptionPageConfigController_getConfigByUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get",
@@ -3145,7 +3578,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetSubscriptionRequestHistoryResponseDto",
           "400:UserSubscriptionRequestHistoryController_getSubscriptionRequestHistory.responses.400",
-          "500:UserSubscriptionRequestHistoryController_getSubscriptionRequestHistory.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -3172,7 +3606,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetSubscriptionRequestHistoryStatsResponseDto",
           "400:UserSubscriptionRequestHistoryController_getSubscriptionRequestHistoryStats.responses.400",
-          "500:UserSubscriptionRequestHistoryController_getSubscriptionRequestHistoryStats.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_stats",
@@ -3199,7 +3634,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetSubscriptionSettingsResponseDto",
           "400:SubscriptionSettingsController_getSettings.responses.400",
-          "500:SubscriptionSettingsController_getSettings.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get",
@@ -3222,11 +3658,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "SubscriptionSettingsController_updateSettings",
         "path": "/api/subscription-settings",
-        "requestSchemaKey": "UpdateSubscriptionSettingsRequestDto",
+        "requestSchemaKey": "UpdateSubscriptionSettingsBodyDto",
         "responseSchemaKeys": [
           "200:UpdateSubscriptionSettingsResponseDto",
           "400:SubscriptionSettingsController_updateSettings.responses.400",
-          "500:SubscriptionSettingsController_updateSettings.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update",
@@ -3253,7 +3690,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetTemplatesResponseDto",
           "400:SubscriptionTemplateController_getAllTemplates.responses.400",
-          "500:SubscriptionTemplateController_getAllTemplates.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -3276,11 +3714,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "SubscriptionTemplateController_updateTemplate",
         "path": "/api/subscription-templates",
-        "requestSchemaKey": "UpdateTemplateRequestDto",
+        "requestSchemaKey": "UpdateTemplateBodyDto",
         "responseSchemaKeys": [
           "200:UpdateTemplateResponseDto",
           "400:SubscriptionTemplateController_updateTemplate.responses.400",
-          "500:SubscriptionTemplateController_updateTemplate.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update",
@@ -3303,11 +3742,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "SubscriptionTemplateController_createTemplate",
         "path": "/api/subscription-templates",
-        "requestSchemaKey": "CreateSubscriptionTemplateRequestDto",
+        "requestSchemaKey": "CreateSubscriptionTemplateBodyDto",
         "responseSchemaKeys": [
-          "200:CreateSubscriptionTemplateResponseDto",
+          "201:CreateSubscriptionTemplateResponseDto",
           "400:SubscriptionTemplateController_createTemplate.responses.400",
-          "500:SubscriptionTemplateController_createTemplate.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create",
@@ -3330,11 +3770,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "SubscriptionTemplateController_reorderSubscriptionTemplates",
         "path": "/api/subscription-templates/actions/reorder",
-        "requestSchemaKey": "ReorderSubscriptionTemplatesRequestDto",
+        "requestSchemaKey": "ReorderSubscriptionTemplatesBodyDto",
         "responseSchemaKeys": [
           "200:ReorderSubscriptionTemplatesResponseDto",
           "400:SubscriptionTemplateController_reorderSubscriptionTemplates.responses.400",
-          "500:SubscriptionTemplateController_reorderSubscriptionTemplates.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "reorder",
@@ -3359,9 +3800,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/subscription-templates/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteSubscriptionTemplateResponseDto",
           "400:SubscriptionTemplateController_deleteTemplate.responses.400",
-          "500:SubscriptionTemplateController_deleteTemplate.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete",
@@ -3388,7 +3829,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetTemplateResponseDto",
           "400:SubscriptionTemplateController_getTemplateByUuid.responses.400",
-          "500:SubscriptionTemplateController_getTemplateByUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get",
@@ -3413,9 +3855,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/subscriptions",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetAllSubscriptionsResponseDto",
+          "200:GetSubscriptionsResponseDto",
           "400:SubscriptionsController_getAllSubscriptions.responses.400",
-          "500:SubscriptionsController_getAllSubscriptions.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -3432,6 +3875,34 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "subscriptions",
+      "key": "subscriptions.get_by_id",
+      "normalizer": "none",
+      "openapi": {
+        "method": "get",
+        "operationId": "SubscriptionsController_getSubscriptionByUuid",
+        "path": "/api/subscriptions/by-id/{userId}",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetSubscriptionByIdResponseDto",
+          "400:SubscriptionsController_getSubscriptionByUuid.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_by_id",
+      "rawAllowed": false,
+      "rawPolicy": "raw_denied",
+      "riskTier": "tier1",
+      "safetyMode": "direct",
+      "sideEffects": {
+        "kind": "none",
+        "summary": "Reads one protected subscription by numeric user ID without mutating panel state."
+      },
+      "status": "supported",
+      "write": false
+    },
+    {
+      "domain": "subscriptions",
       "key": "subscriptions.get_by_short_uuid",
       "normalizer": "none",
       "openapi": {
@@ -3442,8 +3913,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetSubscriptionByShortUuidProtectedResponseDto",
           "400:SubscriptionsController_getSubscriptionByShortUuidProtected.responses.400",
-          "404:SubscriptionsController_getSubscriptionByShortUuidProtected.responses.404",
-          "500:SubscriptionsController_getSubscriptionByShortUuidProtected.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_by_short_uuid",
@@ -3470,7 +3941,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetRawSubscriptionByShortUuidResponseDto",
           "400:SubscriptionsController_getRawSubscriptionByShortUuid.responses.400",
-          "500:SubscriptionsController_getRawSubscriptionByShortUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_raw_by_short_uuid",
@@ -3497,8 +3969,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetSubscriptionByUsernameResponseDto",
           "400:SubscriptionsController_getSubscriptionByUsername.responses.400",
-          "404:SubscriptionsController_getSubscriptionByUsername.responses.404",
-          "500:SubscriptionsController_getSubscriptionByUsername.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_by_username",
@@ -3515,48 +3987,21 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "subscriptions",
-      "key": "subscriptions.get_by_uuid",
+      "key": "subscriptions.get_connection_keys_by_user_id",
       "normalizer": "none",
       "openapi": {
         "method": "get",
-        "operationId": "SubscriptionsController_getSubscriptionByUuid",
-        "path": "/api/subscriptions/by-uuid/{uuid}",
+        "operationId": "SubscriptionsController_getConnectionKeysByUserId",
+        "path": "/api/subscriptions/connection-keys/{userId}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetSubscriptionByUuidResponseDto",
-          "400:SubscriptionsController_getSubscriptionByUuid.responses.400",
-          "404:SubscriptionsController_getSubscriptionByUuid.responses.404",
-          "500:SubscriptionsController_getSubscriptionByUuid.responses.500"
+          "200:GetConnectionKeysByUserIdResponseDto",
+          "400:SubscriptionsController_getConnectionKeysByUserId.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
-      "operation": "get_by_uuid",
-      "rawAllowed": false,
-      "rawPolicy": "raw_denied",
-      "riskTier": "tier1",
-      "safetyMode": "direct",
-      "sideEffects": {
-        "kind": "none",
-        "summary": "Reads one protected subscription by UUID without mutating panel state."
-      },
-      "status": "supported",
-      "write": false
-    },
-    {
-      "domain": "subscriptions",
-      "key": "subscriptions.get_connection_keys_by_uuid",
-      "normalizer": "none",
-      "openapi": {
-        "method": "get",
-        "operationId": "SubscriptionsController_getConnectionKeysByUuid",
-        "path": "/api/subscriptions/connection-keys/{uuid}",
-        "requestSchemaKey": null,
-        "responseSchemaKeys": [
-          "200:GetConnectionKeysByUuidResponseDto",
-          "400:SubscriptionsController_getConnectionKeysByUuid.responses.400",
-          "500:SubscriptionsController_getConnectionKeysByUuid.responses.500"
-        ]
-      },
-      "operation": "get_connection_keys_by_uuid",
+      "operation": "get_connection_keys_by_user_id",
       "rawAllowed": false,
       "rawPolicy": "raw_denied",
       "riskTier": "tier1",
@@ -3576,11 +4021,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "get",
         "operationId": "SubscriptionsController_getSubpageConfigByShortUuid",
         "path": "/api/subscriptions/subpage-config/{shortUuid}",
-        "requestSchemaKey": "GetSubpageConfigByShortUuidRequestBodyDto",
+        "requestSchemaKey": "GetSubpageConfigByShortUuidBodyDto",
         "responseSchemaKeys": [
           "200:GetSubpageConfigByShortUuidResponseDto",
           "400:SubscriptionsController_getSubpageConfigByShortUuid.responses.400",
-          "500:SubscriptionsController_getSubpageConfigByShortUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_subpage_config_by_short_uuid",
@@ -3597,6 +4043,25 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "system",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "system.get_system_controller_get_configuration_system_configuration",
+      "openapi": {
+        "method": "get",
+        "operationId": "SystemController_getConfiguration",
+        "path": "/api/system/configuration",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetConfigurationResponseDto",
+          "400:SystemController_getConfiguration.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_system_controller_get_configuration_system_configuration",
+      "status": "excluded"
+    },
+    {
+      "domain": "system",
       "key": "system.get_health",
       "normalizer": "none",
       "openapi": {
@@ -3607,7 +4072,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetRemnawaveHealthResponseDto",
           "400:SystemController_getRemnawaveHealth.responses.400",
-          "500:SystemController_getRemnawaveHealth.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_health",
@@ -3634,7 +4100,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetMetadataResponseDto",
           "400:SystemController_getMetadata.responses.400",
-          "500:SystemController_getMetadata.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_metadata",
@@ -3661,7 +4128,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetNodesMetricsResponseDto",
           "400:SystemController_getNodesMetrics.responses.400",
-          "500:SystemController_getNodesMetrics.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_nodes_metrics",
@@ -3688,7 +4156,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetStatsResponseDto",
           "400:SystemController_getStats.responses.400",
-          "500:SystemController_getStats.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_stats",
@@ -3715,7 +4184,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetBandwidthStatsResponseDto",
           "400:SystemController_getBandwidthStats.responses.400",
-          "500:SystemController_getBandwidthStats.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_bandwidth_stats",
@@ -3732,6 +4202,44 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "system",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "system.get_system_controller_get_stats_digest_system_stats_digest",
+      "openapi": {
+        "method": "get",
+        "operationId": "SystemController_getStatsDigest",
+        "path": "/api/system/stats/digest",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetStatsDigestResponseDto",
+          "400:SystemController_getStatsDigest.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_system_controller_get_stats_digest_system_stats_digest",
+      "status": "excluded"
+    },
+    {
+      "domain": "system",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "system.get_system_controller_get_http_stats_system_stats_http",
+      "openapi": {
+        "method": "get",
+        "operationId": "SystemController_getHttpStats",
+        "path": "/api/system/stats/http",
+        "requestSchemaKey": null,
+        "responseSchemaKeys": [
+          "200:GetHttpStatsResponseDto",
+          "400:SystemController_getHttpStats.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "get_system_controller_get_http_stats_system_stats_http",
+      "status": "excluded"
+    },
+    {
+      "domain": "system",
       "key": "system.get_node_statistics",
       "normalizer": "none",
       "openapi": {
@@ -3742,7 +4250,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetNodesStatisticsResponseDto",
           "400:SystemController_getNodesStatistics.responses.400",
-          "500:SystemController_getNodesStatistics.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_node_statistics",
@@ -3769,7 +4278,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetRecapResponseDto",
           "400:SystemController_getRecap.responses.400",
-          "500:SystemController_getRecap.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_recap",
@@ -3792,11 +4302,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "SystemController_debugSrrMatcher",
         "path": "/api/system/testers/srr-matcher",
-        "requestSchemaKey": "DebugSrrMatcherRequestDto",
+        "requestSchemaKey": "DebugSrrMatcherBodyDto",
         "responseSchemaKeys": [
-          "201:DebugSrrMatcherResponseDto",
+          "200:DebugSrrMatcherResponseDto",
           "400:SystemController_debugSrrMatcher.responses.400",
-          "500:SystemController_debugSrrMatcher.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "post_system_controller_debug_srr_matcher_system_testers_srr_matcher",
@@ -3814,7 +4325,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GenerateX25519ResponseDto",
           "400:SystemController_getX25519Keypairs.responses.400",
-          "500:SystemController_getX25519Keypairs.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "generate_x25519_keypairs",
@@ -3832,37 +4344,39 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     {
       "domain": "tokens",
       "exclusionReason": "excluded_tokens",
-      "key": "tokens.get_api_tokens_controller_find_all_tokens",
+      "key": "tokens.get_api_tokens_controller_get_api_tokens_tokens",
       "openapi": {
         "method": "get",
-        "operationId": "ApiTokensController_findAll",
+        "operationId": "ApiTokensController_getApiTokens",
         "path": "/api/tokens",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:FindAllApiTokensResponseDto",
-          "400:ApiTokensController_findAll.responses.400",
-          "500:ApiTokensController_findAll.responses.500"
+          "200:GetApiTokensResponseDto",
+          "400:ApiTokensController_getApiTokens.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
-      "operation": "get_api_tokens_controller_find_all_tokens",
+      "operation": "get_api_tokens_controller_get_api_tokens_tokens",
       "status": "excluded"
     },
     {
       "domain": "tokens",
       "exclusionReason": "excluded_tokens",
-      "key": "tokens.post_api_tokens_controller_create_tokens",
+      "key": "tokens.post_api_tokens_controller_create_api_token_tokens",
       "openapi": {
         "method": "post",
-        "operationId": "ApiTokensController_create",
+        "operationId": "ApiTokensController_createApiToken",
         "path": "/api/tokens",
-        "requestSchemaKey": "CreateApiTokenRequestDto",
+        "requestSchemaKey": "CreateApiTokenBodyDto",
         "responseSchemaKeys": [
           "201:CreateApiTokenResponseDto",
-          "400:ApiTokensController_create.responses.400",
-          "500:ApiTokensController_create.responses.500"
+          "400:ApiTokensController_createApiToken.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
-      "operation": "post_api_tokens_controller_create_tokens",
+      "operation": "post_api_tokens_controller_create_api_token_tokens",
       "status": "excluded"
     },
     {
@@ -3877,7 +4391,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetApiTokenScopesResponseDto",
           "400:ApiTokensController_getScopes.responses.400",
-          "500:ApiTokensController_getScopes.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_api_tokens_controller_get_scopes_tokens_scopes",
@@ -3886,19 +4401,19 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     {
       "domain": "tokens",
       "exclusionReason": "excluded_tokens",
-      "key": "tokens.delete_api_tokens_controller_delete_tokens_uuid",
+      "key": "tokens.delete_api_tokens_controller_delete_api_token_tokens_uuid",
       "openapi": {
         "method": "delete",
-        "operationId": "ApiTokensController_delete",
+        "operationId": "ApiTokensController_deleteApiToken",
         "path": "/api/tokens/{uuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteApiTokenResponseDto",
-          "400:ApiTokensController_delete.responses.400",
-          "500:ApiTokensController_delete.responses.500"
+          "400:ApiTokensController_deleteApiToken.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
-      "operation": "delete_api_tokens_controller_delete_tokens_uuid",
+      "operation": "delete_api_tokens_controller_delete_api_token_tokens_uuid",
       "status": "excluded"
     },
     {
@@ -3907,13 +4422,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "users_list",
       "openapi": {
         "method": "get",
-        "operationId": "UsersController_getAllUsers",
+        "operationId": "UsersController_getUsers",
         "path": "/api/users",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetAllUsersResponseDto",
-          "400:UsersController_getAllUsers.responses.400",
-          "500:UsersController_getAllUsers.responses.500"
+          "200:GetUsersResponseDto",
+          "400:UsersController_getUsers.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list",
@@ -3936,11 +4452,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "patch",
         "operationId": "UsersController_updateUser",
         "path": "/api/users",
-        "requestSchemaKey": "UpdateUserRequestDto",
+        "requestSchemaKey": "UpdateUserBodyDto",
         "responseSchemaKeys": [
-          "200:UpdateUserResponseDto",
+          "200:UserResponseDto",
           "400:UsersController_updateUser.responses.400",
-          "500:UsersController_updateUser.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "update",
@@ -3963,11 +4480,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersController_createUser",
         "path": "/api/users",
-        "requestSchemaKey": "CreateUserRequestDto",
+        "requestSchemaKey": "CreateUserBodyDto",
         "responseSchemaKeys": [
-          "201:CreateUserResponseDto",
+          "201:UserResponseDto",
           "400:UsersController_createUser.responses.400",
-          "500:UsersController_createUser.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "create",
@@ -3990,11 +4508,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersBulkActionsController_bulkAllExtendExpirationDate",
         "path": "/api/users/bulk/all/extend-expiration-date",
-        "requestSchemaKey": "BulkAllExtendExpirationDateRequestDto",
+        "requestSchemaKey": "BulkAllExtendExpirationDateBodyDto",
         "responseSchemaKeys": [
-          "200:BulkAllExtendExpirationDateResponseDto",
           "400:UsersBulkActionsController_bulkAllExtendExpirationDate.responses.400",
-          "500:UsersBulkActionsController_bulkAllExtendExpirationDate.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_all_extend_expiration_date",
@@ -4019,9 +4537,9 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/users/bulk/all/reset-traffic",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:BulkAllResetTrafficUsersResponseDto",
           "400:UsersBulkActionsController_bulkAllResetUserTraffic.responses.400",
-          "500:UsersBulkActionsController_bulkAllResetUserTraffic.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_all_reset_traffic",
@@ -4044,11 +4562,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersBulkActionsController_bulkUpdateAllUsers",
         "path": "/api/users/bulk/all/update",
-        "requestSchemaKey": "BulkAllUpdateUsersRequestDto",
+        "requestSchemaKey": "BulkAllUpdateUsersBodyDto",
         "responseSchemaKeys": [
-          "200:BulkAllUpdateUsersResponseDto",
           "400:UsersBulkActionsController_bulkUpdateAllUsers.responses.400",
-          "500:UsersBulkActionsController_bulkUpdateAllUsers.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_all_update",
@@ -4071,11 +4589,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersBulkActionsController_bulkDeleteUsers",
         "path": "/api/users/bulk/delete",
-        "requestSchemaKey": "BulkDeleteUsersRequestDto",
+        "requestSchemaKey": "BulkDeleteUsersBodyDto",
         "responseSchemaKeys": [
-          "200:BulkDeleteUsersResponseDto",
           "400:UsersBulkActionsController_bulkDeleteUsers.responses.400",
-          "500:UsersBulkActionsController_bulkDeleteUsers.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_delete",
@@ -4098,11 +4616,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersBulkActionsController_bulkDeleteUsersByStatus",
         "path": "/api/users/bulk/delete-by-status",
-        "requestSchemaKey": "BulkDeleteUsersByStatusRequestDto",
+        "requestSchemaKey": "BulkDeleteUsersByStatusBodyDto",
         "responseSchemaKeys": [
-          "200:BulkDeleteUsersByStatusResponseDto",
           "400:UsersBulkActionsController_bulkDeleteUsersByStatus.responses.400",
-          "500:UsersBulkActionsController_bulkDeleteUsersByStatus.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_delete_by_status",
@@ -4125,11 +4643,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersBulkActionsController_bulkExtendExpirationDate",
         "path": "/api/users/bulk/extend-expiration-date",
-        "requestSchemaKey": "BulkExtendExpirationDateRequestDto",
+        "requestSchemaKey": "BulkExtendExpirationDateBodyDto",
         "responseSchemaKeys": [
-          "200:BulkExtendExpirationDateResponseDto",
           "400:UsersBulkActionsController_bulkExtendExpirationDate.responses.400",
-          "500:UsersBulkActionsController_bulkExtendExpirationDate.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_extend_expiration_date",
@@ -4152,11 +4670,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersBulkActionsController_bulkResetUserTraffic",
         "path": "/api/users/bulk/reset-traffic",
-        "requestSchemaKey": "BulkResetTrafficUsersRequestDto",
+        "requestSchemaKey": "BulkResetTrafficUsersBodyDto",
         "responseSchemaKeys": [
-          "200:BulkResetTrafficUsersResponseDto",
           "400:UsersBulkActionsController_bulkResetUserTraffic.responses.400",
-          "500:UsersBulkActionsController_bulkResetUserTraffic.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_reset_traffic",
@@ -4179,11 +4697,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersBulkActionsController_bulkRevokeUsersSubscription",
         "path": "/api/users/bulk/revoke-subscription",
-        "requestSchemaKey": "BulkRevokeUsersSubscriptionRequestDto",
+        "requestSchemaKey": "BulkRevokeUsersSubscriptionBodyDto",
         "responseSchemaKeys": [
-          "200:BulkRevokeUsersSubscriptionResponseDto",
           "400:UsersBulkActionsController_bulkRevokeUsersSubscription.responses.400",
-          "500:UsersBulkActionsController_bulkRevokeUsersSubscription.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_revoke_subscription",
@@ -4206,11 +4724,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersBulkActionsController_bulkUpdateUsers",
         "path": "/api/users/bulk/update",
-        "requestSchemaKey": "BulkUpdateUsersRequestDto",
+        "requestSchemaKey": "BulkUpdateUsersBodyDto",
         "responseSchemaKeys": [
-          "200:BulkUpdateUsersResponseDto",
           "400:UsersBulkActionsController_bulkUpdateUsers.responses.400",
-          "500:UsersBulkActionsController_bulkUpdateUsers.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_update",
@@ -4233,11 +4751,11 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersBulkActionsController_bulkUpdateUsersInternalSquads",
         "path": "/api/users/bulk/update-squads",
-        "requestSchemaKey": "BulkUpdateUsersSquadsRequestDto",
+        "requestSchemaKey": "BulkUpdateUsersSquadsBodyDto",
         "responseSchemaKeys": [
-          "200:BulkUpdateUsersSquadsResponseDto",
           "400:UsersBulkActionsController_bulkUpdateUsersInternalSquads.responses.400",
-          "500:UsersBulkActionsController_bulkUpdateUsersInternalSquads.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "bulk_update_squads",
@@ -4254,60 +4772,6 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "users",
-      "key": "users.get_by_email",
-      "normalizer": "user",
-      "openapi": {
-        "method": "get",
-        "operationId": "UsersController_getUsersByEmail",
-        "path": "/api/users/by-email/{email}",
-        "requestSchemaKey": null,
-        "responseSchemaKeys": [
-          "200:GetUserByEmailResponseDto",
-          "400:UsersController_getUsersByEmail.responses.400",
-          "500:UsersController_getUsersByEmail.responses.500"
-        ]
-      },
-      "operation": "get_by_email",
-      "rawAllowed": false,
-      "rawPolicy": "raw_denied",
-      "riskTier": "tier1",
-      "safetyMode": "direct",
-      "sideEffects": {
-        "kind": "none",
-        "summary": "Reads users.get_by_email without mutating panel state."
-      },
-      "status": "supported",
-      "write": false
-    },
-    {
-      "domain": "users",
-      "key": "users.get_by_id",
-      "normalizer": "user",
-      "openapi": {
-        "method": "get",
-        "operationId": "UsersController_getUserById",
-        "path": "/api/users/by-id/{id}",
-        "requestSchemaKey": null,
-        "responseSchemaKeys": [
-          "200:GetUserByIdResponseDto",
-          "400:UsersController_getUserById.responses.400",
-          "500:UsersController_getUserById.responses.500"
-        ]
-      },
-      "operation": "get_by_id",
-      "rawAllowed": false,
-      "rawPolicy": "raw_denied",
-      "riskTier": "tier1",
-      "safetyMode": "direct",
-      "sideEffects": {
-        "kind": "none",
-        "summary": "Reads users.get_by_id without mutating panel state."
-      },
-      "status": "supported",
-      "write": false
-    },
-    {
-      "domain": "users",
       "key": "users.get_by_short_uuid",
       "normalizer": "user",
       "openapi": {
@@ -4316,9 +4780,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/users/by-short-uuid/{shortUuid}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetUserByShortUuidResponseDto",
+          "200:UserResponseDto",
           "400:UsersController_getUserByShortUuid.responses.400",
-          "500:UsersController_getUserByShortUuid.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_by_short_uuid",
@@ -4335,60 +4800,6 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "users",
-      "key": "users.get_by_tag",
-      "normalizer": "user",
-      "openapi": {
-        "method": "get",
-        "operationId": "UsersController_getUsersByTag",
-        "path": "/api/users/by-tag/{tag}",
-        "requestSchemaKey": null,
-        "responseSchemaKeys": [
-          "200:GetUserByTagResponseDto",
-          "400:UsersController_getUsersByTag.responses.400",
-          "500:UsersController_getUsersByTag.responses.500"
-        ]
-      },
-      "operation": "get_by_tag",
-      "rawAllowed": false,
-      "rawPolicy": "raw_denied",
-      "riskTier": "tier1",
-      "safetyMode": "direct",
-      "sideEffects": {
-        "kind": "none",
-        "summary": "Reads users.get_by_tag without mutating panel state."
-      },
-      "status": "supported",
-      "write": false
-    },
-    {
-      "domain": "users",
-      "key": "users.get_by_telegram_id",
-      "normalizer": "user",
-      "openapi": {
-        "method": "get",
-        "operationId": "UsersController_getUserByTelegramId",
-        "path": "/api/users/by-telegram-id/{telegramId}",
-        "requestSchemaKey": null,
-        "responseSchemaKeys": [
-          "200:GetUserByTelegramIdResponseDto",
-          "400:UsersController_getUserByTelegramId.responses.400",
-          "500:UsersController_getUserByTelegramId.responses.500"
-        ]
-      },
-      "operation": "get_by_telegram_id",
-      "rawAllowed": false,
-      "rawPolicy": "raw_denied",
-      "riskTier": "tier1",
-      "safetyMode": "direct",
-      "sideEffects": {
-        "kind": "none",
-        "summary": "Reads users.get_by_telegram_id without mutating panel state."
-      },
-      "status": "supported",
-      "write": false
-    },
-    {
-      "domain": "users",
       "key": "users.get_by_username",
       "normalizer": "user",
       "openapi": {
@@ -4397,9 +4808,10 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "path": "/api/users/by-username/{username}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetUserByUsernameResponseDto",
+          "200:UserResponseDto",
           "400:UsersController_getUserByUsername.responses.400",
-          "500:UsersController_getUserByUsername.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_by_username",
@@ -4422,24 +4834,25 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "method": "post",
         "operationId": "UsersController_resolveUser",
         "path": "/api/users/resolve",
-        "requestSchemaKey": "ResolveUserRequestBodyDto",
+        "requestSchemaKey": "ResolveUserBodyDto",
         "responseSchemaKeys": [
           "200:ResolveUserResponseDto",
           "400:UsersController_resolveUser.responses.400",
-          "500:UsersController_resolveUser.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "resolve",
       "rawAllowed": false,
       "rawPolicy": "raw_denied",
-      "riskTier": "tier2",
+      "riskTier": "tier1",
       "safetyMode": "direct",
       "sideEffects": {
-        "kind": "update",
-        "summary": "Executes users.resolve through its OpenAPI endpoint."
+        "kind": "none",
+        "summary": "Reads users.resolve without mutating panel state."
       },
       "status": "supported",
-      "write": true
+      "write": false
     },
     {
       "domain": "users",
@@ -4453,7 +4866,8 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
         "responseSchemaKeys": [
           "200:GetUsersStreamResponseDto",
           "400:UsersController_getUsersStream.responses.400",
-          "500:UsersController_getUsersStream.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_users_controller_get_users_stream_users_stream",
@@ -4465,13 +4879,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "none",
       "openapi": {
         "method": "get",
-        "operationId": "UsersController_getAllTags",
+        "operationId": "UsersController_getUsersTags",
         "path": "/api/users/tags",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetAllTagsResponseDto",
-          "400:UsersController_getAllTags.responses.400",
-          "500:UsersController_getAllTags.responses.500"
+          "200:GetUsersTagsResponseDto",
+          "400:UsersController_getUsersTags.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "list_tags",
@@ -4493,12 +4908,12 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "openapi": {
         "method": "delete",
         "operationId": "UsersController_deleteUser",
-        "path": "/api/users/{uuid}",
+        "path": "/api/users/{userId}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DeleteUserResponseDto",
           "400:UsersController_deleteUser.responses.400",
-          "500:UsersController_deleteUser.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "delete",
@@ -4519,13 +4934,14 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "normalizer": "user",
       "openapi": {
         "method": "get",
-        "operationId": "UsersController_getUserByUuid",
-        "path": "/api/users/{uuid}",
+        "operationId": "UsersController_getUserById",
+        "path": "/api/users/{userId}",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:GetUserByUuidResponseDto",
-          "400:UsersController_getUserByUuid.responses.400",
-          "500:UsersController_getUserByUuid.responses.500"
+          "200:UserResponseDto",
+          "400:UsersController_getUserById.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get",
@@ -4535,7 +4951,7 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "safetyMode": "direct",
       "sideEffects": {
         "kind": "none",
-        "summary": "Reads one user by UUID without mutating panel state."
+        "summary": "Reads one user by numeric ID without mutating panel state."
       },
       "status": "supported",
       "write": false
@@ -4547,12 +4963,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "openapi": {
         "method": "get",
         "operationId": "UsersController_getUserAccessibleNodes",
-        "path": "/api/users/{uuid}/accessible-nodes",
+        "path": "/api/users/{userId}/accessible-nodes",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
           "200:GetUserAccessibleNodesResponseDto",
           "400:UsersController_getUserAccessibleNodes.responses.400",
-          "500:UsersController_getUserAccessibleNodes.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_accessible_nodes",
@@ -4574,12 +4991,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "openapi": {
         "method": "post",
         "operationId": "UsersController_disableUser",
-        "path": "/api/users/{uuid}/actions/disable",
+        "path": "/api/users/{userId}/actions/disable",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:DisableUserResponseDto",
+          "200:UserResponseDto",
           "400:UsersController_disableUser.responses.400",
-          "500:UsersController_disableUser.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "disable",
@@ -4601,12 +5019,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "openapi": {
         "method": "post",
         "operationId": "UsersController_enableUser",
-        "path": "/api/users/{uuid}/actions/enable",
+        "path": "/api/users/{userId}/actions/enable",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:EnableUserResponseDto",
+          "200:UserResponseDto",
           "400:UsersController_enableUser.responses.400",
-          "500:UsersController_enableUser.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "enable",
@@ -4623,17 +5042,37 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
     },
     {
       "domain": "users",
+      "exclusionReason": "not_selected_initial_inventory",
+      "key": "users.post_users_controller_extend_user_expiration_date_users_user_id_actions_extend",
+      "openapi": {
+        "method": "post",
+        "operationId": "UsersController_extendUserExpirationDate",
+        "path": "/api/users/{userId}/actions/extend",
+        "requestSchemaKey": "ExtendUserBodyDto",
+        "responseSchemaKeys": [
+          "200:UserResponseDto",
+          "400:UsersController_extendUserExpirationDate.responses.400",
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
+        ]
+      },
+      "operation": "post_users_controller_extend_user_expiration_date_users_user_id_actions_extend",
+      "status": "excluded"
+    },
+    {
+      "domain": "users",
       "key": "users.reset_traffic",
       "normalizer": "none",
       "openapi": {
         "method": "post",
         "operationId": "UsersController_resetUserTraffic",
-        "path": "/api/users/{uuid}/actions/reset-traffic",
+        "path": "/api/users/{userId}/actions/reset-traffic",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
-          "200:ResetUserTrafficResponseDto",
+          "200:UserResponseDto",
           "400:UsersController_resetUserTraffic.responses.400",
-          "500:UsersController_resetUserTraffic.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "reset_traffic",
@@ -4655,12 +5094,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "openapi": {
         "method": "post",
         "operationId": "UsersController_revokeUserSubscription",
-        "path": "/api/users/{uuid}/actions/revoke",
+        "path": "/api/users/{userId}/actions/revoke",
         "requestSchemaKey": "RevokeUserSubscriptionBodyDto",
         "responseSchemaKeys": [
-          "200:RevokeUserSubscriptionResponseDto",
+          "200:UserResponseDto",
           "400:UsersController_revokeUserSubscription.responses.400",
-          "500:UsersController_revokeUserSubscription.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "revoke_subscription",
@@ -4682,12 +5122,13 @@ export const REMNAWAVE_OPERATION_INVENTORY = ({
       "openapi": {
         "method": "get",
         "operationId": "UsersController_getUserSubscriptionRequestHistory",
-        "path": "/api/users/{uuid}/subscription-request-history",
+        "path": "/api/users/{userId}/subscription-request-history",
         "requestSchemaKey": null,
         "responseSchemaKeys": [
           "200:GetUserSubscriptionRequestHistoryResponseDto",
           "400:UsersController_getUserSubscriptionRequestHistory.responses.400",
-          "500:UsersController_getUserSubscriptionRequestHistory.responses.500"
+          "404:RemnawaveNotFoundErrorDto",
+          "500:RemnawaveInternalServerErrorDto"
         ]
       },
       "operation": "get_subscription_request_history",

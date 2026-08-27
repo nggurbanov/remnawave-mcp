@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
 import { DEFAULT_OPERATION_REGISTRY } from '../src/remnawave-api/registry.js';
-import { validateFreeFormObjectOverlay } from '../src/remnawave-api/schema.js';
+import { SUPPORTED_OPERATION_SCHEMAS, validateFreeFormObjectOverlay } from '../src/remnawave-api/schema.js';
 
 describe('remnawave_api schema metadata and validation', () => {
   test('describeOperation exposes curated schema metadata for users.create', () => {
@@ -26,6 +26,28 @@ describe('remnawave_api schema metadata and validation', () => {
     expect(operation).not.toHaveProperty('validationSchema');
   });
 
+  test('describeOperation exposes the 3.3.2 numeric userId boundary', () => {
+    const operation = DEFAULT_OPERATION_REGISTRY.describeOperation('users', 'get');
+
+    expect(operation).toMatchObject({
+      domain: 'users',
+      operation: 'get',
+      schemaSummary: 'payload requires userId:positive integer',
+      validationRulesSummary: [
+        'payload must be an object',
+        'only the documented fields are allowed',
+        'payload.userId is required and must be an integer (>= 1).',
+      ],
+      payloadExample: { userId: 1 },
+    });
+    expect(operation).not.toHaveProperty('validationSchema');
+    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'get')?.validation.validatePayload({ userId: 1 })).toEqual([]);
+    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'get')?.validation.validatePayload({ uuid: 'legacy-user-uuid' })).toEqual(expect.arrayContaining([
+      { field: 'payload.userId', code: 'REQUIRED', message: 'payload.userId is required.' },
+      { field: 'payload.uuid', code: 'UNEXPECTED_FIELD', message: 'payload.uuid is not supported for this operation.' },
+    ]));
+  });
+
   test('describeOperation exposes empty-object schema metadata for system.get_stats', () => {
     const operation = DEFAULT_OPERATION_REGISTRY.describeOperation('system', 'get_stats');
 
@@ -39,6 +61,14 @@ describe('remnawave_api schema metadata and validation', () => {
       ],
     });
     expect(operation).not.toHaveProperty('validationSchema');
+  });
+
+  test('keeps subscription pagination within the 3.3.2 limit and removes stale schemas', () => {
+    expect(SUPPORTED_OPERATION_SCHEMAS).not.toHaveProperty('subscriptions.get');
+    expect(DEFAULT_OPERATION_REGISTRY.get('subscriptions', 'list')?.validation.validatePayload({ size: 500 })).toEqual([]);
+    expect(DEFAULT_OPERATION_REGISTRY.get('subscriptions', 'list')?.validation.validatePayload({ size: 501 })).toEqual([
+      { field: 'payload.size', code: 'MAX_VALUE', message: 'payload.size must be less than or equal to 500.' },
+    ]);
   });
 
   test('rejects missing required fields with field-specific codes', () => {
@@ -61,7 +91,7 @@ describe('remnawave_api schema metadata and validation', () => {
     expect(issues).toEqual(expect.arrayContaining([
       { field: 'payload.username', code: 'MIN_LENGTH', message: 'payload.username must be at least 3 characters long.' },
       { field: 'payload.expireAt', code: 'INVALID_FORMAT', message: 'payload.expireAt must match date-time format.' },
-      { field: 'payload.telegramId', code: 'INVALID_TYPE', message: 'payload.telegramId must be integer.' },
+      { field: 'payload.telegramId', code: 'INVALID_TYPE', message: 'payload.telegramId must be number.' },
     ]));
   });
 
@@ -109,22 +139,44 @@ describe('remnawave_api schema metadata and validation', () => {
       expireAt: '2026-05-01T00:00:00.000Z',
     })).toEqual([]);
     expect(DEFAULT_OPERATION_REGISTRY.get('system', 'get_stats')?.validation.validatePayload({})).toEqual([]);
-    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'disable')?.validation.validatePayload({ uuid: 'user-1' })).toEqual([]);
-    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'enable')?.validation.validatePayload({ uuid: 'user-1' })).toEqual([]);
+    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'disable')?.validation.validatePayload({ userId: 1 })).toEqual([]);
+    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'enable')?.validation.validatePayload({ userId: 1 })).toEqual([]);
     expect(DEFAULT_OPERATION_REGISTRY.get('nodes', 'restart')?.validation.validatePayload({ uuid: 'node-1', forceRestart: false })).toEqual([]);
+    expect(DEFAULT_OPERATION_REGISTRY.get('nodes', 'restart_all')?.validation.validatePayload({ forceRestart: false })).toEqual([]);
     expect(DEFAULT_OPERATION_REGISTRY.get('hosts', 'bulk_update')?.validation.validatePayload({
       hostUuids: ['host-1'],
       port: 8443,
     })).toEqual([]);
-    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'resolve')?.validation.validatePayload({ uuid: 'user-1' })).toEqual([]);
+    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'resolve')?.validation.validatePayload({ id: 1 })).toEqual([]);
+    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'list')?.validation.validatePayload({
+      size: 25,
+      start: 0,
+      filters: [{ id: 'status', value: 'ACTIVE' }],
+      filterModes: { status: 'equals' },
+      globalFilterMode: 'and',
+      sorting: [{ id: 'username', desc: false }],
+    })).toEqual([]);
+    expect(DEFAULT_OPERATION_REGISTRY.get('internal_squads', 'add_users')?.validation.validatePayload({ uuid: 'squad-1' })).toEqual([]);
+  });
+
+  test('rejects the removed userUuids body for 3.3.2 all-user squad operations', () => {
+    expect(DEFAULT_OPERATION_REGISTRY.get('internal_squads', 'add_users')?.validation.validatePayload({
+      uuid: 'squad-1',
+      userUuids: ['legacy-user-uuid'],
+    })).toEqual([
+      { field: 'payload.userUuids', code: 'UNEXPECTED_FIELD', message: 'payload.userUuids is not supported for this operation.' },
+    ]);
   });
 
   test('rejects malformed users.resolve selector payloads', () => {
     expect(DEFAULT_OPERATION_REGISTRY.get('users', 'resolve')?.validation.validatePayload({ selector: { uuid: 'user-1' } })).toEqual([
       { field: 'payload.selector', code: 'UNEXPECTED_FIELD', message: 'payload.selector is not supported for this operation.' },
     ]);
-    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'resolve')?.validation.validatePayload({ uuid: 'user-1', username: 'alice' })).toEqual([
-      { field: 'payload', code: 'INVALID_SELECTOR', message: 'payload must include exactly one of id, uuid, shortUuid, or username.' },
+    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'resolve')?.validation.validatePayload({ id: 1, username: 'alice' })).toEqual([
+      { field: 'payload', code: 'INVALID_SELECTOR', message: 'payload must include exactly one of id, shortUuid, or username.' },
+    ]);
+    expect(DEFAULT_OPERATION_REGISTRY.get('users', 'resolve')?.validation.validatePayload({ uuid: 'legacy-user-uuid' })).toEqual([
+      { field: 'payload.uuid', code: 'UNEXPECTED_FIELD', message: 'payload.uuid is not supported for this operation.' },
     ]);
   });
 
