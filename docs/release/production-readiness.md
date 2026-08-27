@@ -12,7 +12,7 @@ The publication boundary described here is based on the current audited repo sta
 - Built entrypoint: `dist/index.js`
 - CLI command: `remnawave-mcp`
 - Required runtimes: Node.js `>=20.11.0`, npm `>=10.0.0`
-- Supported Remnawave version policy: `2.8.0` through `2.8.1`
+- Supported Remnawave version policy: `3.3.2`
 
 The publishable npm package is intentionally conservative. It does not claim Docker packaging, remote transport hosting, or compatibility with unknown Remnawave panel versions.
 
@@ -36,19 +36,19 @@ Release readiness therefore depends on two things being true at the same time:
 
 The current compatibility contract is intentionally strict.
 
-- Supported: Remnawave `2.8.0` through `2.8.1`
+- Supported: Remnawave `3.3.2`
 - Unsupported explicit versions: startup fails with `REMNAWAVE_VERSION_UNSUPPORTED`
 - Missing or unknown versions: startup fails with `REMNAWAVE_VERSION_UNKNOWN`
 - Discovery gating: the tool is not advertised when version gating fails
 
-This policy is grounded in the vendored 2.8.1 OpenAPI contract and the verified 2.8.1 release changes.
+This policy is grounded in the vendored 3.3.2 OpenAPI contract and the verified 3.3.2 release changes.
 
 ## Capability matrix publication status
 
 The published capability matrix remains the authoritative capability-level support record:
 
 - Matrix: [`docs/scope/capability-matrix.md`](../scope/capability-matrix.md)
-- Contract evidence baseline: [`docs/contracts/remnawave-contract-report.md`](../contracts/remnawave-contract-report.md)
+- Contract evidence baseline: [`docs/contracts/remnawave-3.3.2-contract-report.md`](../contracts/remnawave-3.3.2-contract-report.md)
 
 This is a capability boundary, not an endpoint inventory.
 
@@ -67,7 +67,7 @@ The capability classes should be interpreted literally in release decisions:
 
 ## Published supported boundary
 
-The shipped boundary for this release is registry-backed and intentionally explicit. It currently publishes 150 supported operations across 19 runtime domains:
+The shipped boundary for this release is registry-backed and intentionally explicit. It currently publishes 143 supported operations across 19 runtime domains:
 
 - one published tool: `remnawave_api`
 - executable behavior only for operations marked `supported` in the scope map
@@ -93,7 +93,7 @@ Dangerous node actions remain supported only through the shared tier3 confirmati
 
 Deferred capabilities and explicitly excluded surfaces are intentionally absent from runtime discovery. Direct calls to unsupported domains or operations return compact unsupported-operation errors.
 
-- Auth/bootstrap, tokens, Remnawave-settings, node-plugin, and IP-control surfaces
+- Auth/bootstrap, tokens, Remnawave-settings, node-plugin, and connection-management surfaces
 - Dangerous/internal system helpers such as HAPP encryption and SRR matcher endpoints
 - Standalone routing or response-rule control-plane seams outside the supported profile/host endpoints
 
@@ -111,7 +111,7 @@ These are intentionally excluded so the published support boundary stays truthfu
 
 ## Known risks and limitations
 
-- **Version drift risk:** upstream materials can reference versions newer than `2.8.1`, but this repo publishes support only for the verified `2.8.0` through `2.8.1` gate.
+- **Version drift risk:** upstream materials can reference versions newer than `3.3.2` gate.
 - **Advanced operational drift risk:** metadata, bandwidth, plugin, and composite/operator surfaces are useful but more drift-sensitive than the narrowest stable core.
 - **Environment verification gap:** TypeScript LSP diagnostics are not available in this environment; authoritative verification here is command-based.
 - **Packaging/runtime limitation:** the repo ships local stdio execution only; Docker/container guidance is intentionally unsupported.
@@ -143,7 +143,7 @@ The following checklist must be satisfied before publishing or tagging the v1 si
 ### Version gates
 
 - [ ] package version in `package.json` matches the intended release artifact (`0.2.1`)
-- [ ] supported Remnawave version gate is `2.8.0` through `2.8.1`
+- [ ] supported Remnawave version gate is `3.3.2`
 - [ ] startup still fails closed for unsupported versions with `REMNAWAVE_VERSION_UNSUPPORTED`
 - [ ] startup still fails closed for unknown or missing versions with `REMNAWAVE_VERSION_UNKNOWN`
 - [ ] failed version gating still prevents tool advertisement
@@ -160,7 +160,7 @@ The following checklist must be satisfied before publishing or tagging the v1 si
 
 - [ ] preserve the previous published package artifact and release notes before shipping the new docs/version
 - [ ] if the single-tool docs or discovery contract are found to misstate scope, revert the documentation change set and republish corrected release notes before widening support claims
-- [ ] if version gating regresses, roll back to the last known-good artifact that still enforces the `2.8.0` through `2.8.1` gate before discovery
+- [ ] if version gating regresses, roll back to the last known-good artifact that still enforces the `3.3.2` gate before discovery
 - [ ] if migration guidance breaks clients, temporarily restore the last accurate legacy guidance while fixing the `remnawave_api` docs and scope snapshot
 - [ ] after rollback, rerun `npm run check`, `npm test`, and `npm run build` before any republish
 
@@ -170,7 +170,7 @@ Rollback for this release is intentionally simple and documentation-first:
 
 1. revert the release commit or restore the last known-good package artifact
 2. restore the previous README/scope/readiness files if the single-tool messaging is inaccurate
-3. confirm the `2.8.0` through `2.8.1` gate still blocks unsupported startup before rediscovery is advertised
+3. confirm the `3.3.2` gate still blocks unsupported startup before rediscovery is advertised
 4. rerun the standard verification commands before reissuing any release statement
 
 Because the current release is about truthful publication of the v2 compact contract, the main rollback risk is misleading callers about what is executable. The rollback response should prioritize restoring accurate documentation and version-gated behavior over preserving aspirational scope language.
@@ -179,7 +179,7 @@ Because the current release is about truthful publication of the v2 compact cont
 
 This release-readiness report is supported by the following repo artifacts and command evidence:
 
-- Contract baseline: [`docs/contracts/remnawave-contract-report.md`](../contracts/remnawave-contract-report.md)
+- Contract baseline: [`docs/contracts/remnawave-3.3.2-contract-report.md`](../contracts/remnawave-3.3.2-contract-report.md)
 - Scope baseline: [`docs/scope/capability-matrix.md`](../scope/capability-matrix.md)
 - Prior implementation evidence captured during the internal task series
 
@@ -190,7 +190,7 @@ For Task 0 baseline freeze, the operative truth is the current in-repo runtime, 
 The current repository state is production-ready only within the boundaries described above:
 
 - local stdio runtime only
-- Remnawave `2.8.0` through `2.8.1`
+- Remnawave `3.3.2`
 - only the published single-tool boundary described by the current registry-backed scope map
 - compact v2 direct payload and error contract
 
@@ -244,7 +244,7 @@ The published compatibility surface is:
 - Single tool: `remnawave_api` only
 - Domain/operation/payload invocation pattern
 - Registry-backed `supported` operations only
-- Remnawave version `2.8.0` through `2.8.1`
+- Remnawave version `3.3.2`
 - Compact v2 direct payload and error contract
 
 No legacy compatibility shims are published or discoverable.

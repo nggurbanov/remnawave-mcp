@@ -75,7 +75,8 @@ Tier 3 confirmation-gated operations use a two-step flow.
   "domain": "nodes",
   "operation": "restart",
   "payload": {
-    "uuid": "node-1"
+    "uuid": "node-1",
+    "forceRestart": false
   }
 }
 ```
@@ -102,7 +103,8 @@ Response:
   "domain": "nodes",
   "operation": "restart",
   "payload": {
-    "uuid": "node-1"
+    "uuid": "node-1",
+    "forceRestart": false
   },
   "confirmToken": "sha256:abc123..."
 }
@@ -225,7 +227,7 @@ These operations remain denied because no model-facing runtime seam exists:
 |--------|-----------|------------|
 | `node_plugins` | `execute_plugin_executor` | No truthful executor seam in single-tool runtime |
 | `node_plugins` | `truncate_torrent_blocker_reports` | No truthful truncation seam in single-tool runtime |
-| `ip_control` | `drop_connections` | Destructive action, no model-facing runtime seam |
+| `connections` | all lookup-job and drop operations | Explicitly excluded; no model-facing runtime seam |
 | `metadata` | `manage_node` | No truthful node-write seam in model-facing client contract |
 | `system` | `debug_srr_matcher` | Debug-only endpoint, not for MCP exposure |
 
@@ -239,7 +241,6 @@ These categories remain outside the current runtime contract and are not discove
 |--------|-----------|--------------|
 | `routing` | control-plane rule management | No standalone routing-rule management seam is published |
 | `subscriptions` | broader lifecycle mutations | Subscription settings and broader lifecycle writes remain out of scope |
-| `templates` | reorder semantics | Template reorder remains deferred pending a narrower contract |
 | `snippets` | reorder semantics | Snippet reorder remains deferred pending a narrower contract |
 
 ## Risk Profile Structure
