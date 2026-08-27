@@ -362,7 +362,7 @@ describe('OperationRegistry', () => {
     expect(scope.supported).not.toContain('hosts.manage_routing');
     expect(scope.supported).not.toContain('nodes.manage_maintenance');
     expect(DEFAULT_OPERATION_REGISTRY.hasDomain('auth')).toBe(false);
-    expect(DEFAULT_OPERATION_REGISTRY.hasDomain('ip_control')).toBe(false);
+    expect(DEFAULT_OPERATION_REGISTRY.hasDomain('connections')).toBe(false);
     expect(DEFAULT_OPERATION_REGISTRY.hasDomain('node_plugins')).toBe(false);
   });
 
@@ -375,7 +375,7 @@ describe('OperationRegistry', () => {
     expect(defaultFactory).not.toContain('manage_lifecycle');
     expect(defaultFactory).not.toContain('manage_routing');
     expect(defaultFactory).not.toContain("registerDomain(registry, 'auth'");
-    expect(defaultFactory).not.toContain("registerDomain(registry, 'ip_control'");
+    expect(defaultFactory).not.toContain("registerDomain(registry, 'connections'");
     expect(defaultFactory).not.toContain("registerDomain(registry, 'node_plugins'");
   });
 });

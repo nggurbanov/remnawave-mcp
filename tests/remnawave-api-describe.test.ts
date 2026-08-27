@@ -1,7 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
 
+import { REMNAWAVE_OPENAPI_EXTRACT } from '../src/remnawave-api/generated/operations.js';
 import { routeRemnawaveApiRequest } from '../src/remnawave-api/router.js';
-import type { RemnawaveApiClient } from '../src/remnawave-api/registry.js';
+import { DEFAULT_OPERATION_REGISTRY, type RemnawaveApiClient } from '../src/remnawave-api/registry.js';
 
 function createClient(overrides: Partial<RemnawaveApiClient> = {}): RemnawaveApiClient {
   return {
@@ -45,6 +46,50 @@ describe('remnawave_api compact describe responses', () => {
       risk: { tier: 'tier1' },
     });
     expectCompact(result);
+  });
+
+  test('publishes every supported OpenAPI path and query parameter in discovery metadata', () => {
+    const missingParameters: string[] = [];
+
+    for (const operation of REMNAWAVE_OPENAPI_EXTRACT.operations) {
+      const separator = operation.key.indexOf('.');
+      const domain = operation.key.slice(0, separator);
+      const operationName = operation.key.slice(separator + 1);
+      const registration = DEFAULT_OPERATION_REGISTRY.get(domain, operationName);
+      if (!registration) continue;
+
+      for (const parameter of operation.parameters) {
+        if (!Object.hasOwn(registration.validation.validationSchema.properties, parameter.name)) {
+          missingParameters.push(`${operation.key}:${parameter.name}`);
+        }
+      }
+    }
+
+    expect(missingParameters).toEqual([]);
+    expect(DEFAULT_OPERATION_REGISTRY.describeOperation('hosts', 'get')).toMatchObject({
+      validationRulesSummary: expect.arrayContaining([
+        expect.stringContaining('payload.uuid is required'),
+      ]),
+      payloadExample: { uuid: expect.any(String) },
+    });
+  });
+
+  test('publishes executable payload examples for every supported operation', () => {
+    const invalidExamples: Array<{ key: string; issues: unknown }> = [];
+
+    for (const domain of DEFAULT_OPERATION_REGISTRY.listDomains()) {
+      for (const registration of DEFAULT_OPERATION_REGISTRY.listOperations(domain)) {
+        const issues = registration.validation.validatePayload(registration.validation.payloadExample);
+        if (issues.length > 0) {
+          invalidExamples.push({
+            key: `${domain}.${registration.discovery.operation}`,
+            issues,
+          });
+        }
+      }
+    }
+
+    expect(invalidExamples).toEqual([]);
   });
 
   test('denied operations return compact unsupported_operation errors', async () => {

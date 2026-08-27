@@ -100,7 +100,7 @@ describe('stdio entrypoint', () => {
       REMNAWAVE_BASE_URL: 'https://panel.example.test',
       REMNAWAVE_API_TOKEN: 'token-value',
       LOG_LEVEL: 'debug',
-      REMNAWAVE_VERSION: '2.8.1',
+      REMNAWAVE_VERSION: '3.3.2',
     });
 
     const stderrStream = child.stderr;
