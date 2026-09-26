@@ -5,8 +5,8 @@ import { RuntimeConfigError, redactSecrets } from '../src/runtime/errors.js';
 import { buildDiscoveryManifest } from '../src/server/discovery.js';
 
 describe('loadRuntimeConfig', () => {
-  const supportedRemnawaveVersions = ['2.7.0', '2.7.1', '2.7.2', '2.7.3', '2.7.4', '3.4.4'] as const;
-  const supportedRemnawaveRange = '2.7.0-2.7.4, 3.4.4';
+  const supportedRemnawaveVersions = ['3.3.2', '3.4.4'] as const;
+  const supportedRemnawaveRange = '3.3.2, 3.4.4';
 
   test.each(supportedRemnawaveVersions)('marks supported Remnawave patch version %s as supported', (version) => {
     const config = loadRuntimeConfig({
@@ -24,12 +24,12 @@ describe('loadRuntimeConfig', () => {
     expect(config.startupDiagnostics.capabilities.tools).toBe(true);
   });
 
-  test('returns config and marks fixture version 2.7.4 as supported', () => {
+  test('returns config and marks fixture version 3.3.2 as supported', () => {
     const config = loadRuntimeConfig({
       REMNAWAVE_BASE_URL: 'https://panel.example.test',
       REMNAWAVE_API_TOKEN: 'token-value',
       LOG_LEVEL: 'debug',
-      REMNAWAVE_VERSION: '2.7.4',
+      REMNAWAVE_VERSION: '3.3.2',
     });
 
     expect(config.remnawaveBaseUrl).toBe('https://panel.example.test');
@@ -38,7 +38,7 @@ describe('loadRuntimeConfig', () => {
     expect(config.startupDiagnostics.remnawaveVersion).toEqual({
       supported: true,
       status: 'supported',
-      value: '2.7.4',
+      value: '3.3.2',
       supportedRange: supportedRemnawaveRange,
     });
     expect(config.startupDiagnostics.capabilities.tools).toBe(true);
@@ -106,16 +106,15 @@ describe('loadRuntimeConfig', () => {
     { label: 'latest', rawValue: 'latest', expectedStatus: 'unsupported', expectedValue: 'latest' },
     { label: '2.7', rawValue: '2.7', expectedStatus: 'unsupported', expectedValue: '2.7' },
     { label: '2.7.x', rawValue: '2.7.x', expectedStatus: 'unsupported', expectedValue: '2.7.x' },
-    { label: 'v2.7.4', rawValue: 'v2.7.4', expectedStatus: 'unsupported', expectedValue: 'v2.7.4' },
+    { label: 'v3.3.2', rawValue: 'v3.3.2', expectedStatus: 'unsupported', expectedValue: 'v3.3.2' },
     {
-      label: '2.7.4-beta.1',
-      rawValue: '2.7.4-beta.1',
+      label: '3.3.2-beta.1',
+      rawValue: '3.3.2-beta.1',
       expectedStatus: 'unsupported',
-      expectedValue: '2.7.4-beta.1',
+      expectedValue: '3.3.2-beta.1',
     },
     { label: '2.6.4', rawValue: '2.6.4', expectedStatus: 'unsupported', expectedValue: '2.6.4' },
-    { label: '2.8.0', rawValue: '2.8.0', expectedStatus: 'unsupported', expectedValue: '2.8.0' },
-    { label: '2.8.1', rawValue: '2.8.1', expectedStatus: 'unsupported', expectedValue: '2.8.1' },
+    { label: '2.7.4', rawValue: '2.7.4', expectedStatus: 'unsupported', expectedValue: '2.7.4' },
     { label: '3.0.0', rawValue: '3.0.0', expectedStatus: 'unsupported', expectedValue: '3.0.0' },
   ] as const;
 

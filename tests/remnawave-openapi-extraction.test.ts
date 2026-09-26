@@ -11,13 +11,13 @@ import {
 import { REMNAWAVE_OPENAPI_EXTRACT } from '../src/remnawave-api/generated/operations.js';
 import { SUPPORTED_REMNAWAVE_OPERATIONS } from '../src/remnawave-api/domains/runtime-scope.js';
 
-const vendoredSnapshotPath = resolve('src/remnawave-api/openapi/remnawave-openapi-2.7.4.json');
+const vendoredSnapshotPath = resolve('src/remnawave-api/openapi/remnawave-openapi-3.3.2.json');
 const sourceSnapshotPath = process.env.REMNAWAVE_OPENAPI_SOURCE_SNAPSHOT ?? resolve('__missing_openapi_source_snapshot__.json');
 
 describe('Remnawave OpenAPI extraction', () => {
   const sourceSnapshotTest = existsSync(sourceSnapshotPath) ? test : test.skip;
 
-  sourceSnapshotTest('vendors the pinned Remnawave 2.7.4 OpenAPI snapshot exactly', () => {
+  sourceSnapshotTest('vendors the pinned Remnawave 3.3.2 OpenAPI snapshot exactly', () => {
     expect(readFileSync(vendoredSnapshotPath, 'utf8')).toBe(readFileSync(sourceSnapshotPath, 'utf8'));
   });
 
@@ -28,12 +28,21 @@ describe('Remnawave OpenAPI extraction', () => {
     expect(extracted).toEqual(REMNAWAVE_OPENAPI_EXTRACT);
     expect(extracted.metadata).toMatchObject({
       openapi: '3.0.0',
-      title: 'Remnawave API v2.7.4',
-      version: '2.7.4',
-      source: 'remnawave-openapi-2.7.4.json',
+      title: 'Remnawave API v3.3.2',
+      version: '3.3.2',
+      source: 'remnawave-openapi-3.3.2.json',
     });
     expect(extracted.operations.map((operation) => operation.key).sort()).toEqual(
       SUPPORTED_REMNAWAVE_OPERATIONS.map((operation) => operation.key).sort(),
+    );
+  });
+
+  test('keeps the exported selection table aligned with the pinned OpenAPI operation IDs', () => {
+    const document = readOpenApiSnapshot(vendoredSnapshotPath);
+    const selected = extractOpenApiSnapshot(document, SELECTED_OPENAPI_OPERATIONS);
+
+    expect(selected.operations.map((operation) => operation.key).sort()).toEqual(
+      SELECTED_OPENAPI_OPERATIONS.map((operation) => operation.key).sort(),
     );
   });
 
@@ -48,7 +57,7 @@ describe('Remnawave OpenAPI extraction', () => {
     });
     expect(extractedByKey.get('metadata.upsert_user')).toMatchObject({
       method: 'put',
-      path: '/api/metadata/user/{uuid}',
+      path: '/api/metadata/user/{userId}',
       operationId: 'MetadataController_upsertUserMetadata',
     });
     expect(extractedByKey.get('templates.create')).toMatchObject({ method: 'post', path: '/api/subscription-templates' });
@@ -59,10 +68,10 @@ describe('Remnawave OpenAPI extraction', () => {
     expect(extractedByKey.get('public_subscriptions.get_by_client_type')).toMatchObject({ method: 'get', path: '/api/sub/{shortUuid}/{clientType}' });
     expect(extractedByKey.get('profiles.get_computed')).toMatchObject({ method: 'get', path: '/api/config-profiles/{uuid}/computed-config' });
     expect(extractedByKey.get('profiles.list_inbounds')).toMatchObject({ method: 'get', path: '/api/config-profiles/{uuid}/inbounds' });
-    expect(extractedByKey.get('users.revoke_subscription')).toMatchObject({ method: 'post', path: '/api/users/{uuid}/actions/revoke' });
+    expect(extractedByKey.get('users.revoke_subscription')).toMatchObject({ method: 'post', path: '/api/users/{userId}/actions/revoke' });
   });
 
-  test('extracts CreateUserRequestDto constraints without permissive fallbacks', () => {
+  test('extracts CreateUserBodyDto constraints without permissive fallbacks', () => {
     const createUser = REMNAWAVE_OPENAPI_EXTRACT.operations.find((operation) => operation.key === 'users.create');
     expect(createUser?.requestBody?.required).toBe(true);
 
@@ -103,7 +112,7 @@ describe('Remnawave OpenAPI extraction', () => {
           ],
         },
         telegramId: {
-          anyOf: [{ type: 'integer' }, { type: 'null' }],
+          anyOf: [{ type: 'number' }, { type: 'null' }],
         },
         email: {
           anyOf: [{ type: 'string', format: 'email' }, { type: 'null' }],
@@ -116,43 +125,40 @@ describe('Remnawave OpenAPI extraction', () => {
   });
 
   test('extracts path parameters, query parameters, and response schemas', () => {
-    const getByUuid = REMNAWAVE_OPENAPI_EXTRACT.operations.find((operation) => operation.key === 'users.get');
-    expect(getByUuid?.parameters).toEqual([
+    const getById = REMNAWAVE_OPENAPI_EXTRACT.operations.find((operation) => operation.key === 'users.get');
+    expect(getById?.parameters).toEqual([
       {
-        description: 'UUID of the user',
+
         in: 'path',
-        name: 'uuid',
+        name: 'userId',
         required: true,
-        schema: { type: 'string' },
+        schema: { exclusiveMinimum: 0,
+          type: 'number' },
       },
     ]);
-    expect(getByUuid?.responses['200'].schema).toMatchObject({
+    expect(getById?.responses['200'].schema).toMatchObject({
       type: 'object',
       properties: {
         response: {
           type: 'object',
-          properties: expect.objectContaining({ uuid: { format: 'uuid', type: 'string' } }),
+          properties: expect.objectContaining({ id: { type: 'number' }, vlessUuid: expect.objectContaining({ format: 'uuid', type: 'string' }) }),
         },
       },
     });
 
     const listUsers = REMNAWAVE_OPENAPI_EXTRACT.operations.find((operation) => operation.key === 'users.list');
-    expect(listUsers?.parameters).toEqual([
-      {
-        description: 'Page size for pagination',
-        in: 'query',
-        name: 'size',
-        required: false,
-        schema: { type: 'number' },
-      },
-      {
-        description: 'Offset for pagination',
-        in: 'query',
-        name: 'start',
-        required: false,
-        schema: { type: 'number' },
-      },
+    expect(listUsers?.parameters.map((parameter) => parameter.name)).toEqual([
+      'start',
+      'size',
+      'filters',
+      'filterModes',
+      'globalFilterMode',
+      'sorting',
     ]);
+    expect(listUsers?.parameters.find((parameter) => parameter.name === 'filterModes')).toMatchObject({
+      in: 'query',
+      style: 'deepObject',
+    });
     expect(listUsers?.responses['200'].schema).toMatchObject({
       type: 'object',
       properties: {
@@ -191,9 +197,62 @@ describe('Remnawave OpenAPI extraction', () => {
     ).toThrow('Selected OpenAPI operationId mismatch for POST /api/users');
   });
 
+  test('compacts recursive JSON schemas without overflowing the call stack', () => {
+    const document = {
+      openapi: '3.0.0',
+      info: { title: 'Recursive schema fixture', version: '1.0.0' },
+      paths: {
+        '/api/recursive': {
+          post: {
+            operationId: 'RecursiveController_create',
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/JsonValue' },
+                },
+              },
+            },
+            responses: {
+              '200': { description: 'OK' },
+            },
+          },
+        },
+      },
+      components: {
+        schemas: {
+          JsonValue: {
+            anyOf: [
+              { type: 'string' },
+              { type: 'array', items: { $ref: '#/components/schemas/JsonValue' } },
+              { type: 'object', additionalProperties: { $ref: '#/components/schemas/JsonValue' } },
+            ],
+          },
+        },
+      },
+    };
+
+    const extracted = extractOpenApiSnapshot(document, [
+      {
+        key: 'recursive.create',
+        method: 'post',
+        path: '/api/recursive',
+        operationId: 'RecursiveController_create',
+      },
+    ]);
+
+    expect(extracted.operations[0]?.requestBody?.schema).toEqual({
+      anyOf: [
+        { type: 'string' },
+        { items: {}, type: 'array' },
+        { additionalProperties: {}, type: 'object' },
+      ],
+    });
+  });
+
   test('fails loudly for unsupported schema constructs', () => {
     const document = structuredClone(readOpenApiSnapshot(vendoredSnapshotPath)) as Record<string, any>;
-    document.components.schemas.CreateUserRequestDto.properties.username = {
+    document.components.schemas.CreateUserBodyDto.properties.username = {
       type: 'string',
       not: { enum: ['root'] },
     };

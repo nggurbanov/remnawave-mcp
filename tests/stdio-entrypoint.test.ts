@@ -41,39 +41,53 @@ async function collectStream(stream: NodeJS.ReadableStream): Promise<string> {
   return output;
 }
 
-async function waitForStderrContains(
+const STARTUP_DIAGNOSTIC_TIMEOUT_MS = 5_000;
+
+function waitForStderrContains(
   child: ReturnType<typeof spawn>,
   expected: string,
-  timeoutMs = 2000,
+  timeoutMs = STARTUP_DIAGNOSTIC_TIMEOUT_MS,
 ): Promise<string> {
   const stderrStream = child.stderr;
 
   if (!stderrStream) {
-    throw new Error('Expected child stderr stream to be available');
+    return Promise.reject(new Error('Expected child stderr stream to be available'));
   }
 
-  let stderr = '';
+  return new Promise((resolve, reject) => {
+    let stderr = '';
+    let settled = false;
 
-  stderrStream.setEncoding('utf8');
-  stderrStream.on('data', (chunk) => {
-    stderr += chunk;
+    const finish = (result: () => void): void => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      clearTimeout(timeout);
+      stderrStream.off('data', onData);
+      child.off('exit', onExit);
+      result();
+    };
+
+    const onData = (chunk: string): void => {
+      stderr += chunk;
+      if (stderr.includes(expected)) {
+        finish(() => resolve(stderr));
+      }
+    };
+
+    const onExit = (code: number | null, signal: NodeJS.Signals | null): void => {
+      finish(() => reject(new Error(`Entrypoint exited before stderr included ${expected}: code=${code}, signal=${signal}\nCurrent stderr:\n${stderr}`)));
+    };
+
+    const timeout = setTimeout(() => {
+      finish(() => reject(new Error(`Timed out waiting for stderr to include ${expected}\nCurrent stderr:\n${stderr}`)));
+    }, timeoutMs);
+
+    stderrStream.setEncoding('utf8');
+    stderrStream.on('data', onData);
+    child.once('exit', onExit);
   });
-
-  const deadline = Date.now() + timeoutMs;
-
-  while (Date.now() < deadline) {
-    if (stderr.includes(expected)) {
-      return stderr;
-    }
-
-    if (child.exitCode !== null) {
-      break;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 25));
-  }
-
-  throw new Error(`Timed out waiting for stderr to include ${expected}\nCurrent stderr:\n${stderr}`);
 }
 
 describe('stdio entrypoint', () => {
@@ -86,7 +100,7 @@ describe('stdio entrypoint', () => {
       REMNAWAVE_BASE_URL: 'https://panel.example.test',
       REMNAWAVE_API_TOKEN: 'token-value',
       LOG_LEVEL: 'debug',
-      REMNAWAVE_VERSION: '2.7.4',
+      REMNAWAVE_VERSION: '3.3.2',
     });
 
     const stderrStream = child.stderr;
@@ -94,12 +108,6 @@ describe('stdio entrypoint', () => {
     if (!stderrStream) {
       throw new Error('Expected child stderr stream to be available');
     }
-
-    const stderrChunks: string[] = [];
-    stderrStream.setEncoding('utf8');
-    stderrStream.on('data', (chunk) => {
-      stderrChunks.push(chunk);
-    });
 
     const stderr = await waitForStderrContains(child, 'startup');
 

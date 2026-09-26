@@ -337,7 +337,7 @@ async function handlePreviewApplyPreview(
   const preview = await buildPreviewApplyPreview(domain, operation, client, payload);
   if (preview.missingHostUuids !== undefined) {
     return validationError({
-      message: 'Payload references hosts that do not exist for hosts.bulk_set_port.',
+      message: 'Payload references hosts that do not exist for hosts.bulk_update.',
       validationIssues: preview.missingHostUuids.map((uuid) => ({
         field: 'payload.hostUuids',
         code: 'HOST_NOT_FOUND',
@@ -409,7 +409,7 @@ async function handlePreviewApplyApply(
 }
 
 function hasRealPreviewBuilder(operation: OperationRegistration): boolean {
-  return operation.discovery.domain === 'hosts' && operation.discovery.operation === 'bulk_set_port'
+  return operation.discovery.domain === 'hosts' && operation.discovery.operation === 'bulk_update'
     || operation.openapi.method === 'delete' && operation.openapi.path.includes('{uuid}')
     || operation.openapi.method === 'patch'
     || operation.openapi.method === 'post' && operation.openapi.path.includes('/actions/reorder')
@@ -425,7 +425,7 @@ async function buildPreviewApplyPreview(
   client: RemnawaveApiClient,
   payload: Record<string, unknown>,
 ): Promise<PreviewApplyPreviewState> {
-  if (domain === 'hosts' && operation.discovery.operation === 'bulk_set_port') {
+  if (domain === 'hosts' && operation.discovery.operation === 'bulk_update') {
     return buildHostBulkSetPortPreview(client, payload);
   }
 
@@ -451,7 +451,7 @@ async function buildHostBulkSetPortPreview(
 
   const getHosts = client.getHosts;
   if (getHosts === undefined) {
-    throw new Error('hosts.bulk_set_port preview requires getHosts client method.');
+    throw new Error('hosts.bulk_update preview requires getHosts client method.');
   }
 
   const hostUuids = readStringArray(payload.hostUuids);
@@ -546,7 +546,6 @@ function uuidEntityReader(domain: string, client: RemnawaveApiClient): ((uuid: s
   if (domain === 'profiles' && client.getProfile !== undefined) return client.getProfile;
   if (domain === 'nodes' && client.getNode !== undefined) return client.getNode;
   if (domain === 'external_squads' && client.getExternalSquadByUuid !== undefined) return client.getExternalSquadByUuid;
-  if (domain === 'subscriptions' && client.getSubscriptionByUuid !== undefined) return client.getSubscriptionByUuid;
   if (domain === 'metadata' && client.getNodeMetadata !== undefined) return client.getNodeMetadata;
   return null;
 }

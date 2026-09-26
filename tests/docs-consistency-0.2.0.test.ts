@@ -4,6 +4,7 @@ import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 
 import { buildRemnawaveApiToolDiscoveryDescription } from '../src/remnawave-api/contract.js';
+import { REMNAWAVE_OPERATION_INVENTORY } from '../src/remnawave-api/generated/operation-inventory.js';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
 
@@ -21,7 +22,12 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
   const skillBoundary = readRepoFile('docs/architecture/mcp-skill-boundary.md');
   const actionRegistry = readRepoFile('docs/panel/action-registry.md');
   const workflowContract = readRepoFile('docs/contracts/priority-workflow-contract.md');
+  const currentContractReport = readRepoFile('docs/contracts/remnawave-3.3.2-contract-report.md');
+  const historicalContractReport = readRepoFile('docs/contracts/remnawave-contract-report.md');
   const packageJson = JSON.parse(readRepoFile('package.json')) as { version: string };
+  const openapi = JSON.parse(readRepoFile('src/remnawave-api/openapi/remnawave-openapi-3.3.2.json')) as {
+    paths: Record<string, Record<string, { operationId?: string }>>;
+  };
 
   test('package version is 0.2.1', () => {
     expect(packageJson.version).toBe('0.2.1');
@@ -40,8 +46,8 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
     expect(readme).toContain('preview/apply');
     expect(readme).toContain('confirmToken');
     expect(readme).toContain('applyToken');
-    expect(readme).toContain('2.7.0');
-    expect(readme).toContain('2.7.4');
+    expect(readme).toContain('3.3.2');
+    expect(readme).toContain('3.3.2');
     expect(readme).toContain('unsupported-operation errors');
     expect(readme).toContain('absent from discovery');
   });
@@ -54,10 +60,10 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
     expect(readme).toContain('"retryable": false');
   });
 
-  test('README does not mention stale runtime-discoverable denied/deferred behavior', () => {
+  test('README documents the supported 3.3.2 runtime range', () => {
     const beforeMigration = readme.split('## Migration from 0.1')[0] ?? readme;
-    expect(beforeMigration).not.toContain('2.8.x');
-    expect(beforeMigration).not.toContain('2.8.');
+    expect(beforeMigration).toContain('3.3.2');
+    expect(beforeMigration).toContain('3.3.2');
   });
 
   test('migration guide covers 0.1 to 0.2 transition', () => {
@@ -73,19 +79,15 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
   test('migration guide does not claim deferred/denied are runtime-discoverable', () => {
     expect(migration).not.toContain('deferred');
     expect(migration).not.toContain('denied');
-    expect(migration).not.toContain('2.8.x');
-    expect(migration).not.toContain('2.8.');
   });
 
   test('release readiness aligns with compact v2 and version gate', () => {
     expect(readiness).toContain('0.2.1');
-    expect(readiness).toContain('2.7.0');
-    expect(readiness).toContain('2.7.4');
+    expect(readiness).toContain('3.3.2');
+    expect(readiness).toContain('3.3.2');
     expect(readiness).toContain('compact v2');
     expect(readiness).toContain('absent from runtime discovery');
     expect(readiness).toContain('compact unsupported-operation errors');
-    expect(readiness).not.toContain('2.8.x');
-    expect(readiness).not.toContain('2.8.');
     expect(readiness).not.toContain('deferred domains are documented');
     expect(readiness).not.toContain('visible in discovery');
     expect(readiness).not.toContain('Server version: `0.1.0`');
@@ -110,6 +112,14 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
     expect(scopeDoc).not.toContain('nodes.manage_lifecycle');
     expect(scopeDoc).not.toContain('nodes.manage_maintenance');
     expect(scopeDoc).not.toContain('2.7.4 only');
+  });
+
+  test('current capability, scope, migration, and safety docs exclude removed 2.7.4 host bulk operations', () => {
+    for (const text of [matrix, scopeDoc, migration, safetyDoc]) {
+      expect(text).toContain('hosts.bulk_update');
+      expect(text).not.toContain('hosts.bulk_set_port');
+      expect(text).not.toContain('hosts.bulk_set_inbound');
+    }
   });
 
   test('v1 scope doc does not contradict public_subscriptions support status', () => {
@@ -158,9 +168,26 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
 
   test('action registry marks itself as planning inventory and keeps node runtime wording atomic', () => {
     expect(actionRegistry).toContain('Historical note: this document is a planning inventory, not the current runtime contract.');
-    expect(actionRegistry).toContain('| nodes | Node restart control | `nodes.restart` | atomic | high | supported | required | none | 2.7.4-verified-surface |');
+    expect(actionRegistry).toContain('| nodes | Node restart control | `nodes.restart` / `nodes.restart_all` | atomic | high | supported | required | none | 3.3.2-verified-surface |');
     expect(actionRegistry).not.toContain('`nodes.manage_lifecycle`');
     expect(actionRegistry).not.toContain('`nodes.manage_maintenance`');
+  });
+
+  test('action registry cites only operation ids and paths present in the vendored 3.3.2 OpenAPI', () => {
+    const operationIds = new Set<string>();
+    for (const pathItem of Object.values(openapi.paths)) {
+      for (const operation of Object.values(pathItem)) {
+        if (operation.operationId) operationIds.add(operation.operationId);
+      }
+    }
+
+    const citedOperationIds = [...actionRegistry.matchAll(/`([A-Za-z][A-Za-z0-9_]+Controller_[A-Za-z0-9_]+)`/gu)]
+      .map((match) => match[1]);
+    const citedPaths = [...actionRegistry.matchAll(/`(?:GET|POST|PATCH|PUT|DELETE) (\/api[^`]+)`/gu)]
+      .map((match) => match[1]);
+
+    expect(citedOperationIds.filter((operationId) => !operationIds.has(operationId))).toEqual([]);
+    expect(citedPaths.filter((openapiPath) => !Object.hasOwn(openapi.paths, openapiPath))).toEqual([]);
   });
   test('action registry does not claim excluded node_plugins surfaces are supported', () => {
     expect(actionRegistry).not.toContain('node_plugins.get_torrent_blocker_reports');
@@ -171,35 +198,49 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
   test('action registry does not claim template CRUD is deferred', () => {
     expect(actionRegistry).not.toContain('`templates.manage_subscription`');
     expect(actionRegistry).not.toContain('Create/update/delete/reorder semantics remain deferred');
-    expect(actionRegistry).toContain('| templates | Subscription template delete | `templates.delete` | atomic | high | supported | required | none | 2.7.4-verified-surface |');
+    expect(actionRegistry).toContain('| templates | Subscription template delete | `templates.delete` | atomic | high | supported | required | none | 3.3.2-verified-surface |');
   });
 
   test('action registry does not claim snippet CRUD is deferred', () => {
     expect(actionRegistry).not.toContain('`snippets.manage_lifecycle`');
     expect(actionRegistry).not.toContain('Snippet create/update/delete behavior remains deferred');
-    expect(actionRegistry).toContain('| snippets | Snippet delete | `snippets.delete` | atomic | high | supported | required | none | 2.7.4-verified-surface |');
+    expect(actionRegistry).toContain('| snippets | Snippet delete | `snippets.delete` | atomic | high | supported | required | none | 3.3.2-verified-surface |');
+  });
+
+  test('current docs do not contradict supported template, profile, public-subscription, or page-config operations', () => {
+    for (const text of [safetyDoc, matrix, scopeDoc, actionRegistry, workflowContract]) {
+      expect(text).not.toContain('Template reorder remains deferred');
+      expect(text).not.toContain('template reorder remains out of scope');
+      expect(text).not.toContain('profile mutations remain out of scope');
+      expect(text).not.toContain('no `subscription_page` runtime domain');
+      expect(text).not.toContain('subscription-page config mutations remain planning-only');
+    }
+    expect(matrix).not.toContain('Public `/sub/*` user delivery endpoints → denied');
   });
 
 
 
   test('priority workflow contract does not publish planning-only seams as current runtime support', () => {
     expect(workflowContract).toContain('It is not the runtime support contract');
-    expect(workflowContract).toContain('`hosts.bulk_set_port` supports only bounded host port updates');
+    expect(workflowContract).toContain('`hosts.bulk_update` supports only bounded host port updates');
     expect(workflowContract).not.toContain('`hosts.manage_routing`');
     expect(workflowContract).not.toContain('`templates.inspect`');
     expect(workflowContract).not.toContain('`subscription_page.manage_configuration`');
     expect(workflowContract).not.toContain('`templates.manage_subscription`');
     expect(workflowContract).not.toContain('`snippets.manage_lifecycle`');
-    expect(workflowContract).not.toContain('Current `external_squads.');
-    expect(workflowContract).not.toContain('current `external_squads.');
-    expect(workflowContract).toContain('No external squad operation is currently executable');
-    expect(workflowContract).toContain('The current single-tool MCP contract supports atomic template CRUD and atomic snippet CRUD');
+    expect(workflowContract).toContain('`external_squads.add_users` and `external_squads.remove_users`');
+    expect(workflowContract).toContain('all-user membership actions');
+    expect(workflowContract).not.toContain('No external squad operation is currently executable');
+    expect(workflowContract).not.toContain('`external_squads` domain is absent from runtime discovery');
+    expect(workflowContract).toContain(
+      'The current single-tool MCP contract supports atomic template CRUD/reorder, atomic snippet CRUD, and subscription-page-config reads/lifecycle/clone/reorder',
+    );
   });
 
   test('release readiness does not overclaim infra billing, inbound attachment, or stale grouped template snippet names', () => {
     const readinessBeforeMigration = readiness.split('## Migration and compatibility')[0] ?? readiness;
     expect(readinessBeforeMigration).toContain('Infra-billing provider, node, mutation, and history workflows');
-    expect(readinessBeforeMigration).toContain('`hosts.bulk_set_port` covers bounded host port changes only');
+    expect(readinessBeforeMigration).toContain('`hosts.bulk_update` covers bounded host port changes only');
     expect(readinessBeforeMigration).not.toContain('currently supported provider/node mutation and history inspect boundary');
     expect(readinessBeforeMigration).not.toContain('inbound attachment');
     expect(readinessBeforeMigration).not.toContain('templates.manage_subscription');
@@ -212,7 +253,7 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
   });
 
   test('capability matrix says template and snippet CRUD are supported while only broader workflows are deferred', () => {
-    expect(matrix).toContain('Template list/read/create/update/delete are supported; template reorder and broader delivery workflows are deferred.');
+    expect(matrix).toContain('Template list/read/create/update/delete/reorder are supported; broader delivery workflows are deferred.');
     expect(matrix).toContain('Snippet inventory and CRUD are supported; snippet reorder and broader composite workflows are deferred.');
     expect(matrix).not.toContain('Template inspection and CRUD are supported; mutations deferred.');
     expect(matrix).not.toContain('Snippet inventory and CRUD are supported; lifecycle deferred.');
@@ -224,14 +265,9 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
     expect(actionRegistry).toContain('nodes.restart');
   });
 
-  test('docs do not claim 2.8.x support anywhere', () => {
-    for (const text of [readme, migration, readiness]) {
-      expect(text).not.toContain('2.8.x');
-      expect(text).not.toContain('2.8.0');
-      expect(text).not.toContain('2.8.1');
-      expect(text).not.toContain('2.8.2');
-      expect(text).not.toContain('2.8.3');
-      expect(text).not.toContain('2.8.4');
+  test('active runtime docs publish the exact 3.3.2 support version', () => {
+    for (const text of [readme, readiness]) {
+      expect(text).toContain('3.3.2');
     }
   });
   test('docs do not use legacy compact error kind names', () => {
@@ -266,5 +302,45 @@ describe('docs consistency for 0.2.0 compact v2 contract', () => {
     }
     expect(buildRemnawaveApiToolDiscoveryDescription()).toContain('compact v2 single-tool contract');
     expect(actionRegistry).toContain('current compact v2 single-tool runtime contract');
+  });
+
+  test('current capability and scope docs omit operations removed in 3.3.2', () => {
+    const removedOperations = [
+      'users.get_by_email',
+      'users.get_by_id',
+      'users.get_by_tag',
+      'users.get_by_telegram_id',
+      'bandwidth_stats.get_node_user_usage_legacy',
+      'bandwidth_stats.get_user_usage_legacy',
+    ];
+
+    for (const text of [matrix, scopeDoc]) {
+      for (const operation of removedOperations) expect(text).not.toContain(operation);
+    }
+  });
+
+  test('scope truth tables account for supported key generation', () => {
+    expect(scopeDoc).toContain('| key generation | `keygen` | supported |');
+    expect(scopeDoc).toMatch(/\| \*\*Fully supported\*\* \|[^\n]*key generation[^\n]*\|/u);
+    expect(matrix).toContain('| keygen | `supported` |');
+  });
+
+  test('current docs derive the published supported-operation count and explicit connections exclusion from inventory', () => {
+    const supportedCount = REMNAWAVE_OPERATION_INVENTORY.operations.filter((operation) => operation.status === 'supported').length;
+
+    for (const text of [readme, readiness, matrix, scopeDoc, currentContractReport]) {
+      expect(text).toContain(`${supportedCount} supported operations`);
+    }
+    for (const text of [readme, matrix, scopeDoc, safetyDoc]) {
+      expect(text).toContain('connections');
+      expect(text).not.toMatch(/ip(?:_|[ -])control/i);
+    }
+  });
+
+  test('release readiness cites current 3.3.2 evidence and the older live capture is explicitly historical', () => {
+    expect(readiness).toContain('remnawave-3.3.2-contract-report.md');
+    expect(readiness).not.toContain('(../contracts/remnawave-contract-report.md)');
+    expect(currentContractReport).toContain('60d2dabf9c170829f6e807135df84e78e0c8a005820bcb8dd78127cb9d33bc33');
+    expect(historicalContractReport).toContain('Historical evidence only');
   });
 });

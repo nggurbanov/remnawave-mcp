@@ -1,8 +1,13 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { routeRemnawaveApiRequest } from '../src/remnawave-api/router.js';
+import { SUPPORTED_REMNAWAVE_OPERATIONS } from '../src/remnawave-api/domains/runtime-scope.js';
 import type { RemnawaveApiClient } from '../src/remnawave-api/registry.js';
-import { clearTier3ConfirmationTokensForTests } from '../src/remnawave-api/risk.js';
+import {
+  clearTier3ConfirmationTokensForTests,
+  getSupportedOperationRisk,
+  SUPPORTED_OPERATION_RISK,
+} from '../src/remnawave-api/risk.js';
 
 function createClient(overrides: Partial<RemnawaveApiClient> = {}): RemnawaveApiClient {
   return {
@@ -69,7 +74,7 @@ describe('remnawave_api compact risk behavior', () => {
   test('tier3 mutations return compact confirmation errors before execution', async () => {
     const restartNode = vi.fn(async (nodeUuid: string) => ({ uuid: nodeUuid, restarted: true }));
     const result = await routeRemnawaveApiRequest(
-      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1' } },
+      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1', forceRestart: false } },
       createClient({ restartNode }),
     );
 
@@ -86,17 +91,55 @@ describe('remnawave_api compact risk behavior', () => {
     expectCompact(result);
   });
 
+  test('classifies restart-all as a fleet-wide tier3 action without stale subscription metadata', () => {
+    expect(getSupportedOperationRisk('nodes', 'restart_all')).toMatchObject({
+      tier: 'tier3',
+      scope: 'fleet',
+      confirmationRequired: true,
+    });
+    expect(SUPPORTED_OPERATION_RISK).not.toHaveProperty('subscriptions.get');
+  });
+
+  test('derives tier and confirmation metadata from every generated supported contract', () => {
+    for (const contract of SUPPORTED_REMNAWAVE_OPERATIONS) {
+      expect(getSupportedOperationRisk(contract.domain, contract.operation)).toMatchObject({
+        tier: contract.riskTier,
+        confirmationRequired: contract.safetyMode === 'confirm',
+      });
+      expect(SUPPORTED_OPERATION_RISK[contract.key]).toMatchObject({
+        tier: contract.riskTier,
+        confirmationRequired: contract.safetyMode === 'confirm',
+      });
+    }
+  });
+
+  test('all-user squad mutations require confirmation before execution', async () => {
+    const bulkAddUsersToInternalSquad = vi.fn(async (squadUuid: string) => ({ uuid: squadUuid, addedAll: true }));
+    const request = { domain: 'internal_squads', operation: 'add_users', payload: { uuid: 'squad-1' } } as const;
+
+    const confirmation = await routeRemnawaveApiRequest(request, createClient({ bulkAddUsersToInternalSquad }));
+
+    expect(confirmation).toMatchObject({
+      error: {
+        code: 'CONFIRMATION_REQUIRED',
+        kind: 'confirmation_required',
+        token: expect.any(String),
+      },
+    });
+    expect(bulkAddUsersToInternalSquad).not.toHaveBeenCalled();
+  });
+
   test('confirm safety mode executes only when top-level confirmToken matches', async () => {
     const restartNode = vi.fn(async (nodeUuid: string) => ({ uuid: nodeUuid, restarted: true }));
     const client = createClient({ restartNode });
     const first = await routeRemnawaveApiRequest(
-      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1' } },
+      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1', forceRestart: false } },
       client,
     );
 
     const token = (first as { error: { token: string } }).error.token;
     const result = await routeRemnawaveApiRequest(
-      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1' }, confirmToken: token },
+      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1', forceRestart: false }, confirmToken: token },
       client,
     );
 
@@ -109,21 +152,21 @@ describe('remnawave_api compact risk behavior', () => {
     const restartNode = vi.fn(async (nodeUuid: string) => ({ uuid: nodeUuid, restarted: true }));
     const client = createClient({ restartNode });
     const first = await routeRemnawaveApiRequest(
-      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1' } },
+      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1', forceRestart: false } },
       client,
     );
     const token = (first as { error: { token: string } }).error.token;
 
     const wrongPayload = await routeRemnawaveApiRequest(
-      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-2' }, confirmToken: token },
+      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-2', forceRestart: false }, confirmToken: token },
       client,
     );
     const confirmed = await routeRemnawaveApiRequest(
-      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1' }, confirmToken: token },
+      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1', forceRestart: false }, confirmToken: token },
       client,
     );
     const replay = await routeRemnawaveApiRequest(
-      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1' }, confirmToken: token },
+      { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1', forceRestart: false }, confirmToken: token },
       client,
     );
 

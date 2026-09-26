@@ -17,7 +17,8 @@ function createClient(overrides: Partial<RemnawaveApiClient> = {}): RemnawaveApi
       nodes: { totalOnlineUsers: 3, lifetimeBytes: 0n },
     }),
     createUser: async (payload) => ({ uuid: 'user-1', ...payload }),
-    getMetadata: async () => ({ panel: 'rw', version: '2.7.4' }),
+    getMetadata: async () => ({ panel: 'rw', version: '3.3.2' }),
+    executeOpenApiOperation: async (operation, payload) => operation.key === 'users.get' ? { found: true, match: { id: 1, shortUuid: 'short-1', username: 'alice' } } : payload,
     ...overrides,
   };
 }
@@ -111,7 +112,7 @@ describe('routeRemnawaveApiRequest compact contract', () => {
 
   test('responseMode raw returns upstream output for allowlisted safe system reads', async () => {
     const rawStats = { raw: true, cpu: { cores: 4 } };
-    const rawMetadata = { panel: 'rw', version: '2.7.4' };
+    const rawMetadata = { panel: 'rw', version: '3.3.2' };
     const getSystemStats = vi.fn(async () => rawStats);
     const getMetadata = vi.fn(async () => rawMetadata);
 
@@ -157,10 +158,10 @@ describe('routeRemnawaveApiRequest compact contract', () => {
   });
 
   test('responseMode raw is rejected for user-sensitive reads', async () => {
-    const resolveUser = vi.fn(async (uuid: string) => ({ uuid }));
+    const resolveUser = vi.fn(async (selector: Readonly<{ id?: number; shortUuid?: string; username?: string }>) => ({ selector }));
 
     const result = await routeRemnawaveApiRequest(
-      { domain: 'users', operation: 'get', payload: { uuid: 'user-1' }, responseMode: 'raw' },
+      { domain: 'users', operation: 'get', payload: { userId: 1 }, responseMode: 'raw' },
       createClient({ resolveUser }),
     );
 
@@ -234,7 +235,7 @@ describe('routeRemnawaveApiRequest compact contract', () => {
   test('normalizes supported operation responses through explicit mapper policies', async () => {
     const usersList = await routeRemnawaveApiRequest(
       { domain: 'users', operation: 'list', payload: {} },
-      createClient({ getUsers: async () => ({ total: 1, items: [{ uuid: 'user-1', username: 'alice' }] }) }),
+      createClient({ getUsers: async () => ({ total: 1, items: [{ id: 1, username: 'alice' }] }) }),
     );
     const createdUser = await routeRemnawaveApiRequest(
       {
@@ -245,16 +246,16 @@ describe('routeRemnawaveApiRequest compact contract', () => {
       createClient({ createUser: async (payload) => ({ response: { uuid: 'user-2', ...payload }, upstreamTrace: 'ignored' }) }),
     );
     const resolvedUser = await routeRemnawaveApiRequest(
-      { domain: 'users', operation: 'get', payload: { uuid: 'user-1' } },
-      createClient({ resolveUser: async () => ({ response: { uuid: 'user-1', shortUuid: 'short-1', username: 'alice', extra: true } }) }),
+      { domain: 'users', operation: 'get', payload: { userId: 1 } },
+      createClient(),
     );
 
-    expect(usersList).toEqual({ total: 1, items: [{ uuid: 'user-1', username: 'alice' }] });
+    expect(usersList).toEqual({ total: 1, items: [{ id: 1, username: 'alice' }] });
     expect(createdUser).toEqual({
       created: { uuid: 'user-2', username: 'bridge-operator', expireAt: '2026-05-01T00:00:00.000Z' },
     });
     expect(resolvedUser).toEqual({
-      user: { found: true, match: { uuid: 'user-1', shortUuid: 'short-1', username: 'alice' } },
+      user: { found: true, match: { id: 1, shortUuid: 'short-1', username: 'alice' } },
     });
     expectNoLegacyFields(usersList);
     expectNoLegacyFields(createdUser);

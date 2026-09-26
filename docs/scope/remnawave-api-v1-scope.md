@@ -35,7 +35,7 @@ See the [migration guide](../migration/flat-to-single-tool.md) for detailed migr
 
 ## Compact v2 scope summary
 
-The v1 discovery surface publishes the registry-backed compact v2 runtime surface. It currently exposes 150 supported operations across 19 domains.
+The v1 discovery surface publishes the registry-backed compact v2 runtime surface. It currently exposes 143 supported operations across 19 domains.
 
 Accepted baseline for this audited repo state:
 
@@ -74,18 +74,14 @@ These operations are currently `supported` and executable through the v1 single-
 - `users.bulk_revoke_subscription`
 - `users.bulk_update`
 - `users.bulk_update_squads`
-- `users.get_by_email`
-- `users.get_by_id`
 - `users.get_by_short_uuid`
-- `users.get_by_tag`
-- `users.get_by_telegram_id`
 - `users.get_by_username`
 - `users.resolve`
 - `users.list_tags`
 - `users.delete`
 - `users.get_accessible_nodes`
 - `users.reset_traffic`
-- `hosts.bulk_set_port`
+- `hosts.bulk_update`
 - `hosts.list`
 - `hosts.update`
 - `hosts.create`
@@ -93,7 +89,6 @@ These operations are currently `supported` and executable through the v1 single-
 - `hosts.bulk_delete`
 - `hosts.bulk_disable`
 - `hosts.bulk_enable`
-- `hosts.bulk_set_inbound`
 - `hosts.list_tags`
 - `hosts.delete`
 - `hosts.get`
@@ -132,10 +127,10 @@ These operations are currently `supported` and executable through the v1 single-
 - `subscriptions.list`
 - `subscriptions.get_by_username`
 - `subscriptions.get_by_short_uuid`
-- `subscriptions.get_by_uuid`
+- `subscriptions.get_by_id`
 - `subscriptions.get_raw_by_short_uuid`
 - `subscriptions.get_subpage_config_by_short_uuid`
-- `subscriptions.get_connection_keys_by_uuid`
+- `subscriptions.get_connection_keys_by_user_id`
 - `subscription_request_history.list`
 - `subscription_request_history.get_stats`
 - `profiles.list`
@@ -149,9 +144,7 @@ These operations are currently `supported` and executable through the v1 single-
 - `profiles.delete`
 - `bandwidth_stats.list_nodes_usage`
 - `bandwidth_stats.get_node_users_usage`
-- `bandwidth_stats.get_node_user_usage_legacy`
 - `bandwidth_stats.get_user_usage`
-- `bandwidth_stats.get_user_usage_legacy`
 - `external_squads.list`
 - `external_squads.update`
 - `external_squads.create`
@@ -230,7 +223,7 @@ The single-tool discovery inventory currently includes these domains:
 - `subscription_settings`
 - `keygen`
 
-The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawave-settings surfaces, plus dangerous/internal system-helper surfaces such as HAPP encryption and SRR matcher endpoints. Sensitive key generation is published through `keygen.generate_node_secret` and `system.generate_x25519_keypairs`.
+The runtime excludes auth/bootstrap, token, node-plugin, connection-management, and Remnawave-settings surfaces, plus dangerous/internal system-helper surfaces such as HAPP encryption and SRR matcher endpoints. Sensitive key generation is published through `keygen.generate_node_secret` and `system.generate_x25519_keypairs`.
 
 
 ## Registry-aligned scope snapshot
@@ -265,18 +258,14 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
     "users.bulk_revoke_subscription",
     "users.bulk_update",
     "users.bulk_update_squads",
-    "users.get_by_email",
-    "users.get_by_id",
     "users.get_by_short_uuid",
-    "users.get_by_tag",
-    "users.get_by_telegram_id",
     "users.get_by_username",
     "users.resolve",
     "users.list_tags",
     "users.delete",
     "users.get_accessible_nodes",
     "users.reset_traffic",
-    "hosts.bulk_set_port",
+    "hosts.bulk_update",
     "hosts.list",
     "hosts.update",
     "hosts.create",
@@ -284,7 +273,6 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
     "hosts.bulk_delete",
     "hosts.bulk_disable",
     "hosts.bulk_enable",
-    "hosts.bulk_set_inbound",
     "hosts.list_tags",
     "hosts.delete",
     "hosts.get",
@@ -323,10 +311,10 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
     "subscriptions.list",
     "subscriptions.get_by_username",
     "subscriptions.get_by_short_uuid",
-    "subscriptions.get_by_uuid",
+    "subscriptions.get_by_id",
     "subscriptions.get_raw_by_short_uuid",
     "subscriptions.get_subpage_config_by_short_uuid",
-    "subscriptions.get_connection_keys_by_uuid",
+    "subscriptions.get_connection_keys_by_user_id",
     "subscription_request_history.list",
     "subscription_request_history.get_stats",
     "profiles.list",
@@ -340,9 +328,7 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
     "profiles.delete",
     "bandwidth_stats.list_nodes_usage",
     "bandwidth_stats.get_node_users_usage",
-    "bandwidth_stats.get_node_user_usage_legacy",
     "bandwidth_stats.get_user_usage",
-    "bandwidth_stats.get_user_usage_legacy",
     "external_squads.list",
     "external_squads.update",
     "external_squads.create",
@@ -425,11 +411,7 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
         "bulk_revoke_subscription",
         "bulk_update",
         "bulk_update_squads",
-        "get_by_email",
-        "get_by_id",
         "get_by_short_uuid",
-        "get_by_tag",
-        "get_by_telegram_id",
         "get_by_username",
         "resolve",
         "list_tags",
@@ -442,7 +424,7 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
     },
     "hosts": {
       "supported": [
-        "bulk_set_port",
+        "bulk_update",
         "list",
         "update",
         "create",
@@ -450,7 +432,6 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
         "bulk_delete",
         "bulk_disable",
         "bulk_enable",
-        "bulk_set_inbound",
         "list_tags",
         "delete",
         "get"
@@ -525,10 +506,10 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
         "list",
         "get_by_username",
         "get_by_short_uuid",
-        "get_by_uuid",
+        "get_by_id",
         "get_raw_by_short_uuid",
         "get_subpage_config_by_short_uuid",
-        "get_connection_keys_by_uuid"
+        "get_connection_keys_by_user_id"
       ],
       "deferred": [],
       "denied": []
@@ -560,9 +541,7 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
       "supported": [
         "list_nodes_usage",
         "get_node_users_usage",
-        "get_node_user_usage_legacy",
         "get_user_usage",
-        "get_user_usage_legacy"
       ],
       "deferred": [],
       "denied": []
@@ -660,9 +639,9 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
 | `users` | supported | User reads, create/update, lookup, lifecycle actions, and generated bulk preview/apply workflows are supported. |
 | `hosts` | supported | Host list/read/create/update, tags, deletes, reorder, and generated bulk preview/apply workflows are supported. |
 | `nodes` | supported | Node list/read/create/update, lifecycle actions, and generated preview/apply bulk/profile workflows are supported. `nodes.restart` uses tier3 confirmation. |
-| `profiles` | partially supported | `list`, `get`, `get_computed`, and `list_inbounds` are supported; profile mutations remain out of scope. |
+| `profiles` | supported | Profile reads, create/update/delete/reorder, computed output, and inbound inventory are supported with generated safety modes. |
 | `metadata` | partially supported | `get_node`, `upsert_node`, `get_user`, and `upsert_user` are supported. |
-| `templates` | partially supported | `list`, `get`, `create`, `update`, and `delete` are supported; template reorder remains out of scope. |
+| `templates` | supported | `list`, `get`, `create`, `update`, `delete`, and guarded `reorder` are supported. |
 | `snippets` | partially supported | `list`, `create`, `update`, and `delete` are supported; snippet reorder remains out of scope. |
 | `public_subscriptions` | partially supported | `get_info`, `get`, and `get_by_client_type` are supported public subscription reads. |
 | `subscriptions` | supported | Protected subscription reads are supported with MCP raw response mode disabled. |
@@ -672,7 +651,7 @@ The runtime excludes auth/bootstrap, token, node-plugin, IP-control, and Remnawa
 | `external_squads` | supported | External squad list/read/create/update/delete/reorder and membership actions are supported. |
 | `infra_billing` | supported | Billing provider, node, and history reads and guarded mutations are supported. |
 | `node_plugins` | excluded | Node plugin operations remain excluded from runtime discovery. |
-| `ip_control` | excluded | IP-control operations remain excluded from runtime discovery. |
+| `connections` | excluded | Connection lookup and drop operations remain explicitly excluded from runtime discovery. |
 | `auth` | excluded | Authentication and settings surfaces are intentionally excluded from v1. |
 
 ## Single-tool request workflow
@@ -747,7 +726,7 @@ This section maps the PRD-defined target domains to their final disposition in t
 | key generation | `keygen` | supported | `keygen.generate_node_secret` is supported for node onboarding secret material. |
 | infra billing | `infra_billing` | supported | Billing provider, node, and history reads/mutations are supported. |
 | hwid | `hwid` | supported | HWID reads/stats and guarded actions are supported. |
-| ip control | `ip_control` | dropped | IP-control operations remain excluded. |
+| connections | `connections` | dropped | Connection lookup and drop operations remain excluded. |
 | node plugins | `node_plugins` | dropped | Node plugin operations remain excluded. |
 | subscription request history | `subscription_request_history` | supported | Request-history reads and stats are supported. |
 | routing / control-plane rule management | N/A | deferred | No operations are currently executable through a standalone routing domain; routing effects are only available through supported profile/host endpoints. |
@@ -756,10 +735,10 @@ This section maps the PRD-defined target domains to their final disposition in t
 
 | Domain category | PRD domains | Final state |
 |---|---|---|
-| **Fully supported** | users, nodes, hosts, config profiles, internal squads, external squads, subscription settings, subscription templates, subscription page configs, snippets, metadata, bandwidth stats, infra billing, hwid, subscription request history | Targeted compact v2 operations are supported through registry-backed runtime execution. |
+| **Fully supported** | users, nodes, hosts, config profiles, internal squads, external squads, subscription settings, subscription templates, subscription page configs, snippets, metadata, bandwidth stats, key generation, infra billing, hwid, subscription request history | Targeted compact v2 operations are supported through registry-backed runtime execution. |
 | **Partially supported** | system observability | Diagnostics and `system.generate_x25519_keypairs` are supported; debug helpers are denied. |
 | **Deferred** | routing / standalone control-plane rule management | No standalone routing domain is published. |
-| **Denied per PRD** | auth flows, token/bootstrap flows, ip control, node plugins, debug/internal actions | Explicitly excluded from runtime discovery. |
+| **Denied per PRD** | auth flows, token/bootstrap flows, connection management, node plugins, debug/internal actions | Explicitly excluded from runtime discovery. |
 
 ### Coverage completeness check
 

@@ -33,7 +33,7 @@ The Remnawave MCP uses a three-tier risk classification system to govern operati
 - Require explicit gating before execution
 - Two gating styles exist: confirmation (`confirmToken`) and preview/apply (`applyToken`)
 - Confirmation examples: `nodes.restart`, `users.disable`, `users.revoke_subscription`
-- Preview/apply example: `hosts.bulk_set_port`
+- Preview/apply example: `hosts.bulk_update`
 
 ## Side-Effect Classification
 
@@ -75,7 +75,8 @@ Tier 3 confirmation-gated operations use a two-step flow.
   "domain": "nodes",
   "operation": "restart",
   "payload": {
-    "uuid": "node-1"
+    "uuid": "node-1",
+    "forceRestart": false
   }
 }
 ```
@@ -102,7 +103,8 @@ Response:
   "domain": "nodes",
   "operation": "restart",
   "payload": {
-    "uuid": "node-1"
+    "uuid": "node-1",
+    "forceRestart": false
   },
   "confirmToken": "sha256:abc123..."
 }
@@ -136,7 +138,7 @@ Tier 3 preview/apply operations use a two-step flow.
 {
   "tool": "remnawave_api",
   "domain": "hosts",
-  "operation": "bulk_set_port",
+  "operation": "bulk_update",
   "payload": {
     "hostUuids": ["host-1"],
     "port": 443
@@ -162,7 +164,7 @@ Response:
 {
   "tool": "remnawave_api",
   "domain": "hosts",
-  "operation": "bulk_set_port",
+  "operation": "bulk_update",
   "payload": {
     "applyToken": "def456"
   }
@@ -200,9 +202,9 @@ These operations require a preview/apply token before execution:
 
 | Domain | Operation | Effect | Why Tier 3 |
 |--------|-----------|--------|------------|
-| `hosts` | `bulk_set_port` | `update` | Can affect multiple routes |
+| `hosts` | `bulk_update` | `update` | Can affect multiple routes |
 | `profiles` | `update`, `delete`, `reorder` | `update/delete` | Changes delivery profile state; preview/apply protects against stale profile state |
-| `hosts` | `delete`, `reorder`, `bulk_delete`, `bulk_disable`, `bulk_enable`, `bulk_set_inbound` | `update/delete` | Changes host routing state; preview/apply protects against stale host inventory |
+| `hosts` | `delete`, `reorder`, `bulk_delete`, `bulk_disable`, `bulk_enable` | `update/delete` | Changes host routing state; preview/apply protects against stale host inventory |
 | `nodes` | `delete`, `reorder`, `bulk_actions`, `bulk_update`, `profile_modification` | `update/delete` | Changes node/control-plane state; preview/apply protects against stale node inventory |
 | `users` | `bulk_*` operations | `bulk update/delete` | Can mutate many users; preview/apply protects against stale user inventory |
 | `subscription_settings` | `update` | `update` | Changes global subscription behavior; preview/apply protects against stale settings |
@@ -225,7 +227,7 @@ These operations remain denied because no model-facing runtime seam exists:
 |--------|-----------|------------|
 | `node_plugins` | `execute_plugin_executor` | No truthful executor seam in single-tool runtime |
 | `node_plugins` | `truncate_torrent_blocker_reports` | No truthful truncation seam in single-tool runtime |
-| `ip_control` | `drop_connections` | Destructive action, no model-facing runtime seam |
+| `connections` | all lookup-job and drop operations | Explicitly excluded; no model-facing runtime seam |
 | `metadata` | `manage_node` | No truthful node-write seam in model-facing client contract |
 | `system` | `debug_srr_matcher` | Debug-only endpoint, not for MCP exposure |
 
@@ -239,7 +241,6 @@ These categories remain outside the current runtime contract and are not discove
 |--------|-----------|--------------|
 | `routing` | control-plane rule management | No standalone routing-rule management seam is published |
 | `subscriptions` | broader lifecycle mutations | Subscription settings and broader lifecycle writes remain out of scope |
-| `templates` | reorder semantics | Template reorder remains deferred pending a narrower contract |
 | `snippets` | reorder semantics | Snippet reorder remains deferred pending a narrower contract |
 
 ## Risk Profile Structure

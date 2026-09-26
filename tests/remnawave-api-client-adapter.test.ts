@@ -20,20 +20,20 @@ function createPanelClient() {
     getNodesStatistics: vi.fn(async () => ({ items: [] })),
     getNodesMetrics: vi.fn(async () => ({ items: [] })),
     getSystemRecap: vi.fn(async () => ({ totalUsers: 1 })),
-    getUsers: vi.fn(async () => ({ total: 1, items: [{ uuid: 'user-1', username: 'alice' }] })),
-    resolveUser: vi.fn(async (uuid: string) => ({ found: true, match: { uuid, shortUuid: 'short-1', username: 'alice' } })),
+    getUsers: vi.fn(async (params?: Readonly<Record<string, unknown>>) => ({ params, total: 1, items: [{ id: 1, username: 'alice' }] })),
+    resolveUser: vi.fn(async (selector: Readonly<{ id?: number; shortUuid?: string; username?: string }>) => ({ found: true, match: { id: selector.id ?? 1, shortUuid: 'short-1', username: 'alice' } })),
     createUser: vi.fn(async (payload: Record<string, unknown>) => ({ uuid: 'user-2', ...payload })),
-    setUserState: vi.fn(async (uuid: string, action: string, body?: Record<string, unknown>) => ({ uuid, action, body })),
-    restartNode: vi.fn(async (uuid: string) => ({ uuid, restarted: true })),
+    setUserState: vi.fn(async (userId: number, action: string, body?: Record<string, unknown>) => ({ userId, action, body })),
+    restartNode: vi.fn(async (uuid: string, forceRestart: boolean) => ({ uuid, forceRestart, restarted: true })),
     getHosts: vi.fn(async () => ({
       total: 1,
       items: [{ uuid: 'host-1', port: 80, enabled: true, fingerprint: 'fp-1' }],
     })),
-    bulkSetHostPort: vi.fn(async (hostUuids: readonly string[], port: number) => ({ hostUuids, port, updated: true })),
+    bulkUpdateHosts: vi.fn(async (hostUuids: readonly string[], patch: Record<string, unknown>) => ({ hostUuids, ...patch, updated: true })),
     getNodeMetadata: vi.fn(async (uuid: string) => ({ uuid, metadata: {} })),
     upsertNodeMetadata: vi.fn(async (uuid: string, metadata: Record<string, unknown>) => ({ uuid, metadata })),
-    getUserMetadata: vi.fn(async (uuid: string) => ({ uuid, metadata: {} })),
-    upsertUserMetadata: vi.fn(async (uuid: string, metadata: Record<string, unknown>) => ({ uuid, metadata })),
+    getUserMetadata: vi.fn(async (userId: number) => ({ userId, metadata: {} })),
+    upsertUserMetadata: vi.fn(async (userId: number, metadata: Record<string, unknown>) => ({ userId, metadata })),
     getSubscriptionTemplates: vi.fn(async () => ({ items: [] })),
     getSubscriptionTemplateByUuid: vi.fn(async (uuid: string) => ({ uuid, name: 'template' })),
     createSubscriptionTemplate: vi.fn(async (payload: Record<string, unknown>) => ({ ...payload, uuid: 'template-1' })),
@@ -50,33 +50,32 @@ function createPanelClient() {
     getProfile: vi.fn(async (uuid: string) => ({ uuid, name: 'profile' })),
     getComputedProfile: vi.fn(async (uuid: string) => ({ uuid, computed: true })),
     listProfileInbounds: vi.fn(async (uuid: string) => ({ uuid, items: [] })),
-    revokeUserSubscription: vi.fn(async (uuid: string) => ({ uuid, revoked: true })),
+    revokeUserSubscription: vi.fn(async (userId: number) => ({ userId, revoked: true })),
     getSubscriptions: vi.fn(async (params?: { readonly size?: number; readonly start?: number }) => ({ params, items: [] })),
     getSubscriptionByUsername: vi.fn(async (username: string) => ({ username, subscription: true })),
     getSubscriptionByShortUuid: vi.fn(async (shortUuid: string) => ({ shortUuid, subscription: true })),
-    getSubscriptionByUuid: vi.fn(async (uuid: string) => ({ uuid, subscription: true })),
+    getSubscriptionById: vi.fn(async (userId: number) => ({ userId, subscription: true })),
     getRawSubscriptionByShortUuid: vi.fn(async (shortUuid: string, params?: { readonly withDisabledHosts?: boolean }) => ({ shortUuid, params, raw: true })),
     getSubscriptionSubpageConfigByShortUuid: vi.fn(async (shortUuid: string, body?: Record<string, unknown>) => ({ shortUuid, body, config: true })),
-    getSubscriptionConnectionKeysByUuid: vi.fn(async (uuid: string) => ({ uuid, keys: ['key-1'] })),
-    getSubscriptionRequestHistory: vi.fn(async (params?: { readonly size?: number; readonly start?: number }) => ({ params, items: [] })),
+    getSubscriptionConnectionKeysByUserId: vi.fn(async (userId: number) => ({ userId, keys: ['key-1'] })),
+    getSubscriptionRequestHistory: vi.fn(async (params?: Readonly<Record<string, unknown>>) => ({ params, items: [] })),
     getSubscriptionRequestHistoryStats: vi.fn(async () => ({ total: 1 })),
     getSubscriptionPageConfigs: vi.fn(async () => ({ items: [] })),
-    getUserSubscriptionRequestHistory: vi.fn(async (uuid: string) => ({ uuid, items: [] })),
+    getUserSubscriptionRequestHistory: vi.fn(async (userId: number) => ({ userId, items: [] })),
     getSubscriptionPolicySettings: vi.fn(async () => ({ profileTitle: 'before' })),
     getInternalSquads: vi.fn(async () => ({ items: [] })),
-    bulkAddUsersToInternalSquad: vi.fn(async (uuid: string, userUuids: readonly string[]) => ({ uuid, userUuids, added: true })),
-    bulkRemoveUsersFromInternalSquad: vi.fn(async (uuid: string, userUuids: readonly string[]) => ({ uuid, userUuids, removed: true })),
+    bulkAddUsersToInternalSquad: vi.fn(async (uuid: string) => ({ uuid, addedAll: true })),
+    bulkRemoveUsersFromInternalSquad: vi.fn(async (uuid: string) => ({ uuid, removedAll: true })),
     getExternalSquads: vi.fn(async () => ({ items: [] })),
     getExternalSquadByUuid: vi.fn(async (uuid: string) => ({ uuid, name: 'external' })),
-    bulkAddUsersToExternalSquad: vi.fn(async (uuid: string, userUuids: readonly string[]) => ({ uuid, userUuids, added: true })),
-    bulkRemoveUsersFromExternalSquad: vi.fn(async (uuid: string, userUuids: readonly string[]) => ({ uuid, userUuids, removed: true })),
+    bulkAddUsersToExternalSquad: vi.fn(async (uuid: string) => ({ uuid, addedAll: true })),
+    bulkRemoveUsersFromExternalSquad: vi.fn(async (uuid: string) => ({ uuid, removedAll: true })),
     getAuthStatus: vi.fn(async () => ({ auth: true })),
     listApiTokens: vi.fn(async () => ({ tokens: [] })),
-    fetchIpsForUser: vi.fn(async () => ({ jobId: 'job-1' })),
     createNodePlugin: vi.fn(async () => ({ plugin: true })),
     encryptHappPayload: vi.fn(async () => ({ encrypted: true })),
     executePluginExecutor: vi.fn(async () => ({ executed: true })),
-    executeOpenApiOperation: vi.fn(async (_operation, payload: Record<string, unknown>) => ({ resolved: payload })),
+    executeOpenApiOperation: vi.fn(async (operation, payload: Record<string, unknown>) => operation.key === 'users.get' ? { found: true, match: { id: 1, shortUuid: 'short-1', username: 'alice' } } : { resolved: payload }),
   };
 }
 
@@ -133,16 +132,16 @@ const supportedOperationCases = [
   },
   {
     name: 'users.list',
-    request: { domain: 'users', operation: 'list', payload: {} },
+    request: { domain: 'users', operation: 'list', payload: { size: 25, start: 0, filters: [{ id: 'status', value: 'ACTIVE' }], filterModes: { status: 'equals' }, globalFilterMode: 'and', sorting: [{ id: 'username', desc: false }] } },
     assert: (panelClient: ReturnType<typeof createPanelClient>) => {
-      expect(panelClient.getUsers).toHaveBeenCalledTimes(1);
+      expect(panelClient.getUsers).toHaveBeenCalledWith({ size: 25, start: 0, filters: [{ id: 'status', value: 'ACTIVE' }], filterModes: { status: 'equals' }, globalFilterMode: 'and', sorting: [{ id: 'username', desc: false }] });
     },
   },
   {
     name: 'users.get',
-    request: { domain: 'users', operation: 'get', payload: { uuid: 'user-1' } },
+    request: { domain: 'users', operation: 'get', payload: { userId: 1 } },
     assert: (panelClient: ReturnType<typeof createPanelClient>) => {
-      expect(panelClient.resolveUser).toHaveBeenCalledWith('user-1');
+      expect(panelClient.executeOpenApiOperation).toHaveBeenCalledWith(expect.objectContaining({ key: 'users.get' }), { userId: 1 });
     },
   },
   {
@@ -158,17 +157,17 @@ const supportedOperationCases = [
   },
   {
     name: 'users.disable',
-    request: { domain: 'users', operation: 'disable', payload: { uuid: 'user-1' } },
+    request: { domain: 'users', operation: 'disable', payload: { userId: 1 } },
     requiresConfirmation: true,
     assert: (panelClient: ReturnType<typeof createPanelClient>) => {
-      expect(panelClient.setUserState).toHaveBeenCalledWith('user-1', 'disable', undefined);
+      expect(panelClient.executeOpenApiOperation).toHaveBeenCalledWith(expect.objectContaining({ key: 'users.disable' }), { userId: 1 });
     },
   },
   {
     name: 'users.enable',
-    request: { domain: 'users', operation: 'enable', payload: { uuid: 'user-1' } },
+    request: { domain: 'users', operation: 'enable', payload: { userId: 1 } },
     assert: (panelClient: ReturnType<typeof createPanelClient>) => {
-      expect(panelClient.setUserState).toHaveBeenCalledWith('user-1', 'enable', undefined);
+      expect(panelClient.executeOpenApiOperation).toHaveBeenCalledWith(expect.objectContaining({ key: 'users.enable' }), { userId: 1 });
     },
   },
 
@@ -186,28 +185,28 @@ const supportedOperationCases = [
   { name: 'subscriptions.list', request: { domain: 'subscriptions', operation: 'list', payload: { size: 25, start: 0 } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptions).toHaveBeenCalledWith({ size: 25, start: 0 }); } },
   { name: 'subscriptions.get_by_username', request: { domain: 'subscriptions', operation: 'get_by_username', payload: { username: 'alice' } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionByUsername).toHaveBeenCalledWith('alice'); } },
   { name: 'subscriptions.get_by_short_uuid', request: { domain: 'subscriptions', operation: 'get_by_short_uuid', payload: { shortUuid: 'short-1' } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionByShortUuid).toHaveBeenCalledWith('short-1'); } },
-  { name: 'subscriptions.get_by_uuid', request: { domain: 'subscriptions', operation: 'get_by_uuid', payload: { uuid: 'user-1' } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionByUuid).toHaveBeenCalledWith('user-1'); } },
+  { name: 'subscriptions.get_by_id', request: { domain: 'subscriptions', operation: 'get_by_id', payload: { userId: 1 } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionById).toHaveBeenCalledWith(1); } },
   { name: 'subscriptions.get_raw_by_short_uuid', request: { domain: 'subscriptions', operation: 'get_raw_by_short_uuid', payload: { shortUuid: 'short-1', withDisabledHosts: true } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getRawSubscriptionByShortUuid).toHaveBeenCalledWith('short-1', { withDisabledHosts: true }); } },
-  { name: 'subscriptions.get_subpage_config_by_short_uuid', request: { domain: 'subscriptions', operation: 'get_subpage_config_by_short_uuid', payload: { shortUuid: 'short-1', locale: 'en' } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionSubpageConfigByShortUuid).toHaveBeenCalledWith('short-1', { locale: 'en' }); } },
-  { name: 'subscriptions.get_connection_keys_by_uuid', request: { domain: 'subscriptions', operation: 'get_connection_keys_by_uuid', payload: { uuid: 'user-1' } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionConnectionKeysByUuid).toHaveBeenCalledWith('user-1'); } },
-  { name: 'subscription_request_history.list', request: { domain: 'subscription_request_history', operation: 'list', payload: { size: 10, start: 5 } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionRequestHistory).toHaveBeenCalledWith({ size: 10, start: 5 }); } },
+  { name: 'subscriptions.get_subpage_config_by_short_uuid', request: { domain: 'subscriptions', operation: 'get_subpage_config_by_short_uuid', payload: { shortUuid: 'short-1', requestHeaders: { 'user-agent': 'qa-client' } } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionSubpageConfigByShortUuid).toHaveBeenCalledWith('short-1', { requestHeaders: { 'user-agent': 'qa-client' } }); } },
+  { name: 'subscriptions.get_connection_keys_by_user_id', request: { domain: 'subscriptions', operation: 'get_connection_keys_by_user_id', payload: { userId: 1 } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionConnectionKeysByUserId).toHaveBeenCalledWith(1); } },
+  { name: 'subscription_request_history.list', request: { domain: 'subscription_request_history', operation: 'list', payload: { size: 10, start: 5, sorting: [{ id: 'createdAt', desc: true }] } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionRequestHistory).toHaveBeenCalledWith({ size: 10, start: 5, sorting: [{ id: 'createdAt', desc: true }] }); } },
   { name: 'subscription_request_history.get_stats', request: { domain: 'subscription_request_history', operation: 'get_stats', payload: {} }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getSubscriptionRequestHistoryStats).toHaveBeenCalledTimes(1); } },
-  { name: 'users.get_subscription_request_history', request: { domain: 'users', operation: 'get_subscription_request_history', payload: { uuid: 'user-1' } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getUserSubscriptionRequestHistory).toHaveBeenCalledWith('user-1'); } },
-  { name: 'users.resolve', request: { domain: 'users', operation: 'resolve', payload: { uuid: 'user-1' } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.executeOpenApiOperation).toHaveBeenCalledWith(expect.objectContaining({ key: 'users.resolve' }), { uuid: 'user-1' }); } },
-  { name: 'internal_squads.add_users', request: { domain: 'internal_squads', operation: 'add_users', payload: { uuid: 'squad-1', userUuids: ['user-1'] } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.bulkAddUsersToInternalSquad).toHaveBeenCalledWith('squad-1', ['user-1']); } },
-  { name: 'internal_squads.remove_users', request: { domain: 'internal_squads', operation: 'remove_users', payload: { uuid: 'squad-1', userUuids: ['user-1'] } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.bulkRemoveUsersFromInternalSquad).toHaveBeenCalledWith('squad-1', ['user-1']); } },
-  { name: 'external_squads.add_users', request: { domain: 'external_squads', operation: 'add_users', payload: { uuid: 'squad-1', userUuids: ['user-1'] } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.bulkAddUsersToExternalSquad).toHaveBeenCalledWith('squad-1', ['user-1']); } },
-  { name: 'external_squads.remove_users', request: { domain: 'external_squads', operation: 'remove_users', payload: { uuid: 'squad-1', userUuids: ['user-1'] } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.bulkRemoveUsersFromExternalSquad).toHaveBeenCalledWith('squad-1', ['user-1']); } },
+  { name: 'users.get_subscription_request_history', request: { domain: 'users', operation: 'get_subscription_request_history', payload: { userId: 1 } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.executeOpenApiOperation).toHaveBeenCalledWith(expect.objectContaining({ key: 'users.get_subscription_request_history' }), { userId: 1 }); } },
+  { name: 'users.resolve', request: { domain: 'users', operation: 'resolve', payload: { id: 1 } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.executeOpenApiOperation).toHaveBeenCalledWith(expect.objectContaining({ key: 'users.resolve' }), { id: 1 }); } },
+  { name: 'internal_squads.add_users', request: { domain: 'internal_squads', operation: 'add_users', payload: { uuid: 'squad-1' } }, requiresConfirmation: true, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.bulkAddUsersToInternalSquad).toHaveBeenCalledWith('squad-1'); } },
+  { name: 'internal_squads.remove_users', request: { domain: 'internal_squads', operation: 'remove_users', payload: { uuid: 'squad-1' } }, requiresConfirmation: true, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.bulkRemoveUsersFromInternalSquad).toHaveBeenCalledWith('squad-1'); } },
+  { name: 'external_squads.add_users', request: { domain: 'external_squads', operation: 'add_users', payload: { uuid: 'squad-1' } }, requiresConfirmation: true, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.bulkAddUsersToExternalSquad).toHaveBeenCalledWith('squad-1'); } },
+  { name: 'external_squads.remove_users', request: { domain: 'external_squads', operation: 'remove_users', payload: { uuid: 'squad-1' } }, requiresConfirmation: true, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.bulkRemoveUsersFromExternalSquad).toHaveBeenCalledWith('squad-1'); } },
   { name: 'profiles.get', request: { domain: 'profiles', operation: 'get', payload: { uuid: 'profile-1' } }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.getProfile).toHaveBeenCalledWith('profile-1'); } },
   { name: 'keygen.generate_node_secret', request: { domain: 'keygen', operation: 'generate_node_secret', payload: {} }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.executeOpenApiOperation).toHaveBeenCalledWith(expect.objectContaining({ key: 'keygen.generate_node_secret' }), {}); } },
   { name: 'system.generate_x25519_keypairs', request: { domain: 'system', operation: 'generate_x25519_keypairs', payload: {} }, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.executeOpenApiOperation).toHaveBeenCalledWith(expect.objectContaining({ key: 'system.generate_x25519_keypairs' }), {}); } },
-  { name: 'users.revoke_subscription', request: { domain: 'users', operation: 'revoke_subscription', payload: { uuid: 'user-1' } }, requiresConfirmation: true, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.revokeUserSubscription).toHaveBeenCalledWith('user-1'); } },
+  { name: 'users.revoke_subscription', request: { domain: 'users', operation: 'revoke_subscription', payload: { userId: 1 } }, requiresConfirmation: true, assert: (panelClient: ReturnType<typeof createPanelClient>) => { expect(panelClient.executeOpenApiOperation).toHaveBeenCalledWith(expect.objectContaining({ key: 'users.revoke_subscription' }), { userId: 1 }); } },
   {
     name: 'nodes.restart',
-    request: { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1' } },
+    request: { domain: 'nodes', operation: 'restart', payload: { uuid: 'node-1', forceRestart: false } },
     requiresConfirmation: true,
     assert: (panelClient: ReturnType<typeof createPanelClient>) => {
-      expect(panelClient.restartNode).toHaveBeenCalledWith('node-1');
+      expect(panelClient.restartNode).toHaveBeenCalledWith('node-1', false);
     },
   },
 ];
@@ -226,34 +225,34 @@ describe('Remnawave API client adapter', () => {
     assert(panelClient);
   });
 
-  test('binds hosts.bulk_set_port preview/apply to getHosts and bulkSetHostPort only on apply', async () => {
+  test('binds hosts.bulk_update preview/apply to getHosts and bulkUpdateHosts only on apply', async () => {
     const panelClient = createPanelClient();
     const adapter = createRemnawaveApiClientAdapter(panelClient);
 
     const preview = await routeRemnawaveApiRequest(
-      { domain: 'hosts', operation: 'bulk_set_port', payload: { hostUuids: ['host-1'], port: 443 } },
+      { domain: 'hosts', operation: 'bulk_update', payload: { hostUuids: ['host-1'], port: 443 } },
       adapter,
     );
 
     expect(preview).toMatchObject({ applyToken: expect.any(String) });
     expect(panelClient.getHosts).toHaveBeenCalledTimes(1);
-    expect(panelClient.bulkSetHostPort).not.toHaveBeenCalled();
+    expect(panelClient.bulkUpdateHosts).not.toHaveBeenCalled();
 
     const apply = await routeRemnawaveApiRequest(
-      { domain: 'hosts', operation: 'bulk_set_port', payload: { applyToken: (preview as { applyToken: string }).applyToken } },
+      { domain: 'hosts', operation: 'bulk_update', payload: { applyToken: (preview as { applyToken: string }).applyToken } },
       adapter,
     );
 
     expect(apply).toEqual({ updated: { hostUuids: ['host-1'], port: 443, updated: true } });
     expect(panelClient.getHosts).toHaveBeenCalledTimes(2);
-    expect(panelClient.bulkSetHostPort).toHaveBeenCalledWith(['host-1'], 443);
+    expect(panelClient.bulkUpdateHosts).toHaveBeenCalledWith(['host-1'], { port: 443 });
   });
 
   test('does not expose excluded client methods through the runtime adapter', () => {
     const adapter = createRemnawaveApiClientAdapter(createPanelClient());
 
     expect(Object.keys(adapter).sort()).toEqual(expect.arrayContaining([
-      'bulkSetHostPort',
+      'bulkUpdateHosts',
       'createSnippet',
       'createSubscriptionTemplate',
       'createUser',
@@ -269,10 +268,10 @@ describe('Remnawave API client adapter', () => {
       'getSubscriptions',
       'getSubscriptionByUsername',
       'getSubscriptionByShortUuid',
-      'getSubscriptionByUuid',
+      'getSubscriptionById',
       'getRawSubscriptionByShortUuid',
       'getSubscriptionSubpageConfigByShortUuid',
-      'getSubscriptionConnectionKeysByUuid',
+      'getSubscriptionConnectionKeysByUserId',
       'getSubscriptionRequestHistory',
       'getSubscriptionRequestHistoryStats',
       'getUserSubscriptionRequestHistory',
@@ -298,7 +297,7 @@ describe('Remnawave API client adapter', () => {
     const requests = [
       { domain: 'auth', operation: 'status', payload: {} },
       { domain: 'tokens', operation: 'list', payload: {} },
-      { domain: 'ip_control', operation: 'submit_user_fetch_job', payload: { uuid: 'user-1' } },
+      { domain: 'connections', operation: 'post_connections_controller_connections_by_user_connections_by_user_user_id', payload: { userId: 1 } },
       { domain: 'node_plugins', operation: 'execute_plugin_executor', payload: { command: 'block' } },
       { domain: 'system', operation: 'encrypt_happ_payload', payload: {} },
       { domain: 'system', operation: 'debug_srr_matcher', payload: {} },
@@ -313,7 +312,6 @@ describe('Remnawave API client adapter', () => {
 
     expect(panelClient.getAuthStatus).not.toHaveBeenCalled();
     expect(panelClient.listApiTokens).not.toHaveBeenCalled();
-    expect(panelClient.fetchIpsForUser).not.toHaveBeenCalled();
     expect(panelClient.createNodePlugin).not.toHaveBeenCalled();
     expect(panelClient.encryptHappPayload).not.toHaveBeenCalled();
     expect(panelClient.executePluginExecutor).not.toHaveBeenCalled();

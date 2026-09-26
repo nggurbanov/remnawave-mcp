@@ -46,7 +46,6 @@ import { registerRuntimeDomainOperations } from './domains/index.js';
 import { SUPPORTED_REMNAWAVE_OPERATIONS } from './domains/runtime-scope.js';
 import { REMNAWAVE_OPERATION_INVENTORY } from './generated/operation-inventory.js';
 import type { RemnawaveNormalizerId, RemnawaveOpenApiBinding, RemnawaveOperationSafetyMode, RemnawaveSupportedOperationContract } from './operation-contract.js';
-import { getSupportedOperationRisk } from './risk.js';
 import {
   getSupportedOperationSchema,
   type SchemaFieldDefinition,
@@ -64,20 +63,20 @@ export interface RemnawaveApiClient {
   readonly getNodesStatistics?: () => Promise<unknown>;
   readonly generateX25519?: () => Promise<unknown>;
   readonly getSystemRecap?: () => Promise<unknown>;
-  readonly getSubscriptionRequestHistory?: (params?: { readonly size?: number; readonly start?: number }) => Promise<unknown>;
+  readonly getSubscriptionRequestHistory?: (params?: Readonly<Record<string, unknown>>) => Promise<unknown>;
   readonly getSubscriptionRequestHistoryStats?: () => Promise<unknown>;
   readonly getSubscriptionPageConfigs?: () => Promise<unknown>;
-  readonly getUsers?: () => Promise<unknown>;
-  readonly resolveUser?: (uuid: string) => Promise<unknown>;
-  readonly getUserSubscriptionRequestHistory?: (userUuid: string) => Promise<unknown>;
-  readonly getUserHwidDevices?: (userUuid: string) => Promise<unknown>;
+  readonly getUsers?: (params?: Readonly<Record<string, unknown>>) => Promise<unknown>;
+  readonly resolveUser?: (selector: Readonly<{ id?: number; shortUuid?: string; username?: string }>) => Promise<unknown>;
+  readonly getUserSubscriptionRequestHistory?: (userId: number) => Promise<unknown>;
+  readonly getUserHwidDevices?: (userId: number) => Promise<unknown>;
   readonly getSubscriptions?: (params?: { readonly size?: number; readonly start?: number }) => Promise<unknown>;
   readonly getSubscriptionByUsername?: (username: string) => Promise<unknown>;
   readonly getSubscriptionByShortUuid?: (shortUuid: string) => Promise<unknown>;
-  readonly getSubscriptionByUuid?: (uuid: string) => Promise<unknown>;
+  readonly getSubscriptionById?: (userId: number) => Promise<unknown>;
   readonly getRawSubscriptionByShortUuid?: (shortUuid: string, params?: { readonly withDisabledHosts?: boolean }) => Promise<unknown>;
   readonly getSubscriptionSubpageConfigByShortUuid?: (shortUuid: string, body?: Record<string, unknown>) => Promise<unknown>;
-  readonly getSubscriptionConnectionKeysByUuid?: (uuid: string) => Promise<unknown>;
+  readonly getSubscriptionConnectionKeysByUserId?: (userId: number) => Promise<unknown>;
   readonly getSubscriptionPolicySettings?: () => Promise<unknown>;
   readonly updateSubscriptionPolicySettings?: (payload: Record<string, unknown>) => Promise<unknown>;
   readonly getSubscriptionTemplateByUuid?: (templateUuid: string) => Promise<unknown>;
@@ -99,11 +98,7 @@ export interface RemnawaveApiClient {
   readonly deleteHost?: (hostUuid: string) => Promise<unknown>;
   readonly bulkEnableHosts?: (hostUuids: readonly string[]) => Promise<unknown>;
   readonly bulkDisableHosts?: (hostUuids: readonly string[]) => Promise<unknown>;
-  readonly bulkSetHostInbound?: (
-    hostUuids: readonly string[],
-    inbound: { readonly configProfileUuid: string; readonly configProfileInboundUuid: string },
-  ) => Promise<unknown>;
-  readonly bulkSetHostPort?: (hostUuids: readonly string[], port: number) => Promise<unknown>;
+  readonly bulkUpdateHosts?: (hostUuids: readonly string[], patch: Record<string, unknown>) => Promise<unknown>;
   readonly getProfiles?: () => Promise<unknown>;
   readonly getProfile?: (profileUuid: string) => Promise<unknown>;
   readonly getComputedProfile?: (profileUuid: string) => Promise<unknown>;
@@ -125,19 +120,19 @@ export interface RemnawaveApiClient {
   readonly deleteNode?: (nodeUuid: string) => Promise<unknown>;
   readonly enableNode?: (nodeUuid: string) => Promise<unknown>;
   readonly disableNode?: (nodeUuid: string) => Promise<unknown>;
-  readonly restartNode?: (nodeUuid: string) => Promise<unknown>;
+  readonly restartNode?: (nodeUuid: string, forceRestart: boolean) => Promise<unknown>;
   readonly resetNodeTraffic?: (nodeUuid: string) => Promise<unknown>;
   readonly getInternalSquads?: () => Promise<unknown>;
-  readonly bulkAddUsersToInternalSquad?: (squadUuid: string, userUuids: readonly string[]) => Promise<unknown>;
-  readonly bulkRemoveUsersFromInternalSquad?: (squadUuid: string, userUuids: readonly string[]) => Promise<unknown>;
+  readonly bulkAddUsersToInternalSquad?: (squadUuid: string) => Promise<unknown>;
+  readonly bulkRemoveUsersFromInternalSquad?: (squadUuid: string) => Promise<unknown>;
   readonly patchInternalSquad?: (squadUuid: string, patch: Record<string, unknown>) => Promise<unknown>;
   readonly getExternalSquads?: () => Promise<unknown>;
   readonly getExternalSquadByUuid?: (squadUuid: string) => Promise<unknown>;
-  readonly bulkAddUsersToExternalSquad?: (squadUuid: string, userUuids: readonly string[]) => Promise<unknown>;
-  readonly bulkRemoveUsersFromExternalSquad?: (squadUuid: string, userUuids: readonly string[]) => Promise<unknown>;
+  readonly bulkAddUsersToExternalSquad?: (squadUuid: string) => Promise<unknown>;
+  readonly bulkRemoveUsersFromExternalSquad?: (squadUuid: string) => Promise<unknown>;
   readonly patchExternalSquad?: (squadUuid: string, patch: Record<string, unknown>) => Promise<unknown>;
-  readonly getUserMetadata?: (userUuid: string) => Promise<unknown>;
-  readonly upsertUserMetadata?: (userUuid: string, payload: Record<string, unknown>) => Promise<unknown>;
+  readonly getUserMetadata?: (userId: number) => Promise<unknown>;
+  readonly upsertUserMetadata?: (userId: number, payload: Record<string, unknown>) => Promise<unknown>;
   readonly getNodePlugins?: () => Promise<unknown>;
   readonly getNodePlugin?: (pluginUuid: string) => Promise<unknown>;
   readonly createNodePlugin?: (payload: Record<string, unknown>) => Promise<unknown>;
@@ -156,18 +151,15 @@ export interface RemnawaveApiClient {
   readonly updateInfraBillingNode?: (nodeUuid: string, patch: Record<string, unknown>) => Promise<unknown>;
   readonly deleteInfraBillingNode?: (nodeUuid: string) => Promise<unknown>;
   readonly getInfraBillingHistory?: () => Promise<unknown>;
-  readonly fetchIpsForUser?: (userUuid: string) => Promise<unknown>;
-  readonly fetchUsersIpsForNode?: (nodeUuid: string) => Promise<unknown>;
-  readonly getUserIpsFetchJobResult?: (jobId: string) => Promise<unknown>;
   readonly createUser?: (payload: Record<string, unknown>) => Promise<unknown>;
-  readonly patchUserSettings?: (userUuid: string, settings: Record<string, unknown>) => Promise<unknown>;
+  readonly patchUserSettings?: (userId: number, settings: Record<string, unknown>) => Promise<unknown>;
   readonly setUserState?: (
-    userUuid: string,
+    userId: number,
     action: 'enable' | 'disable' | 'reset-traffic',
     body?: Record<string, unknown>,
   ) => Promise<unknown>;
-  readonly revokeUserSubscription?: (userUuid: string) => Promise<unknown>;
-  readonly deleteUserHwidDevice?: (userUuid: string, hwid: string) => Promise<unknown>;
+  readonly revokeUserSubscription?: (userId: number) => Promise<unknown>;
+  readonly deleteUserHwidDevice?: (userId: number, hwid: string) => Promise<unknown>;
   readonly executeOpenApiOperation?: (operation: RemnawaveSupportedOperationContract, payload: Record<string, unknown>) => Promise<unknown>;
 }
 
@@ -254,7 +246,7 @@ export interface RuntimeOperationFactoryContext {
   readonly validateCreateUserPayload: typeof validateCreateUserPayload;
   readonly validateUsersDisablePayload: typeof validateUsersDisablePayload;
   readonly validateUsersEnablePayload: typeof validateUsersEnablePayload;
-  readonly validateHostsBulkSetPortPayload: typeof validateHostsBulkSetPortPayload;
+  readonly validateHostsBulkUpdatePayload: typeof validateHostsBulkUpdatePayload;
   readonly validateNodesRestartPayload: typeof validateNodesRestartPayload;
   readonly requireClientMethod: typeof requireClientMethod;
   readonly readUuidPayload: typeof readUuidPayload;
@@ -282,7 +274,7 @@ const DEFAULT_DOMAIN_DESCRIPTIONS: Readonly<Record<string, string>> = {
   external_squads: 'External squad delivery-policy reads and mutations.',
   nodes: 'Node inventory, diagnostics, and lifecycle actions.',
   node_plugins: 'Node plugin configuration, reports, and executor actions.',
-  ip_control: 'IP-control async fetch jobs and destructive connection actions.',
+  connections: 'Connection lookup jobs and destructive connection actions.',
   metadata: 'Metadata reads and writes for users and nodes.',
   infra_billing: 'Infra billing providers, nodes, and history.',
   templates: 'Subscription template inspection and mutations.',
@@ -471,7 +463,7 @@ export function createDefaultOperationRegistry(): OperationRegistry {
     validateCreateUserPayload,
     validateUsersDisablePayload,
     validateUsersEnablePayload,
-    validateHostsBulkSetPortPayload,
+    validateHostsBulkUpdatePayload,
     validateNodesRestartPayload,
     requireClientMethod,
     readUuidPayload,
@@ -543,7 +535,7 @@ function supportedReadOperation(
       deferred: false,
     },
     risk: {
-      tier: toRegistryRiskTier(getSupportedOperationRisk(domain, operation).tier),
+      tier: toRegistryRiskTier(contract.riskTier),
     },
     sideEffects: {
       summary: `Reads remote state for ${domain}.${operation} without mutating panel data.`,
@@ -594,7 +586,7 @@ function supportedWriteOperation(
       deferred: false,
     },
     risk: {
-      tier: toRegistryRiskTier(getSupportedOperationRisk(domain, operation).tier),
+      tier: toRegistryRiskTier(contract.riskTier),
     },
     sideEffects: {
       summary: `Mutates remote state for ${domain}.${operation} within its validated bounded scope.`,
@@ -650,7 +642,7 @@ function generatedReadOperation(contract: RemnawaveSupportedOperationContract): 
       clientMethod: 'executeOpenApiOperation',
       deferred: false,
     },
-    risk: { tier: toRegistryRiskTier(getSupportedOperationRisk(contract.domain, contract.operation).tier) },
+    risk: { tier: toRegistryRiskTier(contract.riskTier) },
     sideEffects: {
       summary: contract.sideEffects.summary,
       asyncBehavior: 'synchronous request; returns the upstream result for this atomic OpenAPI operation.',
@@ -688,7 +680,7 @@ function generatedWriteOperation(contract: RemnawaveSupportedOperationContract):
       clientMethod: 'executeOpenApiOperation',
       deferred: false,
     },
-    risk: { tier: toRegistryRiskTier(getSupportedOperationRisk(contract.domain, contract.operation).tier) },
+    risk: { tier: toRegistryRiskTier(contract.riskTier) },
     sideEffects: {
       summary: contract.sideEffects.summary,
       asyncBehavior: 'synchronous request; remote state changes when the upstream accepts the payload.',
@@ -751,8 +743,8 @@ function validateHostManageDefinitionPayload(payload: unknown): readonly Validat
   return getSupportedOperationSchema('hosts', 'manage_definition').validatePayload(payload);
 }
 
-function validateHostsBulkSetPortPayload(payload: unknown): readonly ValidationIssue[] {
-  return getSupportedOperationSchema('hosts', 'bulk_set_port').validatePayload(payload);
+function validateHostsBulkUpdatePayload(payload: unknown): readonly ValidationIssue[] {
+  return getSupportedOperationSchema('hosts', 'bulk_update').validatePayload(payload);
 }
 
 function validateInternalSquadManageMembershipPayload(payload: unknown): readonly ValidationIssue[] {
@@ -1336,7 +1328,7 @@ async function executeUsersResolve(
     {
       found: true,
       match: {
-        uuid: user.uuid,
+        id: user.id,
         shortUuid: user.shortUuid,
         username: user.username,
       },
@@ -1364,7 +1356,7 @@ async function executeUsersInspect(
     : { items: [] };
   const subscription = subscriptions.items.find((entry) => entry.user.shortUuid === user.shortUuid) ?? null;
   const devices = typeof client.getUserHwidDevices === 'function'
-    ? toUserHwidDevicesResponse(await client.getUserHwidDevices(user.uuid))
+    ? toUserHwidDevicesResponse(await client.getUserHwidDevices(user.id))
     : { items: [] } satisfies NormalizedUserHwidDevicesResponse;
   const accessibleNodes = user.traffic.lastConnectedNodeUuid === null
     ? []
@@ -1375,7 +1367,7 @@ async function executeUsersInspect(
   const policy = applySensitiveReadPolicy(
     {
       identity: {
-        uuid: user.uuid,
+        id: user.id,
         shortUuid: user.shortUuid,
         username: user.username,
         telegramId: user.telegramId,
@@ -1409,7 +1401,7 @@ async function executeUsersSubscriptionHistory(
   const revealMode = readSensitiveReadRevealMode(payload);
   const user = await resolveUserFromPayload(payload, client);
   const history = toUserSubscriptionHistoryResponse(
-    await requireClientMethod(client, 'getUserSubscriptionRequestHistory', 'users.get_subscription_request_history')(user.uuid),
+    await requireClientMethod(client, 'getUserSubscriptionRequestHistory', 'users.get_subscription_request_history')(user.id),
   );
   const policy = applySensitiveReadPolicy(
     {
@@ -1437,7 +1429,7 @@ async function executeSubscriptionsSupportContext(
   const subscription = subscriptions.items.find((entry) => entry.user.shortUuid === user.shortUuid) ?? null;
   const result = {
     user: {
-      uuid: user.uuid,
+      id: user.id,
       shortUuid: user.shortUuid,
       username: user.username,
       status: user.status,
@@ -1476,7 +1468,7 @@ async function executeSubscriptionsPageDelivery(
   const subscription = subscriptions.items.find((entry) => entry.user.shortUuid === user.shortUuid) ?? null;
   const result = {
     user: {
-      uuid: user.uuid,
+      id: user.id,
       shortUuid: user.shortUuid,
       username: user.username,
     },
@@ -1508,11 +1500,11 @@ async function resolveUserFromPayload(
   try {
     return await resolveUserBySelector(selector, client);
   } catch (error) {
-    if (selector.uuid !== null && typeof client.resolveUser === 'function') {
-      const resolved = toUsersResolveResponse(await client.resolveUser(selector.uuid));
+    if (typeof client.resolveUser === 'function') {
+      const resolved = toUsersResolveResponse(await client.resolveUser(userSelectorRequest(selector)));
       if (resolved.found && resolved.match !== null) {
         return {
-          uuid: resolved.match.uuid,
+          id: resolved.match.id,
           shortUuid: resolved.match.shortUuid,
           username: resolved.match.username,
           status: 'ACTIVE',
@@ -1569,7 +1561,7 @@ function readSensitiveReadRevealMode(payload: Record<string, unknown>): Sensitiv
 }
 
 function readUserSelector(value: unknown): {
-  readonly uuid: string | null;
+  readonly id: number | null;
   readonly shortUuid: string | null;
   readonly username: string | null;
   readonly telegramId: number | null;
@@ -1579,18 +1571,29 @@ function readUserSelector(value: unknown): {
     throw new Error('payload.selector must be an object.');
   }
 
-  const uuid = readStringLike(selector.uuid);
+  const id = typeof selector.id === 'number' && Number.isInteger(selector.id) && selector.id > 0
+    ? selector.id
+    : null;
   const shortUuid = readStringLike(selector.shortUuid);
   const username = readStringLike(selector.username);
   const telegramId = typeof selector.telegramId === 'number' && Number.isInteger(selector.telegramId)
     ? selector.telegramId
     : null;
-  const total = [uuid, shortUuid, username, telegramId].filter((entry) => entry !== null).length;
+  const total = [id, shortUuid, username, telegramId].filter((entry) => entry !== null).length;
   if (total !== 1) {
-    throw new Error('Selector must provide exactly one of uuid, shortUuid, username, or telegramId.');
+    throw new Error('Selector must provide exactly one of id, shortUuid, username, or telegramId.');
   }
 
-  return { uuid, shortUuid, username, telegramId };
+  return { id, shortUuid, username, telegramId };
+}
+
+function userSelectorRequest(
+  selector: ReturnType<typeof readUserSelector>,
+): Readonly<{ id?: number; shortUuid?: string; username?: string }> {
+  if (selector.id !== null) return { id: selector.id };
+  if (selector.shortUuid !== null) return { shortUuid: selector.shortUuid };
+  if (selector.username !== null) return { username: selector.username };
+  throw new Error('The upstream user resolver does not support telegramId selectors.');
 }
 
 function toUserSubscriptionHistoryResponse(value: unknown): NormalizedUserSubscriptionHistoryResponse {
@@ -1674,8 +1677,8 @@ function matchesUserSelector(
   user: NormalizedUser,
   selector: ReturnType<typeof readUserSelector>,
 ): boolean {
-  if (selector.uuid !== null) {
-    return user.uuid === selector.uuid;
+  if (selector.id !== null) {
+    return user.id === selector.id;
   }
   if (selector.shortUuid !== null) {
     return user.shortUuid === selector.shortUuid;
@@ -1994,6 +1997,11 @@ function describeFieldRule(fieldName: string, fieldSchema: SchemaFieldDefinition
     return `${fieldPath} ${requiredPrefix} an integer${bounds}.`;
   }
 
+  if (fieldSchema.type === 'number') {
+    const bounds = describeIntegerBounds(fieldSchema);
+    return `${fieldPath} ${requiredPrefix} a number${bounds}.`;
+  }
+
   if (fieldSchema.type === 'string_array') {
     const bounds = describeStringArrayBounds(fieldSchema);
     return `${fieldPath} ${requiredPrefix} an array of strings${bounds}.`;
@@ -2006,6 +2014,10 @@ function describeFieldRule(fieldName: string, fieldSchema: SchemaFieldDefinition
   if (fieldSchema.type === 'record_array') {
     const bounds = describeRecordArrayBounds(fieldSchema);
     return `${fieldPath} ${requiredPrefix} an array of objects${bounds}.`;
+  }
+
+  if (fieldSchema.type === 'json') {
+    return `${fieldPath} ${requiredPrefix} a JSON value.`;
   }
 
   return `${fieldPath} ${requiredPrefix} a boolean.`;

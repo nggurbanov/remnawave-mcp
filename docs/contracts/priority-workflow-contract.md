@@ -78,7 +78,7 @@ An agent must be able to reconfigure an existing transport topology, including n
 An agent must be able to change routing behavior to produce real chain topologies such as: user → VLESS → RU node → WireGuard → Germany.
 
 Routing / server-routing / response-rule change remains deferred from the current MCP support promise.
-Truthful support today is narrower: `hosts.bulk_set_port` supports only bounded host port updates through preview/apply. It does not expose legacy grouped host routing, inbound association, generic profile routing-rule edits, or response-rule orchestration as executable semantic actions.
+Truthful support today is narrower: `hosts.bulk_update` supports only bounded host port updates through preview/apply. It does not expose legacy grouped host routing, inbound association, generic profile routing-rule edits, or response-rule orchestration as executable semantic actions.
 
 ### Required steps
 1. Inspect the current public profile, bridge profile, relevant inbounds, outbounds, snippets, and response-rule state before editing.
@@ -151,48 +151,48 @@ Minimum workflow that must be supportable after implementation:
 An agent must eventually be able to onboard and maintain a partner-facing external squad with meaningful override settings.
 
 ### Current MCP-safe steps
-No external squad operation is currently executable through the compact v2 `remnawave_api` runtime. External squad lifecycle, delivery-definition patches, and membership control are planning-only in this contract.
+The compact v2 `remnawave_api` runtime can list/read, create, update, reorder, and delete external squads. It also exposes confirmation-gated `external_squads.add_users` and `external_squads.remove_users`; in Remnawave 3.3.2 these two bulk actions add or remove all users for the selected squad, not an explicit list of user UUIDs.
 
 ### Semantic action contract
 
-The current single-tool MCP contract for external squads is intentionally deferred. Future support must not be published as current runtime behavior until registry-backed operations exist and pass safety review.
+The current single-tool MCP contract supports the atomic external-squad operations above. Composite partner-onboarding orchestration and semantic validation of the resulting white-label delivery posture remain deferred.
 
-Required future capabilities:
+Current atomic capabilities and remaining workflow gaps:
 
 1. **External squad inspection**
-   - summarize override posture, template bindings, subscription-setting overrides, and header overrides relevant to white-label delivery
+   - `external_squads.list` and `external_squads.get` expose the current squad records; a higher-level posture summary remains a future composite workflow
 2. **External squad bounded delivery-definition patching**
-   - patch one existing external squad through a validated runtime operation after the seam exists
-3. **External squad bounded membership management**
-   - add or remove explicit user UUIDs for one external squad after the seam exists
+   - `external_squads.update` patches one existing squad through its validated OpenAPI contract
+3. **External squad all-user membership actions**
+   - `external_squads.add_users` and `external_squads.remove_users` are fleet-impact actions and require confirmation
 4. **Access-control coexistence**
    - leave internal squad workflows separate from partner delivery overrides
 
-Not currently supported through the MCP surface: create external squads, inspect external squad delivery posture, patch external squad definitions, manage external squad membership, reorder external squads, preview/apply job semantics, or dedicated partner-field affordances such as `subpageConfigUuid` and `responseHeaders.profile-web-page-url`.
+Not currently supported through the MCP surface: a composite partner-onboarding workflow, semantic post-apply validation of delivery posture, selected-user squad membership changes, preview/apply job semantics, or dedicated partner-field affordances such as `subpageConfigUuid` and `responseHeaders.profile-web-page-url`.
 
 ### Concrete workflow target
 
 Minimum future workflow after implementation:
 
-1. Agent inspects an existing partner-facing external squad, e.g. `Bat Connect Pro`.
-2. Agent updates supported delivery overrides represented in a bounded patch seam.
-3. Agent applies the external squad patch through the designed mutation.
-4. Agent adds or removes users through a designed membership operation when assignment changes are needed.
-5. Agent can coordinate internal-squad assignment separately for access-control workflows.
+1. Agent inspects an existing partner-facing external squad, e.g. `Bat Connect Pro`, through `external_squads.get`.
+2. Agent updates supported delivery overrides through `external_squads.update`.
+3. Agent verifies the resulting record with another read.
+4. Agent uses a confirmation-gated all-user membership action only when fleet-wide assignment is intended.
+5. Agent coordinates internal-squad assignment separately for access-control workflows.
 
 ### Current gap map
 | Step | Current support | Evidence |
 |---|---|---|
-| 1 | not supported | `external_squads` domain is absent from runtime discovery |
-| 2 | not supported | no registry-backed external squad patch operation |
-| 3 | not supported | no registry-backed external squad mutation operation |
-| 4 | not supported | no registry-backed external squad membership operation |
-| 5 | not supported | internal squad operations are also outside the current runtime scope |
+| 1 | supported atomically | `external_squads.list` and `external_squads.get` are registry-backed |
+| 2 | supported atomically | `external_squads.update` is registry-backed and schema-validated |
+| 3 | supported atomically | update followed by read is available; semantic posture validation remains composite |
+| 4 | supported only for all users | `external_squads.add_users` / `remove_users` are tier3 confirmation-gated fleet actions; selected-user membership is absent |
+| 5 | supported atomically | internal squad inventory/update and all-user membership operations are separate registry-backed actions |
 
 ### Source-backed implementation notes
 
 - Official squads docs define external squads as the place to override Templates and subscription Settings for a user group.
-- OpenAPI breadth and prior rollout notes mention richer lifecycle and ordering behavior, but those routes are not promoted into the current model-facing MCP contract and must not be published as supported runtime behavior.
+- OpenAPI 3.3.2 supplies the atomic lifecycle, ordering, update, and all-user bulk routes currently promoted into the runtime; higher-level partner workflow semantics are not implied by that endpoint coverage.
 
 ## Workflow E — Template delivery control / advanced Xray JSON
 
@@ -201,12 +201,13 @@ An agent must stay inside the currently truthful single-tool contract for subscr
 
 ### Current MCP-safe steps
 1. List or read subscription templates with `templates.list` and `templates.get`.
-2. Create, update, or delete subscription templates with `templates.create`, `templates.update`, and confirmation-gated `templates.delete`.
+2. Create, update, delete, or reorder subscription templates with `templates.create`, `templates.update`, confirmation-gated `templates.delete`, and guarded `templates.reorder`.
 3. List, create, update, or delete snippets with `snippets.list`, `snippets.create`, `snippets.update`, and confirmation-gated `snippets.delete`.
+4. List/read and run guarded lifecycle, clone, and reorder operations for subscription page configs through `subscription_page_configs.*`.
 
 ### Semantic action contract
 
-The current single-tool MCP contract supports atomic template CRUD and atomic snippet CRUD. It does not support legacy grouped template inspection, legacy grouped template management, legacy grouped snippet lifecycle management, subscription-page config mutation, template reorder, snippet reorder, advanced `XRAY_JSON` validation workflows, or public subscription-page delivery management.
+The current single-tool MCP contract supports atomic template CRUD/reorder, atomic snippet CRUD, and subscription-page-config reads/lifecycle/clone/reorder. It does not support legacy grouped operations, snippet reorder, advanced `XRAY_JSON` validation workflows, or composite public subscription-page delivery management.
 
 Supported now:
 
@@ -216,13 +217,17 @@ Supported now:
    - `templates.create` creates one subscription template
    - `templates.update` updates one subscription template
    - `templates.delete` deletes one subscription template after tier3 confirmation
+   - `templates.reorder` reorders templates through preview/apply protection
 2. **Snippet CRUD**
    - `snippets.list` returns snippet inventory
    - `snippets.create` creates one snippet
    - `snippets.update` updates one snippet
    - `snippets.delete` deletes one snippet after tier3 confirmation
+3. **Subscription-page config lifecycle**
+   - `subscription_page_configs.list` and `get` read configs
+   - `create`, `update`, `delete`, `clone`, and `reorder` are guarded generated operations
 
-Deferred from the current MCP surface: template reorder and broader delivery workflows, advanced `XRAY_JSON` validation semantics, snippet reorder or composite snippet lifecycle workflows, subscription-page config mutation, and any public subscription-page delivery or `/sub/*` management flow.
+Deferred from the current MCP surface: broader template delivery workflows beyond the supported atomic reorder, advanced `XRAY_JSON` validation semantics, snippet reorder or composite snippet lifecycle workflows, and any composite public subscription-page delivery-management flow.
 
 ### Concrete truthful workflow target
 
@@ -237,12 +242,13 @@ Minimum workflow that is truthfully supportable in the current MCP surface:
 |---|---|---|
 | Template list/read | supported | `templates.list`, `templates.get` |
 | Template create/update/delete | supported | `templates.create`, `templates.update`, `templates.delete` |
-| Template reorder/broader delivery workflow | not supported | no registry-backed reorder or composite delivery operation |
+| Template reorder | supported | `templates.reorder` is registry-backed with preview/apply protection |
+| Broader template delivery workflow | not supported | no composite semantic delivery operation |
 | Snippet list/create/update/delete | supported | `snippets.list`, `snippets.create`, `snippets.update`, `snippets.delete` |
-| Subscription-page config mutation | not supported | no `subscription_page` runtime domain |
+| Subscription-page config lifecycle | supported | `subscription_page_configs.*` reads and guarded lifecycle/clone/reorder operations are registry-backed |
 | Public subscription-page delivery management | not supported | outside v1 MCP boundary |
 
 ### Source-backed implementation notes
 
-- `src/remnawave-api/registry.ts` and the scope docs publish atomic `templates.*` CRUD and atomic `snippets.*` CRUD operations as supported.
-- Broader OpenAPI inventory for template reorder, clone, public subscription-page delivery, subscription-page config mutation, or composite snippet workflows is not sufficient evidence for promotion unless the single-tool runtime/client seam also exposes those operations truthfully.
+- `src/remnawave-api/registry.ts` and the scope docs publish atomic template CRUD/reorder, snippet CRUD, and subscription-page-config operations as supported.
+- Broader composite template delivery, public subscription-page management, and snippet workflow semantics remain outside the runtime even where individual OpenAPI operations exist.

@@ -8,15 +8,16 @@ export function registerNodeOperations(
     'nodes',
     'restart',
     'Restart one node.',
-    'Send payload with uuid to restart one node.',
+    'Send payload with uuid and forceRestart to restart one node.',
     'Atomic OpenAPI-backed node restart action.',
-    { uuid: 'node-uuid' },
+    { uuid: 'node-uuid', forceRestart: false },
     'nodes_restart',
     'restartNode',
     context.validateNodesRestartPayload,
     async (client, payload) => ({
       result: await context.requireClientMethod(client, 'restartNode', 'nodes.restart')(
         context.readUuidPayload(payload, 'nodes.restart'),
+        payload.forceRestart === true,
       ),
     }),
   ));

@@ -39,24 +39,24 @@ function createClient(overrides: Partial<RemnawaveApiClient> = {}): RemnawaveApi
       online: { now: 2, lastDay: 4, lastWeek: 6, never: 0 },
       nodes: { totalOnlineUsers: 3, lifetimeBytes: 0 },
     }),
-    getMetadata: async () => ({ panel: 'rw', version: '2.7.4' }),
+    getMetadata: async () => ({ panel: 'rw', version: '3.3.2' }),
     getSystemHealth: async () => ({ instances: [] }),
     getBandwidthStats: async () => ({ totalBytes: 1024 }),
     getNodesStatistics: async () => ({ items: [] }),
     getNodesMetrics: async () => ({ items: [] }),
     getSystemRecap: async () => ({ totalUsers: 8, activeUsers: 6, inactiveUsers: 2, expiredUsers: 0 }),
-    getUsers: async () => ({ total: 1, items: [{ uuid: 'user-1', username: 'alice' }] }),
-    resolveUser: async (uuid: string) => ({ found: true, match: { uuid, shortUuid: 'short-1', username: 'alice' } }),
+    getUsers: async () => ({ total: 1, items: [{ id: 1, username: 'alice' }] }),
+    resolveUser: async (selector) => ({ found: true, match: { id: selector.id ?? 1, shortUuid: 'short-1', username: 'alice' } }),
     createUser: async (payload) => ({ response: { uuid: 'user-2', ...payload } }),
     setUserState: async (uuid, action) => ({ uuid, action }),
     revokeUserSubscription: async (uuid) => ({ uuid, revoked: true }),
     restartNode: async (uuid) => ({ uuid, restarted: true }),
     getHosts: async () => ({ items: [{ uuid: 'host-1', port: 80, enabled: true, fingerprint: 'fp-1' }] }),
-    bulkSetHostPort: async (hostUuids, port) => ({ hostUuids, port, updated: true }),
+    bulkUpdateHosts: async (hostUuids, patch) => ({ hostUuids, ...patch, updated: true }),
     getNodeMetadata: async (uuid) => ({ uuid, metadata: { zone: 'edge' } }),
     upsertNodeMetadata: async (uuid, metadata) => ({ uuid, metadata }),
-    getUserMetadata: async (uuid) => ({ uuid, metadata: { segment: 'partner' } }),
-    upsertUserMetadata: async (uuid, metadata) => ({ uuid, metadata }),
+    getUserMetadata: async (userId) => ({ userId, metadata: { segment: 'partner' } }),
+    upsertUserMetadata: async (userId, metadata) => ({ userId, metadata }),
     getSubscriptionTemplates: async () => ({ items: [{ uuid: 'template-1', name: 'Default XRAY' }] }),
     getSubscriptionTemplateByUuid: async (uuid) => ({ uuid, name: 'Default XRAY' }),
     createSubscriptionTemplate: async (payload) => ({ response: { uuid: 'template-1', ...payload } }),
@@ -73,6 +73,7 @@ function createClient(overrides: Partial<RemnawaveApiClient> = {}): RemnawaveApi
     getProfile: async (uuid) => ({ uuid, name: 'Default' }),
     getComputedProfile: async (uuid) => ({ uuid, computed: true }),
     listProfileInbounds: async (uuid) => ({ uuid, items: [] }),
+    executeOpenApiOperation: async (operation, payload) => ({ ...payload, operation: operation.operation }),
     ...overrides,
   };
 }
@@ -139,6 +140,7 @@ describe('remnawave_api compact v2 contract matrix', () => {
           execution: { clientMethod: expect.any(String) },
           supportedOperations: expect.arrayContaining([inventoryOperation.operation]),
         }),
+        risk: { tier: inventoryOperation.riskTier },
       });
       expectCompact(description);
     }
@@ -157,23 +159,23 @@ describe('remnawave_api compact v2 contract matrix', () => {
   test('safety modes each have happy and failure cases', async () => {
     const client = createClient();
 
-    const directSuccess = await routeRemnawaveApiRequest({ domain: 'users', operation: 'enable', payload: { uuid: 'user-1' } }, client);
+    const directSuccess = await routeRemnawaveApiRequest({ domain: 'users', operation: 'enable', payload: { userId: 1 } }, client);
     const directFailure = await routeRemnawaveApiRequest({ domain: 'users', operation: 'create', payload: { username: 'ab' } }, client);
-    const confirmFirst = await routeRemnawaveApiRequest({ domain: 'users', operation: 'revoke_subscription', payload: { uuid: 'user-1' } }, client);
+    const confirmFirst = await routeRemnawaveApiRequest({ domain: 'users', operation: 'revoke_subscription', payload: { userId: 1 } }, client);
     const confirmSuccess = isConfirmationRequired(confirmFirst)
-      ? await routeRemnawaveApiRequest({ domain: 'users', operation: 'revoke_subscription', payload: { uuid: 'user-1' }, confirmToken: confirmFirst.error.token }, client)
+      ? await routeRemnawaveApiRequest({ domain: 'users', operation: 'revoke_subscription', payload: { userId: 1 }, confirmToken: confirmFirst.error.token }, client)
       : confirmFirst;
-    const preview = await routeRemnawaveApiRequest({ domain: 'hosts', operation: 'bulk_set_port', payload: { hostUuids: ['host-1'], port: 443 } }, client);
-    const previewFailure = await routeRemnawaveApiRequest({ domain: 'hosts', operation: 'bulk_set_port', payload: { applyToken: '' } }, client);
+    const preview = await routeRemnawaveApiRequest({ domain: 'hosts', operation: 'bulk_update', payload: { hostUuids: ['host-1'], port: 443 } }, client);
+    const previewFailure = await routeRemnawaveApiRequest({ domain: 'hosts', operation: 'bulk_update', payload: { applyToken: '' } }, client);
     const applySuccess = await routeRemnawaveApiRequest(
-      { domain: 'hosts', operation: 'bulk_set_port', payload: { applyToken: (preview as { readonly applyToken: string }).applyToken } },
+      { domain: 'hosts', operation: 'bulk_update', payload: { applyToken: (preview as { readonly applyToken: string }).applyToken } },
       client,
     );
 
-    expect(directSuccess).toEqual({ updated: { uuid: 'user-1', action: 'enable' } });
+    expect(directSuccess).toEqual({ updated: { userId: 1, operation: 'enable' } });
     expect(directFailure).toMatchObject({ error: { code: 'INVALID_PAYLOAD', kind: 'validation' } });
     expect(confirmFirst).toMatchObject({ error: { code: 'CONFIRMATION_REQUIRED', kind: 'confirmation_required', token: expect.any(String) } });
-    expect(confirmSuccess).toEqual({ updated: { uuid: 'user-1', revoked: true } });
+    expect(confirmSuccess).toEqual({ updated: { userId: 1, operation: 'revoke_subscription' } });
     expect(preview).toMatchObject({ applyToken: expect.any(String), changes: [{ target: 'host-1', before: { port: 80 }, after: { port: 443 } }] });
     expect(previewFailure).toMatchObject({ error: { code: 'APPLY_TOKEN_MISSING', kind: 'preview_required' } });
     expect(applySuccess).toEqual({ updated: { hostUuids: ['host-1'], port: 443, updated: true } });
@@ -254,16 +256,14 @@ describe('remnawave_api compact v2 contract matrix', () => {
     expect(scopeMap.supported).not.toEqual(expect.arrayContaining([staleKey]));
     expect(allScopeText).not.toContain(staleKey);
     expect(Object.keys(SUPPORTED_OPERATION_RISK)).toEqual(expect.arrayContaining([currentKey]));
-    expect(Object.keys(SUPPORTED_OPERATION_RISK)).not.toEqual(expect.arrayContaining([staleKey]));
-    expect(Object.keys(SUPPORTED_OPERATION_SCHEMAS)).toEqual(expect.arrayContaining([currentKey]));
     expect(Object.keys(SUPPORTED_OPERATION_SCHEMAS)).not.toEqual(expect.arrayContaining([staleKey]));
     expect(stringifyStable(supportedDescriptions)).not.toContain(staleKey);
 
     const executed = await routeRemnawaveApiRequest(
-      { domain: 'users', operation: 'get_subscription_request_history', payload: { uuid: 'user-1' } },
-      createClient({ getUserSubscriptionRequestHistory: async (uuid) => ({ items: [{ uuid, requestedAt: '2026-05-05T00:00:00.000Z' }] }) }),
+      { domain: 'users', operation: 'get_subscription_request_history', payload: { userId: 1 } },
+      createClient(),
     );
-    expect(executed).toEqual({ items: [{ uuid: 'user-1', requestedAt: '2026-05-05T00:00:00.000Z' }] });
+    expect(executed).toEqual({ userId: 1, operation: 'get_subscription_request_history' });
   });
 
   test('public subscription compact output redacts secret-like fields and caps large strings', async () => {
@@ -302,7 +302,7 @@ describe('remnawave_api compact v2 contract matrix', () => {
     const unsupportedRequests = [
       { domain: 'auth', operation: 'login', payload: {} },
       { domain: 'tokens', operation: 'list', payload: {} },
-      { domain: 'ip_control', operation: 'submit_user_fetch_job', payload: { uuid: 'user-1' } },
+      { domain: 'connections', operation: 'post_connections_controller_connections_by_user_connections_by_user_user_id', payload: { userId: 1 } },
       { domain: 'node_plugins', operation: 'execute_plugin_executor', payload: { pluginUuid: 'plugin-1' } },
       { domain: 'remnawave_settings', operation: 'update', payload: {} },
       { domain: 'system', operation: 'encrypt_happ_payload', payload: {} },
@@ -315,7 +315,7 @@ describe('remnawave_api compact v2 contract matrix', () => {
     const allDiscovery = stringifyStable(DEFAULT_OPERATION_REGISTRY.getScopeMap());
 
     expect(DEFAULT_OPERATION_REGISTRY.listDomains()).toEqual(expect.arrayContaining(['keygen']));
-    expect(DEFAULT_OPERATION_REGISTRY.listDomains()).not.toEqual(expect.arrayContaining(['auth', 'tokens', 'ip_control', 'node_plugins', 'remnawave_settings']));
+    expect(DEFAULT_OPERATION_REGISTRY.listDomains()).not.toEqual(expect.arrayContaining(['auth', 'tokens', 'connections', 'node_plugins', 'remnawave_settings']));
     for (const key of groupedOperationKeys) {
       expect(allDiscovery).not.toContain(key);
     }

@@ -29,7 +29,7 @@ describe('remnawave_api scope sync', () => {
       'users.disable',
       'users.enable',
       'nodes.restart',
-      'hosts.bulk_set_port',
+      'hosts.bulk_update',
     ]));
     expect(implementation.supported).not.toContain('users.manage_lifecycle');
     expect(implementation.supported).not.toContain('hosts.manage_routing');
@@ -41,7 +41,7 @@ describe('remnawave_api scope sync', () => {
     const serialized = JSON.stringify(implementation);
 
     expect(Object.keys(implementation.domains)).toEqual(expect.arrayContaining(['keygen']));
-    expect(Object.keys(implementation.domains)).not.toEqual(expect.arrayContaining(['auth', 'ip_control', 'node_plugins']));
+    expect(Object.keys(implementation.domains)).not.toEqual(expect.arrayContaining(['auth', 'connections', 'node_plugins']));
     expect(serialized).not.toContain('remnawave-settings');
     expect(serialized).not.toContain('encrypt_happ_payload');
     expect(serialized).not.toContain('debug_srr_matcher');

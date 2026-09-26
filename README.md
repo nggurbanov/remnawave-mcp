@@ -1,6 +1,6 @@
 # remnawave-mcp
 
-`remnawave-mcp` is a publishable MCP server that exposes the Remnawave panel surface through a single unified tool interface. The server exposes one MCP tool with strict version gating. Remnawave 2.7 uses the existing operation registry; Remnawave 3.4.4 uses a separate route derived from its pinned OpenAPI contract.
+`remnawave-mcp` is a publishable MCP server that exposes the Remnawave panel surface through a single unified tool interface. The server exposes one MCP tool with strict version gating. Remnawave 3.3.2 uses the existing operation registry; Remnawave 3.4.4 uses a separate route derived from its pinned OpenAPI contract.
 
 ## Current status
 
@@ -9,7 +9,7 @@
 - MCP protocol version: `2025-06-18`
 - Runtime model: local stdio server only
 - Built entrypoint: `dist/index.js`
-- Supported Remnawave version gate: `2.7.0` through `2.7.4`, plus `3.4.4`
+- Supported Remnawave version gate: `3.3.2` and `3.4.4`
 - Unsupported or unknown Remnawave versions: startup fails before discovery is advertised
 
 ## Install from npm
@@ -30,7 +30,7 @@ Then configure your MCP client to run `remnawave-mcp` with the required Remnawav
       "env": {
         "REMNAWAVE_BASE_URL": "https://panel.example.test",
         "REMNAWAVE_API_TOKEN": "replace-with-real-token",
-        "REMNAWAVE_VERSION": "3.4.4"
+        "REMNAWAVE_VERSION": "3.3.2"
       }
     }
   }
@@ -41,11 +41,11 @@ Then configure your MCP client to run `remnawave-mcp` with the required Remnawav
 
 The 3.4.4 route is currently available in this source checkout. The published npm package is still `0.2.1`; build and run this checkout (`npm run build`, then `node dist/index.js`) until a new package version is released.
 
-Set `REMNAWAVE_VERSION=3.4.4` to use the version 3 route. It reads the pinned 3.4.4 OpenAPI contract and exposes its authenticated endpoints through `remnawave_api`. Auth, token management, public subscription, node plugin, legacy IP control, key generation, and panel settings endpoints are excluded. The existing 2.7 route remains available for 2.7 installations.
+Set `REMNAWAVE_VERSION=3.4.4` to use the version 3 route. It reads the pinned 3.4.4 OpenAPI contract and exposes its authenticated endpoints through `remnawave_api`. Auth, token management, public subscription, node plugin, obsolete IP endpoints, key generation, and panel settings endpoints are excluded. The existing 3.3.2 route remains available for 3.3.2 installations.
 
 Discover a domain with `{"domain":"users"}`. Describe an operation with `{"domain":"users","operation":"get_user_by_id"}`. Execute a read with `{"domain":"users","operation":"get_user_by_id","payload":{"userId":42}}`. Version 3 user paths use numeric `userId`; UUID based user paths from version 2 no longer work. Path and query parameters are top-level payload fields. Put JSON request bodies under `payload.body`.
 
-Every version 3 write requires confirmation. The first call with a payload returns `CONFIRMATION_REQUIRED` and a short-lived token. Repeat the same call with that token in `confirmToken` to execute it. A token is bound to the operation and payload and can be used once. Version 3 responses retain the panel's JSON envelope; this route does not normalize them into the 2.7 response shapes.
+Every version 3 write requires confirmation. The first call with a payload returns `CONFIRMATION_REQUIRED` and a short-lived token. Repeat the same call with that token in `confirmToken` to execute it. A token is bound to the operation and payload and can be used once. Version 3 responses retain the panel's JSON envelope; this route does not normalize them into the 3.3.2 response shapes.
 
 The pinned contract is [Remnawave 3.4.4 OpenAPI](https://github.com/Jolymmiles/remnawave-api-go/blob/v3.4.4/specs/3.4.4.json), generated from the [Remnawave backend 3.4.4 release](https://github.com/remnawave/backend/releases/tag/3.4.4).
 
@@ -117,11 +117,11 @@ Returns the panel statistics directly:
 
 Runtime discovery is supported-only. It lists only operations that are registered, validated, safety-classified, OpenAPI-bound, and executable through the runtime adapter. Excluded and not-yet-implemented OpenAPI surfaces are not discoverable at runtime, and direct calls to them return compact unsupported-operation errors.
 
-These operations are currently `supported` and executable. The runtime exposes 150 supported operations across 19 domains. Use domain-only discovery to retrieve the authoritative operation list for a domain. Representative supported operations include:
+These operations are currently `supported` and executable. The runtime exposes 143 supported operations across 19 domains. Use domain-only discovery to retrieve the authoritative operation list for a domain. Representative supported operations include:
 
 - `system.get_metadata`, `system.get_stats`, `system.get_health`, `system.get_nodes_metrics`, `system.get_recap`, `system.get_bandwidth_stats`, `system.get_node_statistics`
 - `users.list`, `users.create`, `users.get`, `users.update`, lookup reads such as `users.get_by_username`, single-user lifecycle actions, and bulk preview/apply actions such as `users.bulk_update`
-- `hosts.list`, `hosts.get`, `hosts.create`, `hosts.update`, `hosts.bulk_set_port`, and other guarded bulk host actions
+- `hosts.list`, `hosts.get`, `hosts.create`, `hosts.update`, `hosts.bulk_update`, and other guarded bulk host actions
 - `nodes.list`, `nodes.get`, `nodes.create`, `nodes.update`, `nodes.restart`, `nodes.restart_all`, and guarded node bulk/profile actions
 - `profiles.list`, `profiles.get`, `profiles.get_computed`, `profiles.list_inbounds`, `profiles.create`, `profiles.update`, `profiles.delete`, and `profiles.reorder`
 - `metadata.get_node`, `metadata.upsert_node`, `metadata.get_user`, `metadata.upsert_user`
@@ -154,7 +154,7 @@ The runtime discovery surface includes only domains that currently contain suppo
 - `subscription_page_configs`
 - `subscription_settings`
 
-Excluded surfaces are intentionally absent from discovery, including `auth`, `tokens`, `ip_control`, `node_plugins`, and `remnawave_settings`. Sensitive key generation is supported through `keygen.generate_node_secret` and `system.generate_x25519_keypairs`, while HAPP encryption and SRR matcher endpoints remain excluded.
+Excluded surfaces are intentionally absent from discovery, including `auth`, `tokens`, `connections`, `node_plugins`, and `remnawave_settings`. Sensitive key generation is supported through `keygen.generate_node_secret` and `system.generate_x25519_keypairs`, while HAPP encryption and SRR matcher endpoints remain excluded.
 
 ### Response mode and raw policy
 
@@ -195,7 +195,7 @@ Every supported operation has a safety mode that determines how it executes:
 {
   "domain": "users",
   "operation": "revoke_subscription",
-  "payload": { "uuid": "user-1" }
+  "payload": { "userId": 1 }
 }
 // Response
 {
@@ -212,12 +212,12 @@ Every supported operation has a safety mode that determines how it executes:
 {
   "domain": "users",
   "operation": "revoke_subscription",
-  "payload": { "uuid": "user-1" },
+  "payload": { "userId": 1 },
   "confirmToken": "abc123"
 }
 // Response
 {
-  "updated": { "uuid": "user-1", "revoked": true }
+  "updated": { "userId": 1, "revoked": true }
 }
 ```
 
@@ -227,7 +227,7 @@ Every supported operation has a safety mode that determines how it executes:
 // Preview call
 {
   "domain": "hosts",
-  "operation": "bulk_set_port",
+  "operation": "bulk_update",
   "payload": { "hostUuids": ["host-1"], "port": 443 }
 }
 // Response
@@ -242,7 +242,7 @@ Every supported operation has a safety mode that determines how it executes:
 // Apply call
 {
   "domain": "hosts",
-  "operation": "bulk_set_port",
+  "operation": "bulk_update",
   "payload": { "applyToken": "def456" }
 }
 // Response
@@ -351,7 +351,7 @@ This project ships as a local stdio server. `stdout` is reserved for MCP protoco
 
 Compatibility is intentionally strict:
 
-- supported now: `2.7.0` through `2.7.4`, plus `3.4.4`
+- supported now: `3.3.2` and `3.4.4`
 - unsupported explicit versions: fail with `REMNAWAVE_VERSION_UNSUPPORTED`
 - missing or unknown versions: fail with `REMNAWAVE_VERSION_UNKNOWN`
 
@@ -361,7 +361,7 @@ Compatibility is intentionally strict:
 |---|---|---|
 | `REMNAWAVE_BASE_URL` | yes | Base URL for the Remnawave panel API |
 | `REMNAWAVE_API_TOKEN` | yes | API token used for Remnawave requests |
-| `REMNAWAVE_VERSION` | recommended | Explicit Remnawave version gate. Versions `2.7.0` through `2.7.4` and `3.4.4` are supported |
+| `REMNAWAVE_VERSION` | recommended | Explicit Remnawave version gate. Versions `3.3.2` and `3.4.4` are supported |
 | `LOG_LEVEL` | no | One of `debug`, `info`, `warn`, `error`. Defaults to `info` |
 
 Example:
@@ -369,7 +369,7 @@ Example:
 ```bash
 export REMNAWAVE_BASE_URL="https://panel.example.test"
 export REMNAWAVE_API_TOKEN="replace-with-real-token"
-export REMNAWAVE_VERSION="2.7.4"
+export REMNAWAVE_VERSION="3.3.2"
 export LOG_LEVEL="info"
 ```
 
@@ -378,7 +378,7 @@ export LOG_LEVEL="info"
 ```bash
 REMNAWAVE_BASE_URL="https://panel.example.test" \
 REMNAWAVE_API_TOKEN="replace-with-real-token" \
-REMNAWAVE_VERSION="2.7.4" \
+REMNAWAVE_VERSION="3.3.2" \
 remnawave-mcp
 ```
 
@@ -415,7 +415,7 @@ If you used 0.1 grouped operations, replace them with the equivalent atomic oper
 |---|---|
 | `users.manage_lifecycle` | `users.disable`, `users.enable`, `users.revoke_subscription` |
 | `nodes.manage_maintenance` | `nodes.restart` |
-| `hosts.manage_routing` | `hosts.bulk_set_port` |
+| `hosts.manage_routing` | `hosts.bulk_update` |
 
 If you parsed legacy envelope fields such as `details.result` or `suggested_next_step`, remove that parsing. Read the direct payload on success and the compact `error` object on failure.
 
