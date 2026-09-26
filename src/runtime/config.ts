@@ -28,8 +28,8 @@ export interface RuntimeConfig {
   readonly startupDiagnostics: StartupDiagnostics;
 }
 
-const SUPPORTED_REMNAWAVE_VERSIONS = new Set(['2.7.0', '2.7.1', '2.7.2', '2.7.3', '2.7.4']);
-const SUPPORTED_REMNAWAVE_RANGE = '2.7.0-2.7.4';
+const SUPPORTED_REMNAWAVE_VERSIONS = new Set(['2.7.0', '2.7.1', '2.7.2', '2.7.3', '2.7.4', '3.4.4']);
+const SUPPORTED_REMNAWAVE_RANGE = '2.7.0-2.7.4, 3.4.4';
 
 export function loadRuntimeConfig(env: NodeJS.ProcessEnv): RuntimeConfig {
   const remnawaveBaseUrl = readRequiredEnv(env, 'REMNAWAVE_BASE_URL');

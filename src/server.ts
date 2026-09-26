@@ -10,6 +10,7 @@ import { buildServerDefinition, registerDiscoverySurface, type DiscoveryManifest
 
 import { createRemnawaveApiClientAdapter } from './remnawave-api/client-adapter.js';
 import { routeRemnawaveApiRequest } from './remnawave-api/router.js';
+import { routeRemnawaveV3Request } from './remnawave-api/v3.js';
 export interface ServerRuntime {
   readonly close: () => Promise<void>;
   readonly discovery: DiscoveryManifest;
@@ -50,11 +51,15 @@ export async function startServer(config: RuntimeConfig): Promise<ServerRuntime>
     'remnawave_api',
     {
       title: 'Remnawave API',
-      description: 'Single Remnawave API entry point. Use domain only to discover operations, domain + operation to describe one operation, and domain + operation + payload to execute.',
+      description: config.startupDiagnostics.remnawaveVersion.value === '3.4.4'
+        ? 'Remnawave 3.4.4 API. Use domain only to discover operations, domain + operation to describe, and domain + operation + payload to execute. Writes require confirmation.'
+        : 'Single Remnawave API entry point. Use domain only to discover operations, domain + operation to describe one operation, and domain + operation + payload to execute.',
       inputSchema: remnawaveApiToolInput,
     },
     async (args) => {
-      const result = await routeRemnawaveApiRequest(args, remnawaveApiClient);
+      const result = config.startupDiagnostics.remnawaveVersion.value === '3.4.4'
+        ? await routeRemnawaveV3Request(args, { baseUrl: config.remnawaveBaseUrl, apiToken: config.remnawaveApiToken })
+        : await routeRemnawaveApiRequest(args, remnawaveApiClient);
       const safeResult = toJsonSafe(result);
       return {
         content: [{ type: 'text', text: JSON.stringify(safeResult, null, 2) }],

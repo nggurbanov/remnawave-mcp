@@ -39,7 +39,9 @@ export function buildDiscoveryManifest(config: RuntimeConfig): DiscoveryManifest
   ensureDiscoveryGating(config);
 
   return {
-    tools: [PRIMARY_TOOL_DEFINITION],
+    tools: config.startupDiagnostics.remnawaveVersion.value === '3.4.4'
+      ? [{ ...PRIMARY_TOOL_DEFINITION, description: 'Remnawave 3.4.4 API. Send domain to discover operations, domain and operation to describe, and add payload to execute. Writes require a confirmation token.' }]
+      : [PRIMARY_TOOL_DEFINITION],
   };
 }
 

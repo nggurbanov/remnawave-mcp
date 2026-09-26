@@ -51,3 +51,7 @@ This file must be updated when:
 - Any third-party dependency with attribution requirements is added.
 
 Trivial adaptations (reimplementations from scratch informed by upstream concepts) do not require updating this file, but should still be noted in the relevant ADR or commit message.
+
+## Remnawave API contract snapshots
+
+The pinned `src/remnawave-api/openapi/remnawave-openapi-3.4.4.json` contract is from the Remnawave backend 3.4.4 release, mirrored at https://github.com/Jolymmiles/remnawave-api-go/blob/v3.4.4/specs/3.4.4.json. Its OpenAPI metadata identifies the upstream license as AGPL-3.0. The contract is used to enumerate version 3 endpoints and is embedded in the built server.

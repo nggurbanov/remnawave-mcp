@@ -16,7 +16,7 @@ See the [danger classes and side-effects reference](../safety/danger-classes-and
 
 ## Version and precedence notes that affect support claims
 
-- Global runtime gate: this repo supports Remnawave `2.7.0` through `2.7.4`; unknown or unsupported versions fail before discovery is advertised.
+- Global runtime gate: this repo supports Remnawave `2.7.0` through `2.7.4` and `3.4.4`; unknown or unsupported versions fail before discovery is advertised. This matrix describes the 2.7 registry; see the README for the 3.4.4 OpenAPI route.
 - Published support is capability-based and registry-backed, not path-count-based.
 - Discovery is supported-only; deferred and excluded operations are absent from runtime discovery.
 
