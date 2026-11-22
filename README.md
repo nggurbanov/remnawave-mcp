@@ -5,7 +5,7 @@
 ## Current status
 
 - Package name: `remnawave-mcp`
-- Server version: `0.2.1`
+- Server version: `0.3.0`
 - MCP protocol version: `2025-06-18`
 - Runtime model: local stdio server only
 - Built entrypoint: `dist/index.js`
@@ -39,7 +39,7 @@ Then configure your MCP client to run `remnawave-mcp` with the required Remnawav
 
 ## Remnawave 3.4.4 and 3.4.11
 
-The 3.4.4 and 3.4.11 routes are available in this source checkout. The published npm package is still `0.2.1`; build and run this checkout (`npm run build`, then `node dist/index.js`) until a new package version is released.
+The 3.4.4 and 3.4.11 routes are available in [release v0.3.0](https://github.com/nggurbanov/remnawave-mcp/releases/tag/v0.3.0). Install the release tarball with `npm install -g https://github.com/nggurbanov/remnawave-mcp/releases/download/v0.3.0/remnawave-mcp-0.3.0.tgz`.
 
 Set `REMNAWAVE_VERSION` to the version running on your panel. For 3.4.4 and 3.4.11, `remnawave_api` uses the matching OpenAPI snapshot. Auth, token management, public subscription, node plugin, obsolete IP endpoints, key generation, and panel settings endpoints are excluded. The existing 3.3.2 route remains available for 3.3.2 installations.
 

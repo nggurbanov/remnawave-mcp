@@ -7,12 +7,12 @@ The publication boundary described here is based on the current audited repo sta
 ## Release metadata summary
 
 - Package name: `remnawave-mcp`
-- Server version: `0.2.1`
+- Server version: `0.3.0`
 - Runtime model: local stdio MCP server only
 - Built entrypoint: `dist/index.js`
 - CLI command: `remnawave-mcp`
 - Required runtimes: Node.js `>=20.11.0`, npm `>=10.0.0`
-- Supported Remnawave version policy: `3.3.2`
+- Supported Remnawave version policy: `3.3.2`, `3.4.4`, and `3.4.11`
 
 The publishable npm package is intentionally conservative. It does not claim Docker packaging, remote transport hosting, or compatibility with unknown Remnawave panel versions.
 
@@ -36,12 +36,12 @@ Release readiness therefore depends on two things being true at the same time:
 
 The current compatibility contract is intentionally strict.
 
-- Supported: Remnawave `3.3.2`
+- Supported: Remnawave `3.3.2`, `3.4.4`, and `3.4.11`
 - Unsupported explicit versions: startup fails with `REMNAWAVE_VERSION_UNSUPPORTED`
 - Missing or unknown versions: startup fails with `REMNAWAVE_VERSION_UNKNOWN`
 - Discovery gating: the tool is not advertised when version gating fails
 
-This policy is grounded in the vendored 3.3.2 OpenAPI contract and the verified 3.3.2 release changes.
+The 3.3.2 route uses the compact operation registry. The 3.4.4 and 3.4.11 routes use their respective pinned OpenAPI snapshots.
 
 ## Capability matrix publication status
 
@@ -142,8 +142,8 @@ The following checklist must be satisfied before publishing or tagging the v1 si
 
 ### Version gates
 
-- [ ] package version in `package.json` matches the intended release artifact (`0.2.1`)
-- [ ] supported Remnawave version gate is `3.3.2`
+- [ ] package version in `package.json` matches the intended release artifact (`0.3.0`)
+- [ ] supported Remnawave versions are `3.3.2`, `3.4.4`, and `3.4.11`
 - [ ] startup still fails closed for unsupported versions with `REMNAWAVE_VERSION_UNSUPPORTED`
 - [ ] startup still fails closed for unknown or missing versions with `REMNAWAVE_VERSION_UNKNOWN`
 - [ ] failed version gating still prevents tool advertisement
