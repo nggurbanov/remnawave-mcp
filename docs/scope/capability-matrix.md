@@ -16,7 +16,7 @@ See the [danger classes and side-effects reference](../safety/danger-classes-and
 
 ## Version and precedence notes that affect support claims
 
-- Global runtime gate: this repo supports Remnawave 3.3.2 and 3.4.4; unknown or unsupported versions fail before discovery is advertised. This matrix describes the 3.3.2 registry; see the README for the 3.4.4 OpenAPI route.
+- Global runtime gate: This repo supports Remnawave 3.3.2, 3.4.4, and 3.4.11. Unknown or unsupported versions fail before discovery is advertised. This matrix describes the 3.3.2 registry. The README covers the 3.4.4 and 3.4.11 OpenAPI routes.
 - Published support is capability-based and registry-backed, not path-count-based.
 - Discovery is supported-only; deferred and excluded operations are absent from runtime discovery.
 

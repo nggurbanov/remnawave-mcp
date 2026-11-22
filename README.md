@@ -1,6 +1,6 @@
 # remnawave-mcp
 
-`remnawave-mcp` is a publishable MCP server that exposes the Remnawave panel surface through a single unified tool interface. The server exposes one MCP tool with strict version gating. Remnawave 3.3.2 uses the existing operation registry; Remnawave 3.4.4 uses a separate route derived from its pinned OpenAPI contract.
+`remnawave-mcp` is a publishable MCP server that exposes the Remnawave panel surface through a single unified tool interface. The server exposes one MCP tool with strict version gating. Remnawave 3.3.2 uses the existing operation registry; Remnawave 3.4.4 and 3.4.11 each use a pinned OpenAPI contract.
 
 ## Current status
 
@@ -9,7 +9,7 @@
 - MCP protocol version: `2025-06-18`
 - Runtime model: local stdio server only
 - Built entrypoint: `dist/index.js`
-- Supported Remnawave version gate: `3.3.2` and `3.4.4`
+- Supported Remnawave version gate: `3.3.2`, `3.4.4`, and `3.4.11`
 - Unsupported or unknown Remnawave versions: startup fails before discovery is advertised
 
 ## Install from npm
@@ -37,17 +37,17 @@ Then configure your MCP client to run `remnawave-mcp` with the required Remnawav
 }
 ```
 
-## Remnawave 3.4.4
+## Remnawave 3.4.4 and 3.4.11
 
-The 3.4.4 route is currently available in this source checkout. The published npm package is still `0.2.1`; build and run this checkout (`npm run build`, then `node dist/index.js`) until a new package version is released.
+The 3.4.4 and 3.4.11 routes are available in this source checkout. The published npm package is still `0.2.1`; build and run this checkout (`npm run build`, then `node dist/index.js`) until a new package version is released.
 
-Set `REMNAWAVE_VERSION=3.4.4` to use the version 3 route. It reads the pinned 3.4.4 OpenAPI contract and exposes its authenticated endpoints through `remnawave_api`. Auth, token management, public subscription, node plugin, obsolete IP endpoints, key generation, and panel settings endpoints are excluded. The existing 3.3.2 route remains available for 3.3.2 installations.
+Set `REMNAWAVE_VERSION` to the version running on your panel. For 3.4.4 and 3.4.11, `remnawave_api` uses the matching OpenAPI snapshot. Auth, token management, public subscription, node plugin, obsolete IP endpoints, key generation, and panel settings endpoints are excluded. The existing 3.3.2 route remains available for 3.3.2 installations.
 
-Discover a domain with `{"domain":"users"}`. Describe an operation with `{"domain":"users","operation":"get_user_by_id"}`. Execute a read with `{"domain":"users","operation":"get_user_by_id","payload":{"userId":42}}`. Version 3 user paths use numeric `userId`; UUID based user paths from version 2 no longer work. Path and query parameters are top-level payload fields. Put JSON request bodies under `payload.body`.
+Discover a domain with `{"domain":"users"}`. Describe an operation with `{"domain":"users","operation":"get_user_by_id"}`. Execute a read with `{"domain":"users","operation":"get_user_by_id","payload":{"userId":42}}`. Version 3 user paths use numeric `userId`; UUID based user paths from version 2 no longer work. Path and query parameters are top-level payload fields. Put JSON request bodies under `payload.body`. Operation descriptions include the request body's referenced schemas under `components.schemas`.
 
 Every version 3 write requires confirmation. The first call with a payload returns `CONFIRMATION_REQUIRED` and a short-lived token. Repeat the same call with that token in `confirmToken` to execute it. A token is bound to the operation and payload and can be used once. Version 3 responses retain the panel's JSON envelope; this route does not normalize them into the 3.3.2 response shapes.
 
-The pinned contract is [Remnawave 3.4.4 OpenAPI](https://github.com/Jolymmiles/remnawave-api-go/blob/v3.4.4/specs/3.4.4.json), generated from the [Remnawave backend 3.4.4 release](https://github.com/remnawave/backend/releases/tag/3.4.4).
+In 3.4.11, host create, update, and bulk update accept an optional `includeInSrrRules` array of strings. The 3.4.11 host responses include the same field. The set of operations is the same as in 3.4.4. See [OpenAPI snapshot provenance](NOTICE.md#remnawave-api-contract-snapshots).
 
 ## Quickstart: Using the single-tool API
 
@@ -351,7 +351,7 @@ This project ships as a local stdio server. `stdout` is reserved for MCP protoco
 
 Compatibility is intentionally strict:
 
-- supported now: `3.3.2` and `3.4.4`
+- supported now: `3.3.2`, `3.4.4`, and `3.4.11`
 - unsupported explicit versions: fail with `REMNAWAVE_VERSION_UNSUPPORTED`
 - missing or unknown versions: fail with `REMNAWAVE_VERSION_UNKNOWN`
 
@@ -361,7 +361,7 @@ Compatibility is intentionally strict:
 |---|---|---|
 | `REMNAWAVE_BASE_URL` | yes | Base URL for the Remnawave panel API |
 | `REMNAWAVE_API_TOKEN` | yes | API token used for Remnawave requests |
-| `REMNAWAVE_VERSION` | recommended | Explicit Remnawave version gate. Versions `3.3.2` and `3.4.4` are supported |
+| `REMNAWAVE_VERSION` | recommended | Explicit Remnawave version gate. Versions `3.3.2`, `3.4.4`, and `3.4.11` are supported |
 | `LOG_LEVEL` | no | One of `debug`, `info`, `warn`, `error`. Defaults to `info` |
 
 Example:
