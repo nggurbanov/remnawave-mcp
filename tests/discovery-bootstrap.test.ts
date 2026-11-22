@@ -11,7 +11,7 @@ import {
 } from '../src/server/discovery.js';
 
 describe('discovery bootstrap', () => {
-  const supportedRemnawaveVersions = ['3.3.2'] as const;
+  const supportedRemnawaveVersions = ['3.3.2', '3.4.4', '3.4.11'] as const;
   const blockedRemnawaveVersions = [
     { label: 'missing', rawValue: undefined, expectedCode: 'REMNAWAVE_VERSION_UNKNOWN' },
     { label: 'whitespace', rawValue: '   ', expectedCode: 'REMNAWAVE_VERSION_UNKNOWN' },
@@ -22,6 +22,7 @@ describe('discovery bootstrap', () => {
     { label: '3.3.2-beta.1', rawValue: '3.3.2-beta.1', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
     { label: '2.6.4', rawValue: '2.6.4', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
     { label: '2.7.4', rawValue: '2.7.4', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
+    { label: '3.4.10', rawValue: '3.4.10', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
     { label: '3.0.0', rawValue: '3.0.0', expectedCode: 'REMNAWAVE_VERSION_UNSUPPORTED' },
   ] as const;
 

@@ -1,4 +1,4 @@
-import type { RuntimeConfig } from '../runtime/config.js';
+import { isRemnawaveOpenApiVersion, type RuntimeConfig } from '../runtime/config.js';
 import { buildRemnawaveApiToolDiscoveryDescription } from '../remnawave-api/contract.js';
 import { RuntimeConfigError } from '../runtime/errors.js';
 
@@ -37,10 +37,11 @@ const EMPTY_DISCOVERY: DiscoveryManifest = {
 
 export function buildDiscoveryManifest(config: RuntimeConfig): DiscoveryManifest {
   ensureDiscoveryGating(config);
+  const version = config.startupDiagnostics.remnawaveVersion.value;
 
   return {
-    tools: config.startupDiagnostics.remnawaveVersion.value === '3.4.4'
-      ? [{ ...PRIMARY_TOOL_DEFINITION, description: 'Remnawave 3.4.4 API. Send domain to discover operations, domain and operation to describe, and add payload to execute. Writes require a confirmation token.' }]
+    tools: isRemnawaveOpenApiVersion(version)
+      ? [{ ...PRIMARY_TOOL_DEFINITION, description: `Remnawave ${version} API. Send domain to discover operations, domain and operation to describe, and add payload to execute. Writes require a confirmation token.` }]
       : [PRIMARY_TOOL_DEFINITION],
   };
 }

@@ -31,7 +31,7 @@ afterEach(async () => {
   }
 });
 
-function createProtocolClient(): { client: Client; transport: StdioClientTransport } {
+function createProtocolClient(version = '3.3.2'): { client: Client; transport: StdioClientTransport } {
   const transport = new StdioClientTransport({
     command: process.execPath,
     args: ['--import', 'tsx', entrypoint],
@@ -41,7 +41,7 @@ function createProtocolClient(): { client: Client; transport: StdioClientTranspo
       ...process.env,
       REMNAWAVE_BASE_URL: 'https://panel.example.test',
       REMNAWAVE_API_TOKEN: 'token-value',
-      REMNAWAVE_VERSION: '3.3.2',
+      REMNAWAVE_VERSION: version,
       LOG_LEVEL: 'error',
     } as Record<string, string>,
   });
@@ -104,5 +104,17 @@ describe('mcp runtime protocol', () => {
     expect(remnawaveApi?.name).toBe('remnawave_api');
     expect(remnawaveApi?.description).toContain('domain only to discover operations');
     expect(remnawaveApi?.description).not.toContain('system.get_stats');
+  });
+
+  test.each(['3.4.4', '3.4.11'])('serves the Remnawave %s host contract over stdio', async (version) => {
+    const { client, transport } = createProtocolClient(version);
+    await client.connect(transport, { timeout: 5000 });
+
+    const { tools } = await client.listTools();
+    expect(tools.map(({ name }) => name)).toEqual(['remnawave_api']);
+    expect(tools[0]?.description).toContain(`Remnawave ${version} API`);
+
+    const result = await client.callTool({ name: 'remnawave_api', arguments: { domain: 'hosts' } });
+    expect(result.structuredContent).toMatchObject({ domain: 'hosts', version });
   });
 });

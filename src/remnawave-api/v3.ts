@@ -1,5 +1,7 @@
+import type { RemnawaveOpenApiVersion } from '../runtime/config.js';
 import { buildTier3ConfirmationState } from './risk.js';
-import openApiDocument from './openapi/remnawave-openapi-3.4.4.json' with { type: 'json' };
+import openApi344 from './openapi/remnawave-openapi-3.4.4.json' with { type: 'json' };
+import openApi3411 from './openapi/remnawave-openapi-3.4.11.json' with { type: 'json' };
 
 interface Parameter {
   readonly name: string;
@@ -14,6 +16,11 @@ interface ApiOperation {
   readonly summary?: string;
   readonly parameters?: readonly Parameter[];
   readonly requestBody?: { readonly required?: boolean; readonly content?: Record<string, unknown> };
+}
+
+interface ApiDocument {
+  readonly paths: Record<string, Record<string, ApiOperation>>;
+  readonly components: { readonly schemas: Record<string, unknown> };
 }
 
 interface V3Operation {
@@ -38,33 +45,44 @@ interface V3ClientOptions {
   readonly fetch?: typeof globalThis.fetch;
 }
 
-const document = openApiDocument as unknown as { readonly paths: Record<string, Record<string, ApiOperation>> };
 const methods = new Set(['get', 'post', 'put', 'patch', 'delete']);
 const excludedPrefixes = ['/api/auth', '/api/tokens', '/api/sub/', '/api/node-plugins', '/api/ip-control', '/api/keygen', '/api/system/tools/', '/api/remnawave-settings'];
-const extractedOperations: readonly V3Operation[] = Object.entries(document.paths).flatMap(([path, pathItem]) =>
-  Object.entries(pathItem).flatMap(([method, spec]) => {
-    if (!methods.has(method) || excludedPrefixes.some((prefix) => path.startsWith(prefix))) return [];
-    const domain = path.split('/')[2]?.replaceAll('-', '_') ?? 'unknown';
-    const operation = snakeCase(spec.operationId.split('_').slice(1).join('_'));
-    return [{ domain, operation, method, path, spec }];
-  }),
-);
-const counts = new Map<string, number>();
-for (const entry of extractedOperations) {
-  const key = `${entry.domain}.${entry.operation}`;
-  counts.set(key, (counts.get(key) ?? 0) + 1);
-}
-const operations: readonly V3Operation[] = extractedOperations.map((entry) => ({
-  ...entry,
-  operation: (counts.get(`${entry.domain}.${entry.operation}`) ?? 0) > 1
-    ? `${entry.operation}_${entry.path.split('/')[3] ?? entry.method}`
-    : entry.operation,
-}));
-const operationNames = new Set<string>();
-for (const entry of operations) {
-  const key = `${entry.domain}.${entry.operation}`;
-  if (operationNames.has(key)) throw new Error(`Duplicate Remnawave 3.4.4 operation: ${key}`);
-  operationNames.add(key);
+const documents: Record<RemnawaveOpenApiVersion, ApiDocument> = {
+  '3.4.4': openApi344 as unknown as ApiDocument,
+  '3.4.11': openApi3411 as unknown as ApiDocument,
+};
+const operationsByVersion = {
+  '3.4.4': extractOperations(documents['3.4.4'], '3.4.4'),
+  '3.4.11': extractOperations(documents['3.4.11'], '3.4.11'),
+} satisfies Record<RemnawaveOpenApiVersion, readonly V3Operation[]>;
+
+function extractOperations(document: ApiDocument, version: RemnawaveOpenApiVersion): readonly V3Operation[] {
+  const extractedOperations: readonly V3Operation[] = Object.entries(document.paths).flatMap(([path, pathItem]) =>
+    Object.entries(pathItem).flatMap(([method, spec]) => {
+      if (!methods.has(method) || excludedPrefixes.some((prefix) => path.startsWith(prefix))) return [];
+      const domain = path.split('/')[2]?.replaceAll('-', '_') ?? 'unknown';
+      const operation = snakeCase(spec.operationId.split('_').slice(1).join('_'));
+      return [{ domain, operation, method, path, spec }];
+    }),
+  );
+  const counts = new Map<string, number>();
+  for (const entry of extractedOperations) {
+    const key = `${entry.domain}.${entry.operation}`;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  const operations: readonly V3Operation[] = extractedOperations.map((entry) => ({
+    ...entry,
+    operation: (counts.get(`${entry.domain}.${entry.operation}`) ?? 0) > 1
+      ? `${entry.operation}_${entry.path.split('/')[3] ?? entry.method}`
+      : entry.operation,
+  }));
+  const operationNames = new Set<string>();
+  for (const entry of operations) {
+    const key = `${entry.domain}.${entry.operation}`;
+    if (operationNames.has(key)) throw new Error(`Duplicate Remnawave ${version} operation: ${key}`);
+    operationNames.add(key);
+  }
+  return operations;
 }
 
 function snakeCase(value: string): string {
@@ -79,7 +97,33 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-function describe(entry: V3Operation): Record<string, unknown> {
+function collectReferencedSchemas(value: unknown, schemas: Record<string, unknown>): Record<string, unknown> {
+  const referenced: Record<string, unknown> = {};
+  const schemaPrefix = '#/components/schemas/';
+
+  function visit(node: unknown): void {
+    if (Array.isArray(node)) {
+      node.forEach(visit);
+      return;
+    }
+    if (!isObject(node)) return;
+
+    if (typeof node.$ref === 'string' && node.$ref.startsWith(schemaPrefix)) {
+      const name = node.$ref.slice(schemaPrefix.length);
+      if (Object.hasOwn(schemas, name) && !Object.hasOwn(referenced, name)) {
+        referenced[name] = schemas[name];
+        visit(schemas[name]);
+      }
+    }
+    Object.values(node).forEach(visit);
+  }
+
+  visit(value);
+  return referenced;
+}
+
+function describe(entry: V3Operation, document: ApiDocument): Record<string, unknown> {
+  const schemas = collectReferencedSchemas(entry.spec.requestBody, document.components.schemas);
   return {
     domain: entry.domain,
     operation: entry.operation,
@@ -88,28 +132,33 @@ function describe(entry: V3Operation): Record<string, unknown> {
     summary: entry.spec.summary ?? '',
     parameters: entry.spec.parameters ?? [],
     requestBody: entry.spec.requestBody ?? null,
+    ...(Object.keys(schemas).length > 0 ? { components: { schemas } } : {}),
     write: entry.method !== 'get',
     confirmationRequired: entry.method !== 'get',
     payloadFormat: 'Path and query parameters are top-level payload fields; JSON request bodies go in payload.body.',
   };
 }
 
-export async function routeRemnawaveV3Request(request: V3Request, client: V3ClientOptions): Promise<unknown> {
+export async function routeRemnawaveV3Request(
+  request: V3Request,
+  client: V3ClientOptions,
+  version: RemnawaveOpenApiVersion,
+): Promise<unknown> {
   const domain = typeof request.domain === 'string' ? request.domain.trim() : '';
   const operationName = typeof request.operation === 'string' ? request.operation.trim() : '';
   if (!domain) return error('DOMAIN_REQUIRED', 'domain is required.');
   if (request.responseMode !== undefined && request.responseMode !== 'normalized' && request.responseMode !== 'raw') {
     return error('INVALID_RESPONSE_MODE', 'responseMode must be normalized or raw.');
   }
-  const domainOperations = operations.filter((entry) => entry.domain === domain);
+  const domainOperations = operationsByVersion[version].filter((entry) => entry.domain === domain);
   if (domainOperations.length === 0) return error('UNSUPPORTED_DOMAIN', `Unsupported domain: ${domain}.`);
   if (!operationName) {
     if (request.payload !== undefined) return error('OPERATION_REQUIRED', 'operation is required when payload is provided.');
-    return { domain, version: '3.4.4', operations: domainOperations.map((entry) => ({ operation: entry.operation, method: entry.method.toUpperCase(), path: entry.path, write: entry.method !== 'get' })) };
+    return { domain, version, operations: domainOperations.map((entry) => ({ operation: entry.operation, method: entry.method.toUpperCase(), path: entry.path, write: entry.method !== 'get' })) };
   }
   const entry = domainOperations.find((item) => item.operation === operationName);
   if (!entry) return error('UNSUPPORTED_OPERATION', `Unsupported operation: ${domain}.${operationName}.`);
-  if (request.payload === undefined) return describe(entry);
+  if (request.payload === undefined) return describe(entry, documents[version]);
   if (!isObject(request.payload)) return error('INVALID_PAYLOAD', 'payload must be an object.');
 
   const payload = request.payload;

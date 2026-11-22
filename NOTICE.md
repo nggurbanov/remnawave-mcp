@@ -55,3 +55,5 @@ Trivial adaptations (reimplementations from scratch informed by upstream concept
 ## Remnawave API contract snapshots
 
 The pinned `src/remnawave-api/openapi/remnawave-openapi-3.4.4.json` contract is from the Remnawave backend 3.4.4 release, mirrored at https://github.com/Jolymmiles/remnawave-api-go/blob/v3.4.4/specs/3.4.4.json. Its OpenAPI metadata identifies the upstream license as AGPL-3.0. The contract is used to enumerate version 3 endpoints and is embedded in the built server.
+
+The pinned `src/remnawave-api/openapi/remnawave-openapi-3.4.11.json` contract was generated with `npm ci` and `npm run generate:openapi` from the [Remnawave backend 3.4.11 tag](https://github.com/remnawave/backend/tree/3.4.11) and compacted with `jq -c .`. Its OpenAPI metadata identifies the upstream license as AGPL-3.0. The snapshot is embedded in the built server.

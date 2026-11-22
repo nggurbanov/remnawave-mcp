@@ -3,7 +3,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import * as z from 'zod';
 
 import { RemnawaveClient } from './client/index.js';
-import type { RuntimeConfig } from './runtime/config.js';
+import { isRemnawaveOpenApiVersion, type RuntimeConfig } from './runtime/config.js';
 import { createStderrLogger } from './runtime/logger.js';
 import { installProcessGuards } from './runtime/process-guard.js';
 import { buildServerDefinition, registerDiscoverySurface, type DiscoveryManifest } from './server/discovery.js';
@@ -20,6 +20,7 @@ export async function startServer(config: RuntimeConfig): Promise<ServerRuntime>
   const logger = createStderrLogger(config.logLevel);
   const server = buildServerDefinition(config);
   const discovery = registerDiscoverySurface(server);
+  const version = config.startupDiagnostics.remnawaveVersion.value;
   const mcpServer = new McpServer(
     {
       name: config.startupDiagnostics.server.name,
@@ -51,14 +52,14 @@ export async function startServer(config: RuntimeConfig): Promise<ServerRuntime>
     'remnawave_api',
     {
       title: 'Remnawave API',
-      description: config.startupDiagnostics.remnawaveVersion.value === '3.4.4'
-        ? 'Remnawave 3.4.4 API. Use domain only to discover operations, domain + operation to describe, and domain + operation + payload to execute. Writes require confirmation.'
+      description: isRemnawaveOpenApiVersion(version)
+        ? `Remnawave ${version} API. Use domain only to discover operations, domain + operation to describe, and domain + operation + payload to execute. Writes require confirmation.`
         : 'Single Remnawave API entry point. Use domain only to discover operations, domain + operation to describe one operation, and domain + operation + payload to execute.',
       inputSchema: remnawaveApiToolInput,
     },
     async (args) => {
-      const result = config.startupDiagnostics.remnawaveVersion.value === '3.4.4'
-        ? await routeRemnawaveV3Request(args, { baseUrl: config.remnawaveBaseUrl, apiToken: config.remnawaveApiToken })
+      const result = isRemnawaveOpenApiVersion(version)
+        ? await routeRemnawaveV3Request(args, { baseUrl: config.remnawaveBaseUrl, apiToken: config.remnawaveApiToken }, version)
         : await routeRemnawaveApiRequest(args, remnawaveApiClient);
       const safeResult = toJsonSafe(result);
       return {

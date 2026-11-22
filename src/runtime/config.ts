@@ -28,8 +28,15 @@ export interface RuntimeConfig {
   readonly startupDiagnostics: StartupDiagnostics;
 }
 
-const SUPPORTED_REMNAWAVE_VERSIONS = new Set(['3.3.2', '3.4.4']);
-const SUPPORTED_REMNAWAVE_RANGE = '3.3.2, 3.4.4';
+const OPENAPI_REMNAWAVE_VERSIONS = ['3.4.4', '3.4.11'] as const;
+const SUPPORTED_REMNAWAVE_VERSIONS = new Set(['3.3.2', ...OPENAPI_REMNAWAVE_VERSIONS]);
+const SUPPORTED_REMNAWAVE_RANGE = [...SUPPORTED_REMNAWAVE_VERSIONS].join(', ');
+
+export type RemnawaveOpenApiVersion = (typeof OPENAPI_REMNAWAVE_VERSIONS)[number];
+
+export function isRemnawaveOpenApiVersion(value: string | null): value is RemnawaveOpenApiVersion {
+  return OPENAPI_REMNAWAVE_VERSIONS.some((version) => version === value);
+}
 
 export function loadRuntimeConfig(env: NodeJS.ProcessEnv): RuntimeConfig {
   const remnawaveBaseUrl = readRequiredEnv(env, 'REMNAWAVE_BASE_URL');

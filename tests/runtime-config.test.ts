@@ -5,8 +5,8 @@ import { RuntimeConfigError, redactSecrets } from '../src/runtime/errors.js';
 import { buildDiscoveryManifest } from '../src/server/discovery.js';
 
 describe('loadRuntimeConfig', () => {
-  const supportedRemnawaveVersions = ['3.3.2', '3.4.4'] as const;
-  const supportedRemnawaveRange = '3.3.2, 3.4.4';
+  const supportedRemnawaveVersions = ['3.3.2', '3.4.4', '3.4.11'] as const;
+  const supportedRemnawaveRange = '3.3.2, 3.4.4, 3.4.11';
 
   test.each(supportedRemnawaveVersions)('marks supported Remnawave patch version %s as supported', (version) => {
     const config = loadRuntimeConfig({
